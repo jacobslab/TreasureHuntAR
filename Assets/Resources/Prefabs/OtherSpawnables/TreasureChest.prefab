@@ -293,7 +293,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1475977018976930
 GameObject:
   m_ObjectHideFlags: 1
@@ -1748,6 +1748,7 @@ MonoBehaviour:
   pivotB: {fileID: 4566389996021220}
   top: {fileID: 4022186290663160}
   specialObjectSpawnPoint: {fileID: 4456505891447500}
+  specialTextMesh: {fileID: 102936727191919064}
 --- !u!114 &114577300472718600
 MonoBehaviour:
   m_ObjectHideFlags: 1

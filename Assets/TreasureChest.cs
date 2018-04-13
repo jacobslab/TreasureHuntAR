@@ -10,14 +10,21 @@ public class TreasureChest : MonoBehaviour {
 	public Transform top;
 	public Transform specialObjectSpawnPoint;
 	float angleToOpen = 150.0f; //degrees
+
+	public TextMesh specialTextMesh;
 	// Use this for initialization
-	void Start () {
-		
+	void Awake () {
+		specialTextMesh.text = "";
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public void SetItemText(string itemName)
+	{
+		specialTextMesh.text = itemName;
 	}
 
 	//open. most likely a treasure chest. could also be something like a giftbox.

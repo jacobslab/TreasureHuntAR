@@ -33,14 +33,14 @@ public class VisibilityToggler : MonoBehaviour {
 		}
 
 
-		//turn off all colliders of an object
-		if(GetComponent<Collider>() != null){
-			GetComponent<Collider>().enabled = shouldBeVisible;
-		}
-		Collider[] colliders = GetComponentsInChildren<Collider>();
-		for(int i = 0; i < colliders.Length; i++){
-			colliders[i].enabled = shouldBeVisible;
-		}
+//		//turn off all colliders of an object
+//		if(GetComponent<Collider>() != null){
+//			GetComponent<Collider>().enabled = shouldBeVisible;
+//		}
+//		Collider[] colliders = GetComponentsInChildren<Collider>();
+//		for(int i = 0; i < colliders.Length; i++){
+//			colliders[i].enabled = shouldBeVisible;
+//		}
 
 
 		isVisible = shouldBeVisible;

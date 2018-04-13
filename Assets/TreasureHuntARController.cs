@@ -61,13 +61,24 @@ public class TreasureHuntARController : MonoBehaviour
 
 	private GameObject spawnObj;
 	private List<GameObject> spawnedObjList = new List<GameObject>();
+	private List<GameObject> retrievalSequenceList = new List<GameObject>();
+	private List<GameObject> choiceSelectionList = new List<GameObject> ();
 	private Object[] spawnArr;
+
+	public GameObject choiceSelectionPrefab;
+
+	//ui
+	public Button beginTrialButton;
+	public CanvasGroup retrievalPanelUIGroup;
+	public Text retrievalText;
 
 	private Touch touch;
 	void Awake()
 	{
 		spawnables = new List<GameObject> ();
 		spawnArr = Resources.LoadAll ("Prefabs/Objects");
+		retrievalPanelUIGroup.alpha = 0f;
+		beginTrialButton.gameObject.SetActive (true);
 
 	}
 	/// <summary>
@@ -128,6 +139,10 @@ public class TreasureHuntARController : MonoBehaviour
 	{
 		bool treasureFound = false;
 		bool noTouch = false;
+		//turn off the retrieval panel
+		retrievalPanelUIGroup.alpha=0f;
+
+		//make a simple spawnable list for this trial
 		yield return StartCoroutine (MakeSpawnableList ());
 		//let's make sure we don't exceed the max spawnables 
 		for(int i=0;i<Configuration.maxObjects;i++) {
@@ -146,19 +161,22 @@ public class TreasureHuntARController : MonoBehaviour
 					noTouch = false;
 
 				if (!noTouch) {
-					
+
 					// Raycast against the location the player touched to search for planes.
 					TrackableHit hit;
 					TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon |
-					                                 TrackableHitFlags.FeaturePointWithSurfaceNormal;
+						TrackableHitFlags.FeaturePointWithSurfaceNormal;
 					if (!EventSystem.current.IsPointerOverGameObject (touch.fingerId)) {
 						if (Frame.Raycast (touch.position.x, touch.position.y, raycastFilter, out hit)) {
 
 							if (Vector3.Distance (spawnChest.transform.position, hit.Pose.position) < 0.1f) {
 								debugText.text = debugText.text.Insert (0, "hit the chest \n");
 								debugText.text = debugText.text.Insert (0, Vector3.Distance (spawnChest.transform.position, hit.Pose.position).ToString () + " \n");
-								yield return StartCoroutine (SpawnTreasure (spawnChest.transform.position, chestIndex));
+
 								yield return StartCoroutine (spawnChest.GetComponent<TreasureChest> ().Open (FirstPersonCamera.gameObject));
+								yield return StartCoroutine (SpawnTreasure (spawnChest.transform.position, chestIndex));
+								//set the text mesh to display the object name
+								spawnChest.GetComponent<TreasureChest> ().SetItemText (spawnObj.GetComponent<SpawnableObject> ().GetName ());
 								chestIndex++;
 
 								//set treasure found as true so we can exit out of the while loop
@@ -180,7 +198,23 @@ public class TreasureHuntARController : MonoBehaviour
 			debugText.text = debugText.text.Insert (0, "spawn: " + spawnObj.gameObject.name.ToString ());
 			//toggle visibility of the item
 			spawnObj.GetComponent<VisibilityToggler>().TurnVisible(false);
+		
 		}
+
+		//have a distractor task here
+
+
+		//have the retrieval here
+		//turn on the retrieval panel
+		yield return StartCoroutine (PerformRetrieval ());
+
+		//have feedback
+		yield return StartCoroutine(ShowFeedback());
+
+		retrievalText.text = "End trial";
+		yield return new WaitForSeconds (1f);
+		retrievalPanelUIGroup.alpha = 0f;
+		beginTrialButton.gameObject.SetActive (true);
 		yield return null;
 	}
 
@@ -188,6 +222,10 @@ public class TreasureHuntARController : MonoBehaviour
 	{
 		//clear any leftovers
 		spawnables.Clear ();
+		spawnedObjList.Clear ();
+		retrievalSequenceList.Clear ();
+		choiceSelectionList.Clear ();
+
 		Configuration.maxObjects = spawnArr.Length; // 0 inclusive
 		for (int i = 0; i < spawnArr.Length; i++) {
 			spawnables.Add ((GameObject)spawnArr [i]);
@@ -229,6 +267,7 @@ public class TreasureHuntARController : MonoBehaviour
 	}
 	public void BeginTrial()
 	{
+		beginTrialButton.gameObject.SetActive (false);
 		StartCoroutine ("RunTrial");
 	}
 
@@ -253,10 +292,9 @@ public class TreasureHuntARController : MonoBehaviour
 	{
 		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
-		spawnObj = Instantiate(spawnableTrialList[chestIndex],new Vector3(chestPosition.x,chestPosition.y+0.5f,chestPosition.z),Quaternion.identity,anchor.transform);
+		spawnObj = Instantiate(spawnableTrialList[chestIndex],new Vector3(chestPosition.x,chestPosition.y+0.1f,chestPosition.z),Quaternion.identity,anchor.transform);
 		spawnObj.transform.SetParent(anchor.transform);
 		debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
-
 
 		//add to the spawn obj list
 		spawnedObjList.Add(spawnObj);
@@ -265,21 +303,114 @@ public class TreasureHuntARController : MonoBehaviour
 		yield return null;
 	}
 
-
-/*
-	public void SpawnSurprise()
+	IEnumerator PerformRetrieval()
 	{
-		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
-		int randInt = Random.Range (0, m_AllPlanes.Count);
-		Vector3 position = GetRandomPosition (randInt);
-		Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
-		var spawnObject = Instantiate(clownPrefab, position,Quaternion.identity,anchor.transform);
 
-		//				spawnObject.transform.localScale = new Vector3 (.025f, .025f, .025f);
-		spawnObject.transform.SetParent(anchor.transform);
+		bool noTouch = false;
+		bool retrievalChoiceMade = false;
+		retrievalPanelUIGroup.alpha=1f;
+		for (int i = 0; i < Configuration.maxObjects; i++) {
+			int randInt = Random.Range (0, spawnableTrialList.Count);
+			retrievalSequenceList.Add (spawnableTrialList [randInt]);
+			spawnableTrialList.RemoveAt (randInt);
+		}
 
+		for(int j=0;j<retrievalSequenceList.Count;j++)
+		{
+			retrievalChoiceMade = false;
+			string displayName = retrievalSequenceList [j].GetComponent<SpawnableObject> ().GetName ();
+			retrievalText.text = "Where did you find the " + displayName + "?";
+
+			//wait until it's picked up, then spawn an object
+			while (!retrievalChoiceMade) {
+				// If the player has not touched the screen, we are done with this update.
+
+				if (Input.touchCount < 1 || (touch = Input.GetTouch (0)).phase != TouchPhase.Began) {
+					noTouch = true;
+				} else
+					noTouch = false;
+
+				if (!noTouch) {
+
+					// Raycast against the location the player touched to search for planes.
+					TrackableHit hit;
+					TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon |
+						TrackableHitFlags.FeaturePointWithSurfaceNormal;
+					if (!EventSystem.current.IsPointerOverGameObject (touch.fingerId)) {
+						if (Frame.Raycast (touch.position.x, touch.position.y, raycastFilter, out hit)) {
+
+							Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (hit.Pose.position, Quaternion.identity));
+							GameObject choiceObj = Instantiate (choiceSelectionPrefab, hit.Pose.position, Quaternion.identity, anchor.transform);
+			
+							choiceSelectionList.Add (choiceObj);
+
+							//wait to show their choice, then make it invisible
+							yield return new WaitForSeconds (1f);
+							choiceObj.GetComponent<VisibilityToggler> ().TurnVisible (false);
+								//choice made bool set to true so we can exit out of the loop
+								retrievalChoiceMade = true;
+
+						}
+					}
+				}
+				yield return 0;
+			}
+		}
+		yield return null;
 	}
-*/
+
+	IEnumerator ShowFeedback()
+	{
+		retrievalText.text = "Showing feedback...";
+		debugText.text=debugText.text.Insert(0, "retseq count : " + retrievalSequenceList.Count.ToString() + "\n");
+		//make all the spawned objects and choice selection visible
+		for (int i = 0; i < retrievalSequenceList.Count; i++) {
+			debugText.text = debugText.text.Insert (0, retrievalSequenceList [i].gameObject.name + "\n");
+			if (retrievalSequenceList [i].GetComponent<VisibilityToggler> () != null)
+				retrievalSequenceList [i].GetComponent<VisibilityToggler> ().TurnVisible (true);
+			else
+				debugText.text = debugText.text.Insert (0, retrievalSequenceList [i].gameObject.name + " has viztoggle null \n");
+		}
+		for (int j = 0; j < choiceSelectionList.Count; j++) {
+			if(choiceSelectionList [j].GetComponent<VisibilityToggler> ()!=null)
+				choiceSelectionList [j].GetComponent<VisibilityToggler> ().TurnVisible (true);
+			else
+				debugText.text = debugText.text.Insert (0, choiceSelectionList [j].gameObject.name + " has viztoggle null \n");
+		}
+		debugText.text=debugText.text.Insert(0, "now waiting for four seconds \n");
+		//wait for 4 seconds
+		yield return new WaitForSeconds (4f);
+		//then destroy them
+		for (int i = 0; i < retrievalSequenceList.Count; i++) {
+			if (retrievalSequenceList [i].transform.parent != null)
+				Destroy (retrievalSequenceList [i].transform.parent.gameObject);
+			else
+				Destroy (retrievalSequenceList [i].gameObject);
+		}
+		for (int j = 0; j < choiceSelectionList.Count; j++) {
+			if (choiceSelectionList [j].transform.parent != null)
+				Destroy (choiceSelectionList [j].transform.parent.gameObject);
+			else
+				Destroy (choiceSelectionList [j].gameObject);
+		}
+		yield return null;
+	}
+
+
+
+//	public void SpawnSurprise()
+//	{
+//		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
+//		int randInt = Random.Range (0, m_AllPlanes.Count);
+//		Vector3 position = GetRandomPosition (randInt);
+//		Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
+//		var spawnObject = Instantiate(clownPrefab, position,Quaternion.identity,anchor.transform);
+//
+//		//				spawnObject.transform.localScale = new Vector3 (.025f, .025f, .025f);
+//		spawnObject.transform.SetParent(anchor.transform);
+//
+//	}
+
 
 	/// <summary>
 	/// Quit the application if there was a connection error for the ARCore session.

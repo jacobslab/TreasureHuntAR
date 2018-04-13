@@ -53,8 +53,9 @@ GameObject:
   - component: {fileID: 4955295785152786}
   - component: {fileID: 95080619172873756}
   - component: {fileID: 114279517430636574}
+  - component: {fileID: 114846333066161388}
   m_Layer: 0
-  m_Name: ananas
+  m_Name: pineapple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -341,5 +342,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9fab63651355410ca0d468a7add7121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114846333066161388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1408800484265284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4354730da4f9c47cd8aae02bcd3067fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
