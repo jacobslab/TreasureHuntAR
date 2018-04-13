@@ -20,12 +20,12 @@
 
 namespace GoogleARCore.HelloAR
 {
-    using System.Collections.Generic;
     using GoogleARCore;
     using UnityEngine;
 	using UnityEngine.EventSystems;
     using UnityEngine.Rendering;
 	using UnityEngine.UI;
+	using System.Collections.Generic;
 
 #if UNITY_EDITOR
     using Input = InstantPreviewInput;
@@ -73,20 +73,47 @@ namespace GoogleARCore.HelloAR
         /// </summary>
         private bool m_IsQuitting = false;
 
+		public GameObject treasureChestPrefab;
 		public GameObject clownPrefab;
-		private List<GameObject> spawnables;
 		public Text debugText;
 
+		private List<GameObject> spawnables;
+		public ObjectManager objManager;
+		private GameObject spawnChest;
+		private int chestIndex=0;
+		private List<GameObject> spawnableTrialList;
+
+		private GameObject spawnObj;
+		private List<GameObject> spawnedObjList = new List<GameObject>();
+		private Object[] spawnArr;
 		void Awake()
 		{
 			spawnables = new List<GameObject> ();
-			Object[] spawnArr = Resources.LoadAll ("Prefabs/Objects");
+			spawnArr = Resources.LoadAll ("Prefabs/Objects");
 
+			MakeSpawnableList ();
+			
+		}
+
+		void MakeSpawnableList()
+		{
 			//clear any leftovers
 			spawnables.Clear ();
 			for (int i = 0; i < spawnArr.Length; i++) {
 				spawnables.Add ((GameObject)spawnArr [i]);
 			}
+
+			int totalCount = spawnables.Count;
+			spawnableTrialList = new List<GameObject> ();
+			for(int i=0;i<totalCount;i++)
+			{
+				int randInt = Random.Range (0, spawnables.Count);
+				spawnableTrialList.Add (spawnables [randInt]);	
+				debugText.text=debugText.text.Insert (0, spawnables [randInt].ToString () + "\n");
+				spawnables.RemoveAt (randInt);
+			}
+			debugText.text=debugText.text.Insert(0,spawnableTrialList.Count.ToString() + "\n");
+
 		}
         /// <summary>
         /// The Unity Update() method.
@@ -97,22 +124,20 @@ namespace GoogleARCore.HelloAR
             {
                 Application.Quit();
             }
-
             _QuitOnConnectionErrors();
 
             // Check that motion tracking is tracking.
-            if (Session.Status != SessionStatus.Tracking)
-            {
-                const int lostTrackingSleepTimeout = 15;
-                Screen.sleepTimeout = lostTrackingSleepTimeout;
-                if (!m_IsQuitting && Session.Status.IsValid())
-                {
-                    SearchingForPlaneUI.SetActive(true);
-                }
+			if (Session.Status != SessionStatus.Tracking) {
+				const int lostTrackingSleepTimeout = 15;
+				Screen.sleepTimeout = lostTrackingSleepTimeout;
+				if (!m_IsQuitting && Session.Status.IsValid ()) {
+					SearchingForPlaneUI.SetActive (true);
+				}
 
-                return;
-            }
-
+				return;
+			} else {
+//				debugText.text = Frame.Pose.position.ToString ();
+			}
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
             // Iterate over planes found in this frame and instantiate corresponding GameObjects to visualize them.
@@ -154,27 +179,36 @@ namespace GoogleARCore.HelloAR
                 TrackableHitFlags.FeaturePointWithSurfaceNormal;
 			if (!EventSystem.current.IsPointerOverGameObject (touch.fingerId)) {
 				if (Frame.Raycast (touch.position.x, touch.position.y, raycastFilter, out hit)) {
-					var andyObject = Instantiate (AndyAndroidPrefab, hit.Pose.position, hit.Pose.rotation);
 
-					// Create an anchor to allow ARCore to track the hitpoint as understanding of the physical
-					// world evolves.
-					var anchor = hit.Trackable.CreateAnchor (hit.Pose);
-
-					// Andy should look at the camera but still be flush with the plane.
-					if ((hit.Flags & TrackableHitFlags.PlaneWithinPolygon) != TrackableHitFlags.None) {
-						// Get the camera position and match the y-component with the hit position.
-						Vector3 cameraPositionSameY = FirstPersonCamera.transform.position;
-						cameraPositionSameY.y = hit.Pose.position.y;
-
-						// Have Andy look toward the camera respecting his "up" perspective, which may be from ceiling.
-						andyObject.transform.LookAt (cameraPositionSameY, andyObject.transform.up);
+					if (Vector3.Distance (spawnChest.transform.position, hit.Pose.position) < 0.1f) {
+						debugText.text=debugText.text.Insert(0,"hit the chest \n");
+						debugText.text=debugText.text.Insert (0, Vector3.Distance (spawnChest.transform.position, hit.Pose.position).ToString () + " \n");
+						SpawnTreasureObject(spawnChest.transform.position,chestIndex);
+						chestIndex++;
 					}
 
-					// Make Andy model a child of the anchor.
-					andyObject.transform.parent = anchor.transform;
+//					var andyObject = Instantiate (AndyAndroidPrefab, hit.Pose.position, hit.Pose.rotation);
+//
+//					// Create an anchor to allow ARCore to track the hitpoint as understanding of the physical
+//					// world evolves.
+//					var anchor = hit.Trackable.CreateAnchor (hit.Pose);
+//
+//					// Andy should look at the camera but still be flush with the plane.
+//					if ((hit.Flags & TrackableHitFlags.PlaneWithinPolygon) != TrackableHitFlags.None) {
+//						// Get the camera position and match the y-component with the hit position.
+//						Vector3 cameraPositionSameY = FirstPersonCamera.transform.position;
+//						cameraPositionSameY.y = hit.Pose.position.y;
+//
+//						// Have Andy look toward the camera respecting his "up" perspective, which may be from ceiling.
+//						andyObject.transform.LookAt (cameraPositionSameY, andyObject.transform.up);
+//					}
+//
+//					// Make Andy model a child of the anchor.
+//					andyObject.transform.parent = anchor.transform;
 				}
 			}
         }
+
 
 		private Vector3 GetRandomPosition(int randInt)
 		{
@@ -193,17 +227,35 @@ namespace GoogleARCore.HelloAR
 			return position;
 		}
 
-		public void SpawnObjects()
+		public void SpawnTreasureChest()
 		{
 			Session.GetTrackables<TrackedPlane>(m_AllPlanes);
-			int randSpawnable = Random.Range (0, spawnables.Count);
 				int randInt = Random.Range (0, m_AllPlanes.Count);
 				Vector3 position = GetRandomPosition (randInt);
 				Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
-			var spawnObject = Instantiate(spawnables[randSpawnable], position,Quaternion.identity,anchor.transform);
+			spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.identity,anchor.transform);
+//			var spawnObject = Instantiate(spawnables[randSpawnable], position,Quaternion.identity,anchor.transform);
 
 //				spawnObject.transform.localScale = new Vector3 (.025f, .025f, .025f);
-				spawnObject.transform.SetParent(anchor.transform);
+			spawnChest.transform.SetParent(anchor.transform);
+			debugText.text=debugText.text.Insert(0,"spawned chest \n");
+		}
+
+		public void SpawnTreasureObject (Vector3 chestPosition, int chestIndex)
+		{
+			Session.GetTrackables<TrackedPlane>(m_AllPlanes);
+			Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
+			spawnObj = Instantiate(spawnableTrialList[chestIndex],new Vector3(chestPosition.x,chestPosition.y+0.5f,chestPosition.z),Quaternion.identity,anchor.transform);
+			spawnObj.transform.SetParent(anchor.transform);
+			debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
+
+
+			//add to the spawn obj list
+			spawnedObjList.Add(spawnObj);
+
+			//would destroy the anchor and the object
+			Destroy (spawnChest.transform.parent.gameObject);
+
 		}
 
 		public void SpawnSurprise()
@@ -216,7 +268,10 @@ namespace GoogleARCore.HelloAR
 
 			//				spawnObject.transform.localScale = new Vector3 (.025f, .025f, .025f);
 			spawnObject.transform.SetParent(anchor.transform);
+
 		}
+
+
         /// <summary>
         /// Quit the application if there was a connection error for the ARCore session.
         /// </summary>
