@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 210734116}
   - component: {fileID: 210734115}
   m_Layer: 5
-  m_Name: SpawnObjects
+  m_Name: BeginTrial
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -235,8 +235,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 627916103}
-        m_MethodName: SpawnTreasureChest
+      - m_Target: {fileID: 627916104}
+        m_MethodName: BeginTrial
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -502,7 +502,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 627916102}
-  - component: {fileID: 627916103}
+  - component: {fileID: 627916104}
   m_Layer: 0
   m_Name: ExampleController
   m_TagString: Untagged
@@ -523,7 +523,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &627916103
+--- !u!114 &627916104
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -531,7 +531,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 627916101}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26074b15f9c13404d858bfedb8b8c00c, type: 3}
+  m_Script: {fileID: 11500000, guid: e0f4754a9d8ee40f58c7d5791a228dfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   FirstPersonCamera: {fileID: 896679035}
@@ -613,13 +613,55 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Spawn Objects Now
+  m_Text: Begin Trial
 --- !u!222 &631188578
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 631188575}
+--- !u!1001 &796857573
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4528017716010986, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: e9d8fc8c215ce46d285b5c7b507b347c, type: 2}
+  m_IsPrefabParent: 0
 --- !u!20 &896679035 stripped
 Camera:
   m_PrefabParentObject: {fileID: 20155940112608238, guid: c10877f7cd5764de18d46d7b777d1faa,
@@ -701,7 +743,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 627916103}
+      - m_Target: {fileID: 0}
         m_MethodName: SpawnSurprise
         m_Mode: 1
         m_Arguments:
