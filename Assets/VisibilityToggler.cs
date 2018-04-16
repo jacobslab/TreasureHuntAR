@@ -32,6 +32,8 @@ public class VisibilityToggler : MonoBehaviour {
 			renderers[i].enabled = shouldBeVisible;
 		}
 
+//		TreasureHuntARController.Instance.debugText.text = TreasureHuntARController.Instance.debugText.text.Insert (0, gameObject.name + "visible: " + shouldBeVisible.ToString ());
+
 
 //		//turn off all colliders of an object
 //		if(GetComponent<Collider>() != null){
