@@ -64,6 +64,7 @@ public class TreasureHuntARController : MonoBehaviour
 	private List<GameObject> spawnedObjList = new List<GameObject>();
 	private List<GameObject> retrievalSequenceList = new List<GameObject>();
 	private List<GameObject> choiceSelectionList = new List<GameObject> ();
+	private List<bool> correctResponseList= new List<bool>();
 	private Object[] spawnArr;
 
 	public GameObject choiceSelectionPrefab;
@@ -71,6 +72,7 @@ public class TreasureHuntARController : MonoBehaviour
 	//ui
 	public Button beginTrialButton;
 	public CanvasGroup retrievalPanelUIGroup;
+	public CanvasGroup scorePanelUIGroup;
 	public Text retrievalText;
 	public Button acceptUserResponseButton;
 	public Vector3 playerPosition { get { return Frame.Pose.position; } }
@@ -437,7 +439,9 @@ public class TreasureHuntARController : MonoBehaviour
 				debugText.text = debugText.text.Insert (0, "response distance: " + responseDistance.ToString ());
 				if (responseDistance < Configuration.minResponseDistance) {
 					lineColor = Color.green;
-				}
+					correctResponseList.Add (true);
+				} else
+					correctResponseList.Add (false);
 				correctPositionIndicator.GetComponent<MeshRenderer> ().material.color = lineColor;
 				correctPositionIndicatorList.Add(correctPositionIndicator);
 			}
@@ -450,7 +454,10 @@ public class TreasureHuntARController : MonoBehaviour
 			else
 				debugText.text = debugText.text.Insert (0, choiceSelectionList [j].gameObject.name + " has viztoggle null \n");
 		}
-		debugText.text=debugText.text.Insert(0, "now waiting for four seconds \n");
+		debugText.text=debugText.text.Insert(0, "now waiting for user input \n");
+
+		//prepare scoreboard
+		yield return StartCoroutine (PrepareScoreboard ());
 
 		retrievalPanelUIGroup.alpha = 0f;
 		acceptUserResponseButton.gameObject.SetActive (true);
@@ -473,6 +480,16 @@ public class TreasureHuntARController : MonoBehaviour
 		}
 		for (int k = 0; k < correctPositionIndicatorList.Count; k++) {
 			Destroy (correctPositionIndicatorList [k].gameObject);
+		}
+		yield return null;
+	}
+
+	IEnumerator PrepareScoreboard()
+	{
+		scorePanelUIGroup.alpha = 1f;
+		for(int i=0;i<Configuration.maxObjects;i++)
+		{
+			scorePanelUIGroup.gameObject.GetComponent<ObjectScoreLine>().SetScore(retrievalSequenceList[i].gameObject.name,
 		}
 		yield return null;
 	}
