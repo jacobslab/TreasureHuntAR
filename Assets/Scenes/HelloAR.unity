@@ -176,7 +176,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &179247814
 RectTransform:
   m_ObjectHideFlags: 0
@@ -675,6 +675,7 @@ MonoBehaviour:
   beginTrialButton: {fileID: 210734115}
   retrievalPanelUIGroup: {fileID: 1644702089}
   retrievalText: {fileID: 1355058632}
+  acceptUserResponseButton: {fileID: 179247815}
 --- !u!1 &631188575
 GameObject:
   m_ObjectHideFlags: 0
@@ -1410,7 +1411,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Begin Trial
+  m_Text: End Trial
 --- !u!222 &1690839882
 CanvasRenderer:
   m_ObjectHideFlags: 0

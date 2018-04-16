@@ -159,12 +159,12 @@ public class TreasureHuntARController : MonoBehaviour
 	{
 		bool treasureFound = false;
 		bool noTouch = false;
-		//turn off the retrieval panel
+		//turn off the retrieval panel, if it hasn't been already
 		retrievalPanelUIGroup.alpha=0f;
 
 		//make a simple spawnable list for this trial
 		yield return StartCoroutine (MakeSpawnableList ());
-//		yield return StartCoroutine (CreateChestLocationList ());
+		yield return StartCoroutine (CreateChestLocationList ());
 		//let's make sure we don't exceed the max spawnables 
 		for(int i=0;i<Configuration.maxObjects;i++) {
 
@@ -190,7 +190,7 @@ public class TreasureHuntARController : MonoBehaviour
 					if (!EventSystem.current.IsPointerOverGameObject (touch.fingerId)) {
 						if (Frame.Raycast (touch.position.x, touch.position.y, raycastFilter, out hit)) {
 
-							if (Vector3.Distance (spawnChest.transform.position, hit.Pose.position) < 0.1f) {
+							if (Vector3.Distance (spawnChest.transform.position, hit.Pose.position) < Configuration.minRetrievalDistance) {
 //								debugText.text = debugText.text.Insert (0, "hit the chest \n");
 //								debugText.text = debugText.text.Insert (0, Vector3.Distance (spawnChest.transform.position, hit.Pose.position).ToString () + " \n");
 
@@ -271,13 +271,14 @@ public class TreasureHuntARController : MonoBehaviour
 	IEnumerator CreateChestLocationList()
 	{
 		chestSpawnLocationList.Clear ();
+		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		//instantiate them all to the last recorded device position
 		for (int j = 0; j < Configuration.maxObjects; j++) {
 			Vector3 tempVec = Frame.Pose.position;
 			chestSpawnLocationList.Add (tempVec);
 		}
 		for (int i = 0; i < Configuration.maxObjects; i++) {
-			chestSpawnLocationList [i] = GetRandomPosition ();
+			chestSpawnLocationList [i] = GetRandomPosition (Random.Range(0,m_AllPlanes.Count));
 			while (!CheckSufficientDistanceBetweenChests (chestSpawnLocationList[i],chestSpawnLocationList,i)) {
 				yield return 0;
 			}
@@ -297,17 +298,17 @@ public class TreasureHuntARController : MonoBehaviour
 		return true;
 	}
 
-	private Vector3 GetRandomPosition()
+	private Vector3 GetRandomPosition(int randInt)
 	{
 		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		// Pick a location.  This is done by selecting a vertex at random and then
 		// a random point between it and the center of the plane.
 		List<Vector3> vertices = new List<Vector3> ();
 
-		m_AllPlanes[0].GetBoundaryPolygon (vertices);
+		m_AllPlanes[randInt].GetBoundaryPolygon (vertices);
 		Vector3 pt = vertices [Random.Range (0, vertices.Count)];
 		float dist = Random.Range (0.05f, 1f);
-		Vector3 position = Vector3.Lerp (pt, m_AllPlanes[0].CenterPose.position, dist);
+		Vector3 position = Vector3.Lerp (pt, m_AllPlanes[randInt].CenterPose.position, dist);
 		// Move the object above the plane.
 		position.y += .05f;
 		return position;
@@ -327,9 +328,9 @@ public class TreasureHuntARController : MonoBehaviour
 	public IEnumerator SpawnTreasureChest(int chestIndex)
 	{
 		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
-		Vector3 position = GetRandomPosition ();
 		int randInt = Random.Range (0, m_AllPlanes.Count);
-//		Vector3 position = GetChestPosition (chestIndex);
+//		Vector3 position = GetRandomPosition (randInt);
+		Vector3 position = GetChestPosition (chestIndex);
 		Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
 		spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.identity,anchor.transform);
 		//			var spawnObject = Instantiate(spawnables[randSpawnable], position,Quaternion.identity,anchor.transform);
@@ -434,7 +435,7 @@ public class TreasureHuntARController : MonoBehaviour
 				//now determine if the response was within range
 				float responseDistance = Vector3.Distance (retrievalSequenceList [i].transform.position, choiceSelectionList [i].transform.position);
 				debugText.text = debugText.text.Insert (0, "response distance: " + responseDistance.ToString ());
-					if (responseDistance < 0.1f) {
+				if (responseDistance < Configuration.minResponseDistance) {
 					lineColor = Color.green;
 				}
 				correctPositionIndicator.GetComponent<MeshRenderer> ().material.color = lineColor;
@@ -451,7 +452,7 @@ public class TreasureHuntARController : MonoBehaviour
 		}
 		debugText.text=debugText.text.Insert(0, "now waiting for four seconds \n");
 
-
+		retrievalPanelUIGroup.alpha = 0f;
 		acceptUserResponseButton.gameObject.SetActive (true);
 		//wait for user input
 		yield return StartCoroutine(WaitForUserInput());
