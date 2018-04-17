@@ -34,6 +34,9 @@ public class TreasureChest : MonoBehaviour {
 		float distOpenerToPivotA = (pivotA.position - opener.transform.position).magnitude;
 		float distOpenerToPivotB = (pivotB.position - opener.transform.position).magnitude;
 
+		//MAKE text mesh face player
+//		specialTextMesh.transform.LookAt(TreasureHuntARController.Instance.FirstPersonCamera.transform);
+
 		Vector3 pivotPos = transform.position;
 		string closePivotName = ""; //actually want to use the closer pivot as our opener reference for Logging
 		if (distOpenerToPivotA > distOpenerToPivotB) { //use the further away pivot

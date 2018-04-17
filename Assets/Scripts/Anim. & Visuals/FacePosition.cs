@@ -24,10 +24,20 @@ public class FacePosition : MonoBehaviour {
 			}
 		}
 		else {
-			FaceThePosition (TreasureHuntARController.Instance.playerPosition,TreasureHuntARController.Instance.playerRotation);
+			FaceThePosition (TreasureHuntARController.Instance.FirstPersonCamera.transform);
 		}
 	}
+	void FaceThePosition(Transform transformToFace){
+		Quaternion origRot = transformToFace.rotation;
+		transform.LookAt (transformToFace);
+		float yRot = transform.rotation.eulerAngles.y;
 
+		transform.rotation = Quaternion.Euler (origRot.eulerAngles.x, yRot, origRot.eulerAngles.z);
+
+		if (ShouldFlip180) {
+			transform.RotateAround(transform.position, Vector3.up, 180.0f);
+		}
+	}
 	void FaceThePosition(Vector3 positionToFace,Quaternion rotationToFace){
 		Quaternion origRot = transform.rotation;
 		GameObject emptyObj = new GameObject ();

@@ -16,9 +16,19 @@ public class ObjectScoreLine : MonoBehaviour {
 		
 	}
 
-	public void SetScore(string itemName, int itemScore)
+	public void SetScore(string itemName, bool isCorrect, out int itemScore)
 	{
+		itemScore = 0;
+		if (isCorrect)
+			itemScore = 250;
+		else
+			itemScore = -100;
 		nameText.text = itemName;
 		scoreText.text = itemScore.ToString();
+	}
+
+	public void SetTotalScore(int totalScore)
+	{
+		scoreText.text = totalScore.ToString ();
 	}
 }

@@ -78,6 +78,9 @@ public class TreasureHuntARController : MonoBehaviour
 	public Vector3 playerPosition { get { return Frame.Pose.position; } }
 	public Quaternion playerRotation { get { return Frame.Pose.rotation; } }
 
+	//scoring
+	private int totalScore = 0;
+
 	private Touch touch;
 	private bool userResponded=false;
 	//A SINGLETON
@@ -99,6 +102,7 @@ public class TreasureHuntARController : MonoBehaviour
 		spawnables = new List<GameObject> ();
 		spawnArr = Resources.LoadAll ("Prefabs/Objects");
 		retrievalPanelUIGroup.alpha = 0f;
+		scorePanelUIGroup.alpha = 0f;
 		beginTrialButton.gameObject.SetActive (true);
 		acceptUserResponseButton.gameObject.SetActive (false);
 
@@ -456,6 +460,8 @@ public class TreasureHuntARController : MonoBehaviour
 		}
 		debugText.text=debugText.text.Insert(0, "now waiting for user input \n");
 
+		//wait for few seconds before showing the scoreboard
+		yield return new WaitForSeconds(2f);
 		//prepare scoreboard
 		yield return StartCoroutine (PrepareScoreboard ());
 
@@ -481,16 +487,23 @@ public class TreasureHuntARController : MonoBehaviour
 		for (int k = 0; k < correctPositionIndicatorList.Count; k++) {
 			Destroy (correctPositionIndicatorList [k].gameObject);
 		}
+
+		//disable scoreboard and clear response list
+		scorePanelUIGroup.alpha=0f;
+		correctResponseList.Clear ();
 		yield return null;
 	}
 
 	IEnumerator PrepareScoreboard()
 	{
+		int itemScore = 0;
 		scorePanelUIGroup.alpha = 1f;
 		for(int i=0;i<Configuration.maxObjects;i++)
 		{
-			scorePanelUIGroup.gameObject.GetComponent<ObjectScoreLine>().SetScore(retrievalSequenceList[i].gameObject.name,
+			scorePanelUIGroup.transform.GetChild(i).gameObject.GetComponent<ObjectScoreLine> ().SetScore (retrievalSequenceList [i].gameObject.GetComponent<SpawnableObject>().GetName(), correctResponseList [i], out itemScore);
+			totalScore += itemScore;
 		}
+		scorePanelUIGroup.transform.GetChild (Configuration.maxObjects).gameObject.GetComponent<ObjectScoreLine> ().SetTotalScore (totalScore);
 		yield return null;
 	}
 
