@@ -1,54 +1,14 @@
-﻿using GoogleARCore;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
-using UnityEngine.UI;
-using System.Collections.Generic;
-using GoogleARCore.HelloAR;
 using System.Collections;
+using UnityEngine.XR.iOS;
+public class TreasureHuntController_ARKit : MonoBehaviour {
 
-/// <summary>
-/// Controls the HelloAR example.
-/// </summary>
-public class TreasureHuntARController : MonoBehaviour
-{
-	/// <summary>
-	/// The first-person camera being used to render the passthrough camera image (i.e. AR background).
-	/// </summary>
 	public Camera FirstPersonCamera;
-
-	/// <summary>
-	/// A prefab for tracking and visualizing detected planes.
-	/// </summary>
-	public GameObject TrackedPlanePrefab;
-
-	/// <summary>
-	/// A model to place when a raycast from a user touch hits a plane.
-	/// </summary>
-	public GameObject AndyAndroidPrefab;
-
-	/// <summary>
-	/// A gameobject parenting UI for displaying the "searching for planes" snackbar.
-	/// </summary>
-	public GameObject SearchingForPlaneUI;
-
-	/// <summary>
-	/// A list to hold new planes ARCore began tracking in the current frame. This object is used across
-	/// the application to avoid per-frame allocations.
-	/// </summary>
-	private List<TrackedPlane> m_NewPlanes = new List<TrackedPlane>();
-
-	/// <summary>
-	/// A list to hold all planes ARCore is tracking in the current frame. This object is used across
-	/// the application to avoid per-frame allocations.
-	/// </summary>
-	private List<TrackedPlane> m_AllPlanes = new List<TrackedPlane>();
-
-	/// <summary>
-	/// True if the app is in the process of quitting due to an ARCore connection error, otherwise false.
-	/// </summary>
-	private bool m_IsQuitting = false;
-
 	public GameObject treasureChestPrefab;
 	public GameObject clownPrefab;
 	public Text debugText;
@@ -75,30 +35,33 @@ public class TreasureHuntARController : MonoBehaviour
 	public CanvasGroup scorePanelUIGroup;
 	public Text retrievalText;
 	public Button acceptUserResponseButton;
-	public Vector3 playerPosition { get { return Frame.Pose.position; } }
-	public Quaternion playerRotation { get { return Frame.Pose.rotation; } }
 
 	//scoring
 	private int totalScore = 0;
 
 	private Touch touch;
 	private bool userResponded=false;
-	//A SINGLETON
-	private static TreasureHuntARController _instance;
 
-	public static TreasureHuntARController Instance {
+
+	public Transform m_HitTransform;
+	public float maxRayDistance = 30.0f;
+	public LayerMask collisionLayer = 1 << 10;  //ARKitPlane layer
+	//A SINGLETON
+	private static TreasureHuntController_ARKit _instance;
+
+	public static TreasureHuntController_ARKit Instance {
 		get {
 			return _instance;
 		}
 	}
-		
+
 	void Awake()
 	{
-			if (_instance != null) {
-				Debug.Log("Instance already exists!");
-				return;
-			}
-			_instance = this;
+		if (_instance != null) {
+			Debug.Log("Instance already exists!");
+			return;
+		}
+		_instance = this;
 		spawnables = new List<GameObject> ();
 		spawnArr = Resources.LoadAll ("Prefabs/Objects");
 		retrievalPanelUIGroup.alpha = 0f;
@@ -107,59 +70,80 @@ public class TreasureHuntARController : MonoBehaviour
 		acceptUserResponseButton.gameObject.SetActive (false);
 
 	}
-	/// <summary>
-	/// The Unity Update() method.
-	/// </summary>
-	public void Update()
+	// Use this for initialization
+	void Start () {
+		
+	}
+
+	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes)
 	{
-		if (Input.GetKey(KeyCode.Escape))
-		{
-			Application.Quit();
-		}
-		_QuitOnConnectionErrors();
-
-		// Check that motion tracking is tracking.
-		if (Session.Status != SessionStatus.Tracking) {
-			const int lostTrackingSleepTimeout = 15;
-			Screen.sleepTimeout = lostTrackingSleepTimeout;
-			if (!m_IsQuitting && Session.Status.IsValid ()) {
-				SearchingForPlaneUI.SetActive (true);
+		List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface ().HitTest (point, resultTypes);
+		if (hitResults.Count > 0) {
+			foreach (var hitResult in hitResults) {
+				Debug.Log ("Got hit!");
+				m_HitTransform.position = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
+				m_HitTransform.rotation = UnityARMatrixOps.GetRotation (hitResult.worldTransform);
+				Debug.Log (string.Format ("x:{0:0.######} y:{1:0.######} z:{2:0.######}", m_HitTransform.position.x, m_HitTransform.position.y, m_HitTransform.position.z));
+				return true;
 			}
-
-			return;
-		} else {
-			//				debugText.text = Frame.Pose.position.ToString ();
 		}
-		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+		return false;
+	}
 
-		// Iterate over planes found in this frame and instantiate corresponding GameObjects to visualize them.
-		Session.GetTrackables<TrackedPlane>(m_NewPlanes, TrackableQueryFilter.New);
-		for (int i = 0; i < m_NewPlanes.Count; i++)
-		{
-			// Instantiate a plane visualization prefab and set it to track the new plane. The transform is set to
-			// the origin with an identity rotation since the mesh for our prefab is updated in Unity World
-			// coordinates.
-			GameObject planeObject = Instantiate(TrackedPlanePrefab, Vector3.zero, Quaternion.identity,
-				transform);
-			planeObject.GetComponent<TrackedPlaneVisualizer>().Initialize(m_NewPlanes[i]);
+	// Update is called once per frame
+	void Update () {
+		#if UNITY_EDITOR   //we will only use this script on the editor side, though there is nothing that would prevent it from working on device
+		if (Input.GetMouseButtonDown (0)) {
+		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		RaycastHit hit;
+
+		//we'll try to hit one of the plane collider gameobjects that were generated by the plugin
+		//effectively similar to calling HitTest with ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent
+		if (Physics.Raycast (ray, out hit, maxRayDistance, collisionLayer)) {
+		//we're going to get the position from the contact point
+		m_HitTransform.position = hit.point;
+		Debug.Log (string.Format ("x:{0:0.######} y:{1:0.######} z:{2:0.######}", m_HitTransform.position.x, m_HitTransform.position.y, m_HitTransform.position.z));
+
+		//and the rotation from the transform of the plane collider
+		m_HitTransform.rotation = hit.transform.rotation;
 		}
-
-		// Disable the snackbar UI when no planes are valid.
-		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
-		bool showSearchingUI = true;
-		for (int i = 0; i < m_AllPlanes.Count; i++)
+		}
+		#else
+		if (Input.touchCount > 0 && m_HitTransform != null)
 		{
-			if (m_AllPlanes[i].TrackingState == TrackingState.Tracking)
+			var touch = Input.GetTouch(0);
+			if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
 			{
-				showSearchingUI = false;
-				break;
+				var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
+				ARPoint point = new ARPoint {
+					x = screenPosition.x,
+					y = screenPosition.y
+				};
+
+				// prioritize results types
+				ARHitTestResultType[] resultTypes = {
+					//ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingGeometry,
+					ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
+					// if you want to use infinite planes use this:
+					//ARHitTestResultType.ARHitTestResultTypeExistingPlane,
+					//ARHitTestResultType.ARHitTestResultTypeEstimatedHorizontalPlane, 
+					//ARHitTestResultType.ARHitTestResultTypeEstimatedVerticalPlane, 
+					//ARHitTestResultType.ARHitTestResultTypeFeaturePoint
+				}; 
+
+				foreach (ARHitTestResultType resultType in resultTypes)
+				{
+					if (HitTestWithResultType (point, resultType))
+					{
+						return;
+					}
+				}
 			}
 		}
-
-		SearchingForPlaneUI.SetActive(showSearchingUI);
-
+		#endif
 
 	}
+		
 
 	public IEnumerator RunTrial()
 	{
@@ -190,29 +174,51 @@ public class TreasureHuntARController : MonoBehaviour
 				if (!noTouch) {
 
 					// Raycast against the location the player touched to search for planes.
-					TrackableHit hit;
-					TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon |
-						TrackableHitFlags.FeaturePointWithSurfaceNormal;
+
 					if (!EventSystem.current.IsPointerOverGameObject (touch.fingerId)) {
-						if (Frame.Raycast (touch.position.x, touch.position.y, raycastFilter, out hit)) {
+						if (Input.touchCount > 0 && m_HitTransform != null)
+						{
+							var touch = Input.GetTouch(0);
+							if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
+							{
+								var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
+								ARPoint point = new ARPoint {
+									x = screenPosition.x,
+									y = screenPosition.y
+								};
 
-							if (Vector3.Distance (spawnChest.transform.position, hit.Pose.position) < Configuration.minRetrievalDistance) {
-//								debugText.text = debugText.text.Insert (0, "hit the chest \n");
-//								debugText.text = debugText.text.Insert (0, Vector3.Distance (spawnChest.transform.position, hit.Pose.position).ToString () + " \n");
+								// prioritize results types
+								ARHitTestResultType[] resultTypes = {
+									//ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingGeometry,
+									ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
+									// if you want to use infinite planes use this:
+									//ARHitTestResultType.ARHitTestResultTypeExistingPlane,
+									//ARHitTestResultType.ARHitTestResultTypeEstimatedHorizontalPlane, 
+									//ARHitTestResultType.ARHitTestResultTypeEstimatedVerticalPlane, 
+									//ARHitTestResultType.ARHitTestResultTypeFeaturePoint
+								}; 
 
-								yield return StartCoroutine (spawnChest.GetComponent<TreasureChest> ().Open (FirstPersonCamera.gameObject));
-								yield return StartCoroutine (SpawnTreasure (spawnChest.transform.position, chestIndex));
-								//set the text mesh to display the object name
-								spawnChest.GetComponent<TreasureChest> ().SetItemText (spawnObj.GetComponent<SpawnableObject> ().GetName ());
-								chestIndex++;
+								foreach (ARHitTestResultType resultType in resultTypes)
+								{
+									if (HitTestWithResultType (point, resultType))
+									{
+										yield return StartCoroutine (spawnChest.GetComponent<TreasureChest> ().Open (FirstPersonCamera.gameObject));
+										yield return StartCoroutine (SpawnTreasure (spawnChest.transform.position, chestIndex));
+										//set the text mesh to display the object name
+										spawnChest.GetComponent<TreasureChest> ().SetItemText (spawnObj.GetComponent<SpawnableObject> ().GetName ());
+										chestIndex++;
+										//set treasure found as true so we can exit out of the while loop
+										treasureFound = true;
+									}
+								}
+							}
+						}
+								
 
-								//set treasure found as true so we can exit out of the while loop
-								treasureFound = true;
+								
 							}
 
 						}
-					}
-				}
 				yield return 0;
 			}
 
@@ -222,10 +228,10 @@ public class TreasureHuntARController : MonoBehaviour
 			//destroy the anchor and the chest
 			Destroy (spawnChest.transform.parent.gameObject);
 
-//			debugText.text = debugText.text.Insert (0, "spawn: " + spawnObj.gameObject.name.ToString ());
+			//			debugText.text = debugText.text.Insert (0, "spawn: " + spawnObj.gameObject.name.ToString ());
 			//toggle visibility of the item
 			spawnObj.GetComponent<VisibilityToggler>().TurnVisible(false);
-		
+
 		}
 
 		//have a distractor task here
@@ -272,7 +278,7 @@ public class TreasureHuntARController : MonoBehaviour
 		//reset chest index
 		chestIndex=0;
 		yield return null;
-			
+
 	}
 	IEnumerator CreateChestLocationList()
 	{
@@ -335,7 +341,7 @@ public class TreasureHuntARController : MonoBehaviour
 	{
 		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		int randInt = Random.Range (0, m_AllPlanes.Count);
-//		Vector3 position = GetRandomPosition (randInt);
+		//		Vector3 position = GetRandomPosition (randInt);
 		Vector3 position = GetChestPosition (chestIndex);
 		Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
 		spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.identity,anchor.transform);
@@ -343,7 +349,7 @@ public class TreasureHuntARController : MonoBehaviour
 
 		//				spawnObject.transform.localScale = new Vector3 (.025f, .025f, .025f);
 		spawnChest.transform.SetParent(anchor.transform);
-//		debugText.text=debugText.text.Insert(0,"spawned chest \n");
+		//		debugText.text=debugText.text.Insert(0,"spawned chest \n");
 
 		yield return null;
 	}
@@ -355,7 +361,7 @@ public class TreasureHuntARController : MonoBehaviour
 		Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
 		spawnObj = Instantiate(spawnableTrialList[chestIndex],new Vector3(chestPosition.x,chestPosition.y+0.1f,chestPosition.z),Quaternion.identity,anchor.transform);
 		spawnObj.transform.SetParent(anchor.transform);
-//		debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
+		//		debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
 
 		//add to the spawn obj list
 		spawnedObjList.Add(spawnObj);
@@ -402,14 +408,14 @@ public class TreasureHuntARController : MonoBehaviour
 
 							Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (hit.Pose.position, Quaternion.identity));
 							GameObject choiceObj = Instantiate (choiceSelectionPrefab, hit.Pose.position, Quaternion.identity, anchor.transform);
-			
+
 							choiceSelectionList.Add (choiceObj);
 
 							//wait to show their choice, then make it invisible
 							yield return new WaitForSeconds (1f);
 							choiceObj.GetComponent<VisibilityToggler> ().TurnVisible (false);
-								//choice made bool set to true so we can exit out of the loop
-								retrievalChoiceMade = true;
+							//choice made bool set to true so we can exit out of the loop
+							retrievalChoiceMade = true;
 
 						}
 					}
@@ -428,7 +434,7 @@ public class TreasureHuntARController : MonoBehaviour
 		debugText.text=debugText.text.Insert(0, "retseq count : " + retrievalSequenceList.Count.ToString() + "\n");
 		//make all the spawned objects and choice selection visible
 		for (int i = 0; i < retrievalSequenceList.Count; i++) {
-			
+
 			//reset the line color first
 			lineColor = Color.red;
 
@@ -449,7 +455,7 @@ public class TreasureHuntARController : MonoBehaviour
 				correctPositionIndicator.GetComponent<MeshRenderer> ().material.color = lineColor;
 				correctPositionIndicatorList.Add(correctPositionIndicator);
 			}
-				else
+			else
 				debugText.text = debugText.text.Insert (0, retrievalSequenceList [i].gameObject.name + " has viztoggle null \n");
 		}
 		for (int j = 0; j < choiceSelectionList.Count; j++) {
@@ -525,75 +531,5 @@ public class TreasureHuntARController : MonoBehaviour
 
 		userResponded = false;
 		yield return null;
-	}
-
-
-
-//	public void SpawnSurprise()
-//	{
-//		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
-//		int randInt = Random.Range (0, m_AllPlanes.Count);
-//		Vector3 position = GetRandomPosition (randInt);
-//		Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
-//		var spawnObject = Instantiate(clownPrefab, position,Quaternion.identity,anchor.transform);
-//
-//		//				spawnObject.transform.localScale = new Vector3 (.025f, .025f, .025f);
-//		spawnObject.transform.SetParent(anchor.transform);
-//
-//	}
-
-
-	/// <summary>
-	/// Quit the application if there was a connection error for the ARCore session.
-	/// </summary>
-	private void _QuitOnConnectionErrors()
-	{
-		if (m_IsQuitting)
-		{
-			return;
-		}
-
-		// Quit if ARCore was unable to connect and give Unity some time for the toast to appear.
-		if (Session.Status == SessionStatus.ErrorPermissionNotGranted)
-		{
-			_ShowAndroidToastMessage("Camera permission is needed to run this application.");
-			m_IsQuitting = true;
-			Invoke("_DoQuit", 0.5f);
-		}
-		else if (Session.Status.IsError())
-		{
-			_ShowAndroidToastMessage("ARCore encountered a problem connecting.  Please start the app again.");
-			m_IsQuitting = true;
-			Invoke("_DoQuit", 0.5f);
-		}
-	}
-
-	/// <summary>
-	/// Actually quit the application.
-	/// </summary>
-	private void _DoQuit()
-	{
-		Application.Quit();
-	}
-
-	/// <summary>
-	/// Show an Android toast message.
-	/// </summary>
-	/// <param name="message">Message string to show in the toast.</param>
-	private void _ShowAndroidToastMessage(string message)
-	{
-		AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-		AndroidJavaObject unityActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-
-		if (unityActivity != null)
-		{
-			AndroidJavaClass toastClass = new AndroidJavaClass("android.widget.Toast");
-			unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-				{
-					AndroidJavaObject toastObject = toastClass.CallStatic<AndroidJavaObject>("makeText", unityActivity,
-						message, 0);
-					toastObject.Call("show");
-				}));
-		}
 	}
 }

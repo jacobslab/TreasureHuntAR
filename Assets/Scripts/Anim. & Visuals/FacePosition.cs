@@ -24,7 +24,7 @@ public class FacePosition : MonoBehaviour {
 			}
 		}
 		else {
-			FaceThePosition (TreasureHuntARController.Instance.FirstPersonCamera.transform);
+			FaceThePosition (TreasureHuntARController_ARCore.Instance.FirstPersonCamera.transform);
 		}
 	}
 	void FaceThePosition(Transform transformToFace){
