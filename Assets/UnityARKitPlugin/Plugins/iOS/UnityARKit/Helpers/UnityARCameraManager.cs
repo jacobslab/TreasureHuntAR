@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.iOS;
-
+using UnityEngine.UI;
 public class UnityARCameraManager : MonoBehaviour {
 
     public Camera m_camera;
@@ -17,6 +17,9 @@ public class UnityARCameraManager : MonoBehaviour {
 	public bool enableLightEstimation = true;
 	public bool enableAutoFocus = true;
 	private bool sessionStarted = false;
+
+	//debug text
+	public Text debugText;
 
 	// Use this for initialization
 	void Start () {
@@ -86,8 +89,8 @@ public class UnityARCameraManager : MonoBehaviour {
             // JUST WORKS!
             Matrix4x4 matrix = m_session.GetCameraPose();
 			m_camera.transform.localPosition = UnityARMatrixOps.GetPosition(matrix);
+			debugText.text = m_camera.transform.localPosition.ToString ();
 			m_camera.transform.localRotation = UnityARMatrixOps.GetRotation (matrix);
-
             m_camera.projectionMatrix = m_session.GetCameraProjection ();
         }
 
