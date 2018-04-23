@@ -2,18 +2,24 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Rendering;
-
+using UnityEngine.UI;
 namespace UnityEngine.XR.iOS
 {
+
+
 
     public class UnityARVideo : MonoBehaviour
     {
         public Material m_ClearMaterial;
 
-        private CommandBuffer m_VideoCommandBuffer;
+		public UnityARCamera arTrackingState;
+        
+		private CommandBuffer m_VideoCommandBuffer;
         private Texture2D _videoTextureY;
         private Texture2D _videoTextureCbCr;
 		private Matrix4x4 _displayTransform;
+
+		public Text trackingStateText;
 
 		private bool bCommandBufferInitialized;
 
@@ -23,9 +29,11 @@ namespace UnityEngine.XR.iOS
 			bCommandBufferInitialized = false;
 		}
 
+
 		void UpdateFrame(UnityARCamera cam)
 		{
 			_displayTransform = new Matrix4x4();
+			trackingStateText.text=cam.trackingState.ToString();
 			_displayTransform.SetColumn(0, cam.displayTransform.column0);
 			_displayTransform.SetColumn(1, cam.displayTransform.column1);
 			_displayTransform.SetColumn(2, cam.displayTransform.column2);

@@ -12,6 +12,8 @@ public class PointCloudParticleExample : MonoBehaviour {
     private ParticleSystem currentPS;
     private ParticleSystem.Particle [] particles;
 
+	private bool pointCloudEnabled=true;
+
 	// Use this for initialization
 	void Start () {
         UnityARSessionNativeInterface.ARFrameUpdatedEvent += ARFrameUpdated;
@@ -25,9 +27,19 @@ public class PointCloudParticleExample : MonoBehaviour {
         frameUpdated = true;
     }
 
+	public void TogglePointCloud(bool shouldEnable)
+	{
+		if (currentPS != null) {
+			pointCloudEnabled = shouldEnable;
+			currentPS.gameObject.SetActive (shouldEnable);
+			} 
+		else
+			Debug.Log ("no point cloud PS exists");
+	}
+
 	// Update is called once per frame
 	void Update () {
-        if (frameUpdated) {
+		if (frameUpdated && pointCloudEnabled) {
             if (m_PointCloudData != null && m_PointCloudData.Length > 0 && maxPointsToShow > 0) {
                 int numParticles = Mathf.Min (m_PointCloudData.Length, maxPointsToShow);
                 ParticleSystem.Particle[] particles = new ParticleSystem.Particle[numParticles];

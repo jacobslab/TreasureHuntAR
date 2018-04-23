@@ -35,6 +35,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public CanvasGroup scorePanelUIGroup;
 	public Text retrievalText;
 	public Button acceptUserResponseButton;
+	public Toggle debugVisualsToggle;
+
+
+	//debug visuals
+	public PointCloudParticleExample pointCloudManager;
+	public bool debugVisuals=false;
 
 	private GameObject currentChest;
 
@@ -74,23 +80,25 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		beginTrialButton.gameObject.SetActive (true);
 		acceptUserResponseButton.gameObject.SetActive (false);
 
+		debugVisuals = debugVisualsToggle.isOn;
+
 	}
 	// Use this for initialization
 	void Start () {
 		
 	}
 
-	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes,out Vector3 hitPosition)
+	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes,out GameObject hitObj)
 	{
-		hitPosition = Vector3.zero;
+		hitObj = new GameObject ();
 		List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface ().HitTest (point, resultTypes);
 		if (hitResults.Count > 0) {
 			foreach (var hitResult in hitResults) {
 				Debug.Log ("Got hit!");
 				//output the hit position,
 				//NOTE: ONLY THE LAST HIT WILL OUTPUT
-				hitPosition = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
-//				m_HitTransform.rotation = UnityARMatrixOps.GetRotation (hitResult.worldTransform);
+				hitObj.transform.position = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
+				hitObj.transform.rotation = UnityARMatrixOps.GetRotation (hitResult.worldTransform);
 //				Debug.Log (string.Format ("x:{0:0.######} y:{1:0.######} z:{2:0.######}", m_HitTransform.position.x, m_HitTransform.position.y, m_HitTransform.position.z));
 				return true;
 			}
@@ -134,7 +142,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 //		}
 
 	}
-		
+
+
 
 	public IEnumerator RunTrial()
 	{
@@ -143,6 +152,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		bool noTouch = false;
 		//turn off the retrieval panel, if it hasn't been already
 		retrievalPanelUIGroup.alpha=0f;
+
 
 		//make a simple spawnable list for this trial
 		yield return StartCoroutine (MakeSpawnableList ());
@@ -195,8 +205,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 								foreach (ARHitTestResultType resultType in resultTypes)
 								{
-							Vector3 hitPosition = Vector3.zero;
-							if (HitTestWithResultType (point, resultType,out hitPosition))
+							GameObject hitObj = new GameObject ();
+							if (HitTestWithResultType (point, resultType,out hitObj))
 									{
 								
 										Debug.Log ("GOT A HIT");
@@ -325,7 +335,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		Debug.Log ("got anchor manager");
 		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 		Debug.Log ("got anchor obj linked list");
-		ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
+
+		//set it to the default first value
+		ARPlaneAnchor planeAnchor= arPlaneAnchors.First.Value.planeAnchor;
+		int randPlaneIndex = Random.Range (0, arPlaneAnchors.Count);
+		int currentIndex = 0;
+		foreach (var plane in arPlaneAnchors) {
+			if (currentIndex == randPlaneIndex) {
+				planeAnchor = plane.planeAnchor;
+			}
+			currentIndex++;
+		}
 		Debug.Log ("got first plane anchor with center " + planeAnchor.center.ToString());
 		Vector3[] vertices = planeAnchor.planeGeometry.boundaryVertices;
 		Debug.Log ("vertex count: " + vertices.Length.ToString ());
@@ -369,6 +389,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.identity,arPlaneAnchors.First.Value.gameObject.transform) as GameObject;
 		spawnChest.transform.parent = arPlaneAnchors.First.Value.gameObject.transform;
 		spawnChest.transform.localPosition = position;
+		spawnChest.transform.parent = null;
 		Debug.Log ("about to set current chest ref");
 		currentChest = spawnChest;
 
@@ -461,12 +482,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 								foreach (ARHitTestResultType resultType in resultTypes)
 								{
-							Vector3 hitPosition = Vector3.zero;
-							if (HitTestWithResultType (point, resultType, out hitPosition))
+							GameObject hitObj = new GameObject ();
+							if (HitTestWithResultType (point, resultType, out hitObj))
 									{
 										//Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (hit.Pose.position, Quaternion.identity));
-								Debug.Log("hit position is: " + hitPosition.ToString());
-								GameObject choiceObj = Instantiate (choiceSelectionPrefab, hitPosition, Quaternion.identity);
+								Debug.Log("hit position is: " + hitObj.transform.position.ToString());
+								GameObject choiceObj = Instantiate (choiceSelectionPrefab, hitObj.transform.position, hitObj.transform.rotation);
 								choiceSelectionList.Add (choiceObj);
 
 										//wait to show their choice, then make it invisible
@@ -575,7 +596,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		yield return null;
 	}
 
-
+	public void ToggleDebugVisuals()
+	{
+		debugVisuals = debugVisualsToggle.isOn;
+		StartCoroutine("UpdateDebugVisuals");
+	}
+//
+	IEnumerator UpdateDebugVisuals()
+	{
+		//keep things on, else turn it off
+			UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+			LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
+			foreach (var plane in arPlaneAnchors) {
+			plane.gameObject.transform.GetChild(0).gameObject.GetComponent<VisibilityToggler> ().TurnVisible (debugVisuals);
+			}
+		pointCloudManager.TogglePointCloud (debugVisuals);
+		yield return null;
+	}
 
 	public void AcceptUserResponse()
 	{

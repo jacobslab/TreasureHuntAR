@@ -6,9 +6,15 @@ public class VisibilityToggler : MonoBehaviour {
 	bool isVisible = true;
 	float currentAlpha = 1.0f;
 
+	public bool isPlane=false;
+
 	// Use this for initialization
 	void Start () {
-
+		//do initial visibility check upon spawn
+		if (isPlane) {
+			if(TreasureHuntController_ARKit.Instance!=null)
+				TurnVisible (TreasureHuntController_ARKit.Instance.debugVisuals);
+		}
 	}
 
 	// Update is called once per frame
@@ -16,18 +22,18 @@ public class VisibilityToggler : MonoBehaviour {
 
 	}
 
-	public bool GetVisibility(){
-		return isVisible;
-	}
+//	public bool GetVisibility(){
+//		return isVisible;
+//	}
 
 	//function to turn off (or on) the object without setting it inactive -- because we want to keep logging on
 	public void TurnVisible(bool shouldBeVisible){ 
 
-		if(GetComponent<Renderer>() != null){
-			GetComponent<Renderer>().enabled = shouldBeVisible;
+		if(GetComponent<MeshRenderer>() != null){
+			GetComponent<MeshRenderer>().enabled = shouldBeVisible;
 		}
 
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		MeshRenderer[] renderers = GetComponentsInChildren<MeshRenderer>();
 		for(int i = 0; i < renderers.Length; i++){
 			renderers[i].enabled = shouldBeVisible;
 		}
@@ -49,24 +55,24 @@ public class VisibilityToggler : MonoBehaviour {
 
 	}
 
-	public void SetAlpha(float newAlpha){
-		currentAlpha = newAlpha;
-
-		Renderer myRenderer = GetComponent<Renderer> ();
-		if(myRenderer != null){
-			Color materialColor = myRenderer.material.color;
-			myRenderer.material.color = new Color(materialColor.r, materialColor.g, materialColor.b, newAlpha);
-		}
-
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		for(int i = 0; i < renderers.Length; i++){
-			Color materialColor = renderers[i].material.color;
-			renderers[i].material.color = new Color(materialColor.r, materialColor.g, materialColor.b, newAlpha);
-		}
-	}
-
-	public float GetAlpha(){
-		return currentAlpha;
-	}
+//	public void SetAlpha(float newAlpha){
+//		currentAlpha = newAlpha;
+//
+//		Renderer myRenderer = GetComponent<Renderer> ();
+//		if(myRenderer != null){
+//			Color materialColor = myRenderer.material.color;
+//			myRenderer.material.color = new Color(materialColor.r, materialColor.g, materialColor.b, newAlpha);
+//		}
+//
+//		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+//		for(int i = 0; i < renderers.Length; i++){
+//			Color materialColor = renderers[i].material.color;
+//			renderers[i].material.color = new Color(materialColor.r, materialColor.g, materialColor.b, newAlpha);
+//		}
+//	}
+//
+//	public float GetAlpha(){
+//		return currentAlpha;
+//	}
 
 }
