@@ -68,6 +68,11 @@ namespace UnityEngine.XR.iOS
             UnsubscribeEvents();
         }
 
+		public int GetPlaneCount()
+		{
+			return planeAnchorMap.Count;
+		}
+
 		public LinkedList<ARPlaneAnchorGameObject> GetCurrentPlaneAnchors()
 		{
 			return planeAnchorMap.Values;

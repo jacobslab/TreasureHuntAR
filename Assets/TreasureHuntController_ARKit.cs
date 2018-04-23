@@ -42,6 +42,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	private Touch touch;
 	private bool userResponded=false;
 
+	//arkit components
+	public UnityARCameraManager arCamManager;
+	public UnityARGeneratePlane arGenPlane;
 
 	public Transform m_HitTransform;
 	public float maxRayDistance = 30.0f;
@@ -214,8 +217,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 							}
 						}
 								
-
-								
 							}
 
 						}
@@ -283,14 +284,16 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	IEnumerator CreateChestLocationList()
 	{
 		chestSpawnLocationList.Clear ();
-		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
+		Matrix4x4 matrix = arCamManager.GetCurrentPose();
+		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+		int planeCount = arAnchorManager.GetPlaneCount ();
 		//instantiate them all to the last recorded device position
 		for (int j = 0; j < Configuration.maxObjects; j++) {
-			Vector3 tempVec = Frame.Pose.position;
-			chestSpawnLocationList.Add (tempVec);
+			Vector3 tempPos = UnityARMatrixOps.GetPosition (matrix);
+			chestSpawnLocationList.Add (tempPos);
 		}
 		for (int i = 0; i < Configuration.maxObjects; i++) {
-			chestSpawnLocationList [i] = GetRandomPosition (Random.Range(0,m_AllPlanes.Count));
+			chestSpawnLocationList [i] = GetRandomPosition (Random.Range(0,planeCount));
 			while (!CheckSufficientDistanceBetweenChests (chestSpawnLocationList[i],chestSpawnLocationList,i)) {
 				yield return 0;
 			}
@@ -312,15 +315,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	private Vector3 GetRandomPosition(int randInt)
 	{
-		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
+		//Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		// Pick a location.  This is done by selecting a vertex at random and then
 		// a random point between it and the center of the plane.
-		List<Vector3> vertices = new List<Vector3> ();
+		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
+		ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
+		Vector3[] vertices = planeAnchor.planeGeometry.boundaryVertices;
 
-		m_AllPlanes[randInt].GetBoundaryPolygon (vertices);
-		Vector3 pt = vertices [Random.Range (0, vertices.Count)];
+		Vector3 pt = vertices [Random.Range (0, vertices.Length)];
 		float dist = Random.Range (0.05f, 1f);
-		Vector3 position = Vector3.Lerp (pt, m_AllPlanes[randInt].CenterPose.position, dist);
+		Vector3 position = Vector3.Lerp (pt, planeAnchor.center, dist); //add center pose of the plane here in the to 
 		// Move the object above the plane.
 		position.y += .05f;
 		return position;
@@ -339,16 +344,20 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public IEnumerator SpawnTreasureChest(int chestIndex)
 	{
-		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
-		int randInt = Random.Range (0, m_AllPlanes.Count);
+		//Session.GetTrackables<TrackedPlane>(m_AllPlanes);
+		//int randInt = Random.Range (0, m_AllPlanes.Count);
 		//		Vector3 position = GetRandomPosition (randInt);
+		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
+		ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
 		Vector3 position = GetChestPosition (chestIndex);
-		Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
-		spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.identity,anchor.transform);
+		//Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
+		spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.identity) as GameObject;
+		ARAnchor anchor = spawnChest.GetComponent<ARAnchor> ();
 		//			var spawnObject = Instantiate(spawnables[randSpawnable], position,Quaternion.identity,anchor.transform);
 
 		//				spawnObject.transform.localScale = new Vector3 (.025f, .025f, .025f);
-		spawnChest.transform.SetParent(anchor.transform);
+		//spawnChest.transform.SetParent(anchor.transform);
 		//		debugText.text=debugText.text.Insert(0,"spawned chest \n");
 
 		yield return null;
@@ -357,10 +366,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public IEnumerator SpawnTreasure(Vector3 chestPosition, int chestIndex)
 	{
-		Session.GetTrackables<TrackedPlane>(m_AllPlanes);
-		Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
-		spawnObj = Instantiate(spawnableTrialList[chestIndex],new Vector3(chestPosition.x,chestPosition.y+0.1f,chestPosition.z),Quaternion.identity,anchor.transform);
-		spawnObj.transform.SetParent(anchor.transform);
+		//Session.GetTrackables<TrackedPlane>(m_AllPlanes);
+		//Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
+		//spawnObj = Instantiate(spawnableTrialList[chestIndex],new Vector3(chestPosition.x,chestPosition.y+0.1f,chestPosition.z),Quaternion.identity,anchor.transform);
+		//spawnObj.transform.SetParent(anchor.transform);
 		//		debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
 
 		//add to the spawn obj list
@@ -400,24 +409,49 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 					noTouch = false;
 
 				if (!noTouch) {
-					TrackableHit hit;
-					TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon |
-						TrackableHitFlags.FeaturePointWithSurfaceNormal;
+
 					if (!EventSystem.current.IsPointerOverGameObject (touch.fingerId)) {
-						if (Frame.Raycast (touch.position.x, touch.position.y, raycastFilter, out hit)) {
+						if (Input.touchCount > 0 && m_HitTransform != null)
+						{
+							var touch = Input.GetTouch(0);
+							if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
+							{
+								var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
+								ARPoint point = new ARPoint {
+									x = screenPosition.x,
+									y = screenPosition.y
+								};
 
-							Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (hit.Pose.position, Quaternion.identity));
-							GameObject choiceObj = Instantiate (choiceSelectionPrefab, hit.Pose.position, Quaternion.identity, anchor.transform);
+								// prioritize results types
+								ARHitTestResultType[] resultTypes = {
+									//ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingGeometry,
+									ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
+									// if you want to use infinite planes use this:
+									//ARHitTestResultType.ARHitTestResultTypeExistingPlane,
+									//ARHitTestResultType.ARHitTestResultTypeEstimatedHorizontalPlane, 
+									//ARHitTestResultType.ARHitTestResultTypeEstimatedVerticalPlane, 
+									//ARHitTestResultType.ARHitTestResultTypeFeaturePoint
+								}; 
 
-							choiceSelectionList.Add (choiceObj);
-
-							//wait to show their choice, then make it invisible
-							yield return new WaitForSeconds (1f);
-							choiceObj.GetComponent<VisibilityToggler> ().TurnVisible (false);
-							//choice made bool set to true so we can exit out of the loop
-							retrievalChoiceMade = true;
-
+								foreach (ARHitTestResultType resultType in resultTypes)
+								{
+									if (HitTestWithResultType (point, resultType))
+									{
+										//Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (hit.Pose.position, Quaternion.identity));
+										//							GameObject choiceObj = Instantiate (choiceSelectionPrefab, hit.Pose.position, Quaternion.identity, anchor.transform);
+										//
+										//							choiceSelectionList.Add (choiceObj);
+										//
+										//							//wait to show their choice, then make it invisible
+										//							yield return new WaitForSeconds (1f);
+										//							choiceObj.GetComponent<VisibilityToggler> ().TurnVisible (false);
+										//							//choice made bool set to true so we can exit out of the loop
+										//							retrievalChoiceMade = true;
+									}
+								}
+							}
 						}
+
 					}
 				}
 				yield return 0;

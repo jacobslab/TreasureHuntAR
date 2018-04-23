@@ -410,6 +410,68 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224780070636903104, guid: d2b789642f1ef44b9bcda01f3e73709c,
     type: 2}
   m_PrefabInternal: {fileID: 284921668}
+--- !u!1 &359656328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 359656330}
+  - component: {fileID: 359656329}
+  m_Layer: 0
+  m_Name: TreasureHuntARKit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &359656329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 359656328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 341949787b4924839848538781077d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FirstPersonCamera: {fileID: 751841458}
+  treasureChestPrefab: {fileID: 1093505005841754, guid: 45051ea159bde4670a7d2bb7bb83f3ca,
+    type: 2}
+  clownPrefab: {fileID: 0}
+  debugText: {fileID: 555101739}
+  objManager: {fileID: 1240507264}
+  choiceSelectionPrefab: {fileID: 1642046928864284, guid: 200173838d04d4c798ff106fcdbfda48,
+    type: 2}
+  correctPositionIndicatorPrefab: {fileID: 1204562768246444, guid: fe26df306395a48289d663ded309b1f4,
+    type: 2}
+  beginTrialButton: {fileID: 1533133238}
+  retrievalPanelUIGroup: {fileID: 796258590}
+  scorePanelUIGroup: {fileID: 1677128000}
+  retrievalText: {fileID: 1966953526}
+  acceptUserResponseButton: {fileID: 882503672}
+  arCamManager: {fileID: 1541959972}
+  arGenPlane: {fileID: 1989182201}
+  m_HitTransform: {fileID: 0}
+  maxRayDistance: 30
+  collisionLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+--- !u!4 &359656330
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 359656328}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &413228717
 GameObject:
   m_ObjectHideFlags: 0
