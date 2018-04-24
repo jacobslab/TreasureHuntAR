@@ -457,6 +457,7 @@ MonoBehaviour:
   debugVisualsToggle: {fileID: 1084166636}
   pointCloudManager: {fileID: 903019472}
   debugVisuals: 0
+  canNavigate: 0
   canNavigateToggle: {fileID: 714579465}
   arCamManager: {fileID: 1541959972}
   arGenPlane: {fileID: 1989182201}

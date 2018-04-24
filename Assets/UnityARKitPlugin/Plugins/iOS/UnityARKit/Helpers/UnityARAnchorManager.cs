@@ -75,7 +75,10 @@ namespace UnityEngine.XR.iOS
 
 		public LinkedList<ARPlaneAnchorGameObject> GetCurrentPlaneAnchors()
 		{
-			return planeAnchorMap.Values;
+			if(planeAnchorMap!=null)
+				return planeAnchorMap.Values;
+			else
+				return null;
 		}
 	}
 }

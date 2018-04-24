@@ -10,11 +10,18 @@ public class TreasureChest : MonoBehaviour {
 	public Transform top;
 	public Transform specialObjectSpawnPoint;
 	float angleToOpen = 150.0f; //degrees
-
+	public Canvas worldCanvas;
+	public bl_ProgressBar progressBar;
 	public TextMesh specialTextMesh;
 	// Use this for initialization
 	void Awake () {
 		specialTextMesh.text = "";
+		if (TreasureHuntController_ARKit.Instance.canNavigate) {
+			worldCanvas.worldCamera = TreasureHuntController_ARKit.Instance.FirstPersonCamera;
+			worldCanvas.gameObject.SetActive (true);
+		} else {
+			worldCanvas.gameObject.SetActive (false);
+		}
 	}
 	
 	// Update is called once per frame
@@ -27,9 +34,17 @@ public class TreasureChest : MonoBehaviour {
 		specialTextMesh.text = itemName;
 	}
 
+	public void UpdateDistanceBar(float distanceLeft)
+	{
+		float barValue = progressBar.MaxValue - (distanceLeft * 100f);
+		if(barValue<100f && barValue>0f)
+			progressBar.Value = barValue;
+	}
+
 	//open. most likely a treasure chest. could also be something like a giftbox.
 	public IEnumerator Open(GameObject opener){
 
+		worldCanvas.gameObject.SetActive (false);
 
 		float distOpenerToPivotA = (pivotA.position - opener.transform.position).magnitude;
 		float distOpenerToPivotB = (pivotB.position - opener.transform.position).magnitude;
