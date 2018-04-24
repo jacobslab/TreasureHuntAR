@@ -21,6 +21,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	private GameObject spawnObj;
 	private List<Vector3> chestSpawnLocationList = new List<Vector3>();
+	public List<int> spawnPlaneIndexList = new List<int>();
 	private List<GameObject> spawnedObjList = new List<GameObject>();
 	private List<GameObject> retrievalSequenceList = new List<GameObject>();
 	private List<GameObject> choiceSelectionList = new List<GameObject> ();
@@ -31,6 +32,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public GameObject correctPositionIndicatorPrefab;
 	//ui
 	public Button beginTrialButton;
+	public CanvasGroup beginTrialPanelUIGroup;
 	public CanvasGroup retrievalPanelUIGroup;
 	public CanvasGroup scorePanelUIGroup;
 	public Text retrievalText;
@@ -46,6 +48,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	//scoring
 	private int totalScore = 0;
+
+	//navigation feature
+	private bool canNavigate=false;
+	public Toggle canNavigateToggle;
 
 	private Touch touch;
 	private bool userResponded=false;
@@ -77,15 +83,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		spawnArr = Resources.LoadAll ("Prefabs/Objects");
 		retrievalPanelUIGroup.alpha = 0f;
 		scorePanelUIGroup.alpha = 0f;
-		beginTrialButton.gameObject.SetActive (true);
+		beginTrialPanelUIGroup.alpha = 1f;
 		acceptUserResponseButton.gameObject.SetActive (false);
 
 		debugVisuals = debugVisualsToggle.isOn;
 
+	
+
 	}
 	// Use this for initialization
 	void Start () {
-		
+		ChangeDebugVisualsStatus(true);
+		UpdateNavigationStatus ();
 	}
 
 	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes,out GameObject hitObj)
@@ -153,6 +162,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		//turn off the retrieval panel, if it hasn't been already
 		retrievalPanelUIGroup.alpha=0f;
 
+		//turn off debug visuals
+		ChangeDebugVisualsStatus(false);
+
 
 		//make a simple spawnable list for this trial
 		yield return StartCoroutine (MakeSpawnableList ());
@@ -180,6 +192,15 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 					// Raycast against the location the player touched to search for planes.
 //					Debug.Log("MIGHT have a touch");
+				if (spawnChest != null) {
+
+					Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
+					Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+					float distance = Vector3.Distance (spawnChest.transform.position, camPos);
+					debugText.text = distance.ToString ();
+				} else {
+					debugText.text = "No chest exists";
+				}
 						if (Input.touchCount > 0)
 						{
 							var touch = Input.GetTouch(0);
@@ -209,16 +230,31 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 							if (HitTestWithResultType (point, resultType,out hitObj))
 									{
 								
-										Debug.Log ("GOT A HIT");
-										Debug.Log ("opening a chest");
-										yield return StartCoroutine (spawnChest.GetComponent<TreasureChest> ().Open (FirstPersonCamera.gameObject));
-										yield return StartCoroutine (SpawnTreasure (spawnChest.transform.position, chestIndex));
-										spawnObj.GetComponent<VisibilityToggler> ().TurnVisible (true);
-										//set the text mesh to display the object name
-										spawnChest.GetComponent<TreasureChest> ().SetItemText (spawnObj.GetComponent<SpawnableObject> ().GetName ());
-										chestIndex++;
-										//set treasure found as true so we can exit out of the while loop
-										treasureFound = true;
+//										Debug.Log ("GOT A HIT");
+//										Debug.Log ("opening a chest");
+								bool canOpen=false;
+								Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
+								Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+								float distance = Vector3.Distance (spawnChest.transform.position, camPos);
+								Debug.Log("hit distance is: " + distance.ToString ());
+								if (!canNavigate) {
+									canOpen = true;
+								} else {
+									if (distance < Configuration.minResponseDistance) {
+										canOpen = true;
+									}
+								}
+								if (canOpen) {
+									yield return StartCoroutine (spawnChest.GetComponent<TreasureChest> ().Open (FirstPersonCamera.gameObject));
+									yield return StartCoroutine (SpawnTreasure (spawnChest.transform, chestIndex));
+									spawnObj.GetComponent<VisibilityToggler> ().TurnVisible (true);
+									//set the text mesh to display the object name
+									spawnChest.GetComponent<TreasureChest> ().SetItemText (spawnObj.GetComponent<SpawnableObject> ().GetName ());
+									chestIndex++;
+									//set treasure found as true so we can exit out of the while loop
+									treasureFound = true;
+								} else
+									Debug.Log ("cannot open yet");
 									}
 								}
 //							}
@@ -254,7 +290,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		retrievalText.text = "End trial";
 		yield return new WaitForSeconds (1f);
 		retrievalPanelUIGroup.alpha = 0f;
-		beginTrialButton.gameObject.SetActive (true);
+		beginTrialPanelUIGroup.alpha = 1f;
+		ChangeDebugVisualsStatus (true);
 		yield return null;
 	}
 
@@ -267,6 +304,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		spawnedObjList.Clear ();
 		retrievalSequenceList.Clear ();
 		choiceSelectionList.Clear ();
+		spawnPlaneIndexList.Clear ();
 
 		Configuration.maxObjects = spawnArr.Length; // 0 inclusive
 		for (int i = 0; i < spawnArr.Length; i++) {
@@ -294,19 +332,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	IEnumerator CreateChestLocationList()
 	{
 		Debug.Log ("creating chest locations");
+		int randPlane = 0;
 		chestSpawnLocationList.Clear ();
 		Matrix4x4 matrix = arCamManager.GetCurrentPose();
 		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
 		int planeCount = arAnchorManager.GetPlaneCount ();
-		//instantiate them all to the last recorded device position
+		//instantiate them all to the last recorded device position and first available plane
 		for (int j = 0; j < Configuration.maxObjects; j++) {
 			Vector3 tempPos = UnityARMatrixOps.GetPosition (matrix);
 			chestSpawnLocationList.Add (tempPos);
+			spawnPlaneIndexList.Add (0);
 		}
 		for (int i = 0; i < Configuration.maxObjects; i++) {
-			chestSpawnLocationList [i] = GetRandomPosition (Random.Range(0,planeCount));
+			chestSpawnLocationList [i] = GetRandomPosition (Random.Range(0,planeCount),out randPlane);
+			spawnPlaneIndexList [i] = randPlane;
 			while (!CheckSufficientDistanceBetweenChests (chestSpawnLocationList[i],chestSpawnLocationList,i)) {
-				chestSpawnLocationList [i] = GetRandomPosition (Random.Range(0,planeCount));
+				chestSpawnLocationList [i] = GetRandomPosition (Random.Range(0,planeCount),out randPlane);
+				spawnPlaneIndexList [i] = randPlane;
 				yield return 0;
 			}
 		}
@@ -325,7 +367,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		return true;
 	}
 
-	private Vector3 GetRandomPosition(int randInt)
+	private Vector3 GetRandomPosition(int randInt,out int randPlaneIndex)
 	{
 		Debug.Log ("getting a random position");
 		//Session.GetTrackables<TrackedPlane>(m_AllPlanes);
@@ -338,7 +380,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		//set it to the default first value
 		ARPlaneAnchor planeAnchor= arPlaneAnchors.First.Value.planeAnchor;
-		int randPlaneIndex = Random.Range (0, arPlaneAnchors.Count);
+		randPlaneIndex = Random.Range (0, arPlaneAnchors.Count);
 		int currentIndex = 0;
 		foreach (var plane in arPlaneAnchors) {
 			if (currentIndex == randPlaneIndex) {
@@ -358,6 +400,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		return position;
 	}
 
+	private int GetPlaneIndex(int chestInt)
+	{
+		return spawnPlaneIndexList [chestInt];
+	}
+
 	private Vector3 GetChestPosition(int chestInt)
 	{
 		Debug.Log ("returned chest position: " + chestSpawnLocationList [chestInt].ToString());
@@ -366,7 +413,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public void BeginTrial()
 	{
-		beginTrialButton.gameObject.SetActive (false);
+		beginTrialPanelUIGroup.alpha = 0f;
 		StartCoroutine ("RunTrial");
 	}
 
@@ -380,14 +427,29 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		//Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		//int randInt = Random.Range (0, m_AllPlanes.Count);
 		//		Vector3 position = GetRandomPosition (randInt);
+
+
+		int planeIndex = GetPlaneIndex (chestIndex);
 		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
 		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
-		ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
+
+		ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
+		int currentIndex = 0;
+		foreach(var plane in arPlaneAnchors)
+		{
+			if (currentIndex == planeIndex) {
+				planeAnchor = plane;
+			}
+			currentIndex++;
+		}
+
 
 		Vector3 position = GetChestPosition (chestIndex);
+		Vector3 planeRotation = planeAnchor.gameObject.transform.rotation.eulerAngles;
+		Vector3 modChestRot = new Vector3 (planeRotation.x, planeRotation.y, -planeRotation.z);
 		//Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
-		spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.identity,arPlaneAnchors.First.Value.gameObject.transform) as GameObject;
-		spawnChest.transform.parent = arPlaneAnchors.First.Value.gameObject.transform;
+		spawnChest = Instantiate(treasureChestPrefab,position,Quaternion.Euler(modChestRot)) as GameObject;
+		spawnChest.transform.parent =  planeAnchor.gameObject.transform;
 		spawnChest.transform.localPosition = position;
 		spawnChest.transform.parent = null;
 		Debug.Log ("about to set current chest ref");
@@ -404,13 +466,15 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	}
 
 
-	public IEnumerator SpawnTreasure(Vector3 chestPosition, int chestIndex)
+	public IEnumerator SpawnTreasure(Transform chestTransform, int chestIndex)
 	{
 		//Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		//Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
+
 		if (currentChest != null) {
 			spawnObj = Instantiate (spawnableTrialList [chestIndex], Vector3.zero, Quaternion.identity);
 			spawnObj.transform.parent = currentChest.transform;
+			spawnObj.transform.rotation = currentChest.transform.rotation;
 			spawnObj.transform.localPosition = Vector3.zero;
 			spawnObj.transform.parent = null;
 			//		debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
@@ -596,9 +660,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		yield return null;
 	}
 
+	public void UpdateNavigationStatus()
+	{
+		canNavigate = canNavigateToggle.isOn;
+
+	}
+
 	public void ToggleDebugVisuals()
 	{
 		debugVisuals = debugVisualsToggle.isOn;
+		StartCoroutine("UpdateDebugVisuals");
+	}
+
+	//non-UI, direct from script version of the ToggleDebugVisuals function
+	public void ChangeDebugVisualsStatus(bool shouldEnable)
+	{
+		debugVisuals = shouldEnable;
+		Debug.Log ("turning debug visuals off");
 		StartCoroutine("UpdateDebugVisuals");
 	}
 //
@@ -611,6 +689,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			plane.gameObject.transform.GetChild(0).gameObject.GetComponent<VisibilityToggler> ().TurnVisible (debugVisuals);
 			}
 		pointCloudManager.TogglePointCloud (debugVisuals);
+		Debug.Log ("debug visuals should be " + debugVisuals.ToString());
 		yield return null;
 	}
 

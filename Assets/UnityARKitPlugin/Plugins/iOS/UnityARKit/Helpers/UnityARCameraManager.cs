@@ -89,7 +89,7 @@ public class UnityARCameraManager : MonoBehaviour {
             // JUST WORKS!
             Matrix4x4 matrix = m_session.GetCameraPose();
 			m_camera.transform.localPosition = UnityARMatrixOps.GetPosition(matrix);
-			debugText.text = m_camera.transform.localPosition.ToString ();
+//			debugText.text = m_camera.transform.localPosition.ToString ();
 			m_camera.transform.localRotation = UnityARMatrixOps.GetRotation (matrix);
             m_camera.projectionMatrix = m_session.GetCameraProjection ();
         }

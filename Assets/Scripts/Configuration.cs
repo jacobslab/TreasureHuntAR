@@ -9,7 +9,7 @@ public class Configuration : MonoBehaviour {
 	public static int maxObjects =3;
 
 	public static float minRetrievalDistance = 0.1f;
-	public static float minResponseDistance = 0.3f;
+	public static float minResponseDistance = 0.75f;
 	// Use this for initialization
 	void Start () {
 		
