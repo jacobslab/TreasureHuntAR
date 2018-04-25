@@ -1,0 +1,669 @@
+fileFormatVersion: 2
+guid: 5e63a1ae4a9ac4397aa7f7f10c1c7f4b
+timeCreated: 1524689219
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: abdomenLower
+    100002: abdomenLower 1
+    100004: abdomenLower 2
+    100006: abdomenLower 3
+    100008: abdomenUpper
+    100010: abdomenUpper 1
+    100012: abdomenUpper 2
+    100014: abdomenUpper 3
+    100016: BelowJaw
+    100018: Boxers_8984
+    100020: Boxers_8984.Shape
+    100022: CenterBrow
+    100024: CenterBrow 1
+    100026: chestLower
+    100028: chestLower 1
+    100030: chestLower 2
+    100032: chestUpper
+    100034: chestUpper 1
+    100036: chestUpper 2
+    100038: Chin
+    100040: //RootNode
+    100042: Genesis8Male
+    100044: Genesis8Male.Shape
+    100046: Genesis8MaleEyelashes
+    100048: Genesis8MaleEyelashes.Shape
+    100050: head
+    100052: head 1
+    100054: hip
+    100056: hip 1
+    100058: hip 2
+    100060: hip 3
+    100062: lBigToe
+    100064: lBigToe_2
+    100066: lBrowInner
+    100068: lBrowInner 1
+    100070: lBrowMid
+    100072: lBrowMid 1
+    100074: lBrowOuter
+    100076: lBrowOuter 1
+    100078: lCarpal1
+    100080: lCarpal2
+    100082: lCarpal3
+    100084: lCarpal4
+    100086: lCheekLower
+    100088: lCheekUpper
+    100090: lCheekUpper 1
+    100092: lCollar
+    100094: lCollar 1
+    100096: lCollar 2
+    100098: lEar
+    100100: lEar 1
+    100102: lEye
+    100104: lEye 1
+    100106: lEyelidInner
+    100108: lEyelidInner 1
+    100110: lEyelidLower
+    100112: lEyelidLower 1
+    100114: lEyelidLowerInner
+    100116: lEyelidLowerInner 1
+    100118: lEyelidLowerOuter
+    100120: lEyelidLowerOuter 1
+    100122: lEyelidOuter
+    100124: lEyelidOuter 1
+    100126: lEyelidUpper
+    100128: lEyelidUpper 1
+    100130: lEyelidUpperInner
+    100132: lEyelidUpperInner 1
+    100134: lEyelidUpperOuter
+    100136: lEyelidUpperOuter 1
+    100138: lFoot
+    100140: lFoot 1
+    100142: lForearmBend
+    100144: lForearmBend 1
+    100146: lForearmTwist
+    100148: lHand
+    100150: lIndex1
+    100152: lIndex2
+    100154: lIndex3
+    100156: LipBelow
+    100158: LipLowerMiddle
+    100160: LipUpperMiddle
+    100162: lJawClench
+    100164: lLipBelowNose
+    100166: lLipBelowNose 1
+    100168: lLipCorner
+    100170: lLipLowerInner
+    100172: lLipLowerOuter
+    100174: lLipNasolabialCrease
+    100176: lLipNasolabialCrease 1
+    100178: lLipUpperInner
+    100180: lLipUpperOuter
+    100182: lMetatarsals
+    100184: lMid1
+    100186: lMid2
+    100188: lMid3
+    100190: lNasolabialLower
+    100192: lNasolabialMiddle
+    100194: lNasolabialMiddle 1
+    100196: lNasolabialMouthCorner
+    100198: lNasolabialUpper
+    100200: lNasolabialUpper 1
+    100202: lNostril
+    100204: lNostril 1
+    100206: lowerFaceRig
+    100208: lowerJaw
+    100210: lowerJaw 1
+    100212: lowerTeeth
+    100214: lPectoral
+    100216: lPectoral 1
+    100218: lPectoral 2
+    100220: lPinky1
+    100222: lPinky2
+    100224: lPinky3
+    100226: lRing1
+    100228: lRing2
+    100230: lRing3
+    100232: lShin
+    100234: lShin 1
+    100236: lShin 2
+    100238: lShldrBend
+    100240: lShldrBend 1
+    100242: lShldrTwist
+    100244: lShldrTwist 1
+    100246: lSmallToe1
+    100248: lSmallToe1_2
+    100250: lSmallToe2
+    100252: lSmallToe2_2
+    100254: lSmallToe3
+    100256: lSmallToe3_2
+    100258: lSmallToe4
+    100260: lSmallToe4_2
+    100262: lSquintInner
+    100264: lSquintInner 1
+    100266: lSquintOuter
+    100268: lSquintOuter 1
+    100270: lThighBend
+    100272: lThighBend 1
+    100274: lThighBend 2
+    100276: lThighTwist
+    100278: lThighTwist 1
+    100280: lThighTwist 2
+    100282: lThumb1
+    100284: lThumb2
+    100286: lThumb3
+    100288: lToe
+    100290: MidNoseBridge
+    100292: MidNoseBridge 1
+    100294: MuscleShirt_15736
+    100296: MuscleShirt_15736.Shape
+    100298: neckLower
+    100300: neckLower 1
+    100302: neckLower 2
+    100304: neckUpper
+    100306: neckUpper 1
+    100308: neckUpper 2
+    100310: Nose
+    100312: Nose 1
+    100314: pelvis
+    100316: pelvis 1
+    100318: pelvis 2
+    100320: pelvis 3
+    100322: rBigToe
+    100324: rBigToe_2
+    100326: rBrowInner
+    100328: rBrowInner 1
+    100330: rBrowMid
+    100332: rBrowMid 1
+    100334: rBrowOuter
+    100336: rBrowOuter 1
+    100338: rCarpal1
+    100340: rCarpal2
+    100342: rCarpal3
+    100344: rCarpal4
+    100346: rCheekLower
+    100348: rCheekUpper
+    100350: rCheekUpper 1
+    100352: rCollar
+    100354: rCollar 1
+    100356: rCollar 2
+    100358: rEar
+    100360: rEar 1
+    100362: rEye
+    100364: rEye 1
+    100366: rEyelidInner
+    100368: rEyelidInner 1
+    100370: rEyelidLower
+    100372: rEyelidLower 1
+    100374: rEyelidLowerInner
+    100376: rEyelidLowerInner 1
+    100378: rEyelidLowerOuter
+    100380: rEyelidLowerOuter 1
+    100382: rEyelidOuter
+    100384: rEyelidOuter 1
+    100386: rEyelidUpper
+    100388: rEyelidUpper 1
+    100390: rEyelidUpperInner
+    100392: rEyelidUpperInner 1
+    100394: rEyelidUpperOuter
+    100396: rEyelidUpperOuter 1
+    100398: rFoot
+    100400: rFoot 1
+    100402: rForearmBend
+    100404: rForearmBend 1
+    100406: rForearmTwist
+    100408: rHand
+    100410: rIndex1
+    100412: rIndex2
+    100414: rIndex3
+    100416: rJawClench
+    100418: rLipBelowNose
+    100420: rLipBelowNose 1
+    100422: rLipCorner
+    100424: rLipLowerInner
+    100426: rLipLowerOuter
+    100428: rLipNasolabialCrease
+    100430: rLipNasolabialCrease 1
+    100432: rLipUpperInner
+    100434: rLipUpperOuter
+    100436: rMetatarsals
+    100438: rMid1
+    100440: rMid2
+    100442: rMid3
+    100444: rNasolabialLower
+    100446: rNasolabialMiddle
+    100448: rNasolabialMiddle 1
+    100450: rNasolabialMouthCorner
+    100452: rNasolabialUpper
+    100454: rNasolabialUpper 1
+    100456: rNostril
+    100458: rNostril 1
+    100460: rPectoral
+    100462: rPectoral 1
+    100464: rPectoral 2
+    100466: rPinky1
+    100468: rPinky2
+    100470: rPinky3
+    100472: rRing1
+    100474: rRing2
+    100476: rRing3
+    100478: rShin
+    100480: rShin 1
+    100482: rShin 2
+    100484: rShldrBend
+    100486: rShldrBend 1
+    100488: rShldrTwist
+    100490: rShldrTwist 1
+    100492: rSmallToe1
+    100494: rSmallToe1_2
+    100496: rSmallToe2
+    100498: rSmallToe2_2
+    100500: rSmallToe3
+    100502: rSmallToe3_2
+    100504: rSmallToe4
+    100506: rSmallToe4_2
+    100508: rSquintInner
+    100510: rSquintInner 1
+    100512: rSquintOuter
+    100514: rSquintOuter 1
+    100516: rThighBend
+    100518: rThighBend 1
+    100520: rThighBend 2
+    100522: rThighTwist
+    100524: rThighTwist 1
+    100526: rThighTwist 2
+    100528: rThumb1
+    100530: rThumb2
+    100532: rThumb3
+    100534: rToe
+    100536: tongue01
+    100538: tongue02
+    100540: tongue03
+    100542: tongue04
+    100544: upperFaceRig
+    100546: upperFaceRig 1
+    100548: upperTeeth
+    100550: upperTeeth 1
+    400000: abdomenLower
+    400002: abdomenLower 1
+    400004: abdomenLower 2
+    400006: abdomenLower 3
+    400008: abdomenUpper
+    400010: abdomenUpper 1
+    400012: abdomenUpper 2
+    400014: abdomenUpper 3
+    400016: BelowJaw
+    400018: Boxers_8984
+    400020: Boxers_8984.Shape
+    400022: CenterBrow
+    400024: CenterBrow 1
+    400026: chestLower
+    400028: chestLower 1
+    400030: chestLower 2
+    400032: chestUpper
+    400034: chestUpper 1
+    400036: chestUpper 2
+    400038: Chin
+    400040: //RootNode
+    400042: Genesis8Male
+    400044: Genesis8Male.Shape
+    400046: Genesis8MaleEyelashes
+    400048: Genesis8MaleEyelashes.Shape
+    400050: head
+    400052: head 1
+    400054: hip
+    400056: hip 1
+    400058: hip 2
+    400060: hip 3
+    400062: lBigToe
+    400064: lBigToe_2
+    400066: lBrowInner
+    400068: lBrowInner 1
+    400070: lBrowMid
+    400072: lBrowMid 1
+    400074: lBrowOuter
+    400076: lBrowOuter 1
+    400078: lCarpal1
+    400080: lCarpal2
+    400082: lCarpal3
+    400084: lCarpal4
+    400086: lCheekLower
+    400088: lCheekUpper
+    400090: lCheekUpper 1
+    400092: lCollar
+    400094: lCollar 1
+    400096: lCollar 2
+    400098: lEar
+    400100: lEar 1
+    400102: lEye
+    400104: lEye 1
+    400106: lEyelidInner
+    400108: lEyelidInner 1
+    400110: lEyelidLower
+    400112: lEyelidLower 1
+    400114: lEyelidLowerInner
+    400116: lEyelidLowerInner 1
+    400118: lEyelidLowerOuter
+    400120: lEyelidLowerOuter 1
+    400122: lEyelidOuter
+    400124: lEyelidOuter 1
+    400126: lEyelidUpper
+    400128: lEyelidUpper 1
+    400130: lEyelidUpperInner
+    400132: lEyelidUpperInner 1
+    400134: lEyelidUpperOuter
+    400136: lEyelidUpperOuter 1
+    400138: lFoot
+    400140: lFoot 1
+    400142: lForearmBend
+    400144: lForearmBend 1
+    400146: lForearmTwist
+    400148: lHand
+    400150: lIndex1
+    400152: lIndex2
+    400154: lIndex3
+    400156: LipBelow
+    400158: LipLowerMiddle
+    400160: LipUpperMiddle
+    400162: lJawClench
+    400164: lLipBelowNose
+    400166: lLipBelowNose 1
+    400168: lLipCorner
+    400170: lLipLowerInner
+    400172: lLipLowerOuter
+    400174: lLipNasolabialCrease
+    400176: lLipNasolabialCrease 1
+    400178: lLipUpperInner
+    400180: lLipUpperOuter
+    400182: lMetatarsals
+    400184: lMid1
+    400186: lMid2
+    400188: lMid3
+    400190: lNasolabialLower
+    400192: lNasolabialMiddle
+    400194: lNasolabialMiddle 1
+    400196: lNasolabialMouthCorner
+    400198: lNasolabialUpper
+    400200: lNasolabialUpper 1
+    400202: lNostril
+    400204: lNostril 1
+    400206: lowerFaceRig
+    400208: lowerJaw
+    400210: lowerJaw 1
+    400212: lowerTeeth
+    400214: lPectoral
+    400216: lPectoral 1
+    400218: lPectoral 2
+    400220: lPinky1
+    400222: lPinky2
+    400224: lPinky3
+    400226: lRing1
+    400228: lRing2
+    400230: lRing3
+    400232: lShin
+    400234: lShin 1
+    400236: lShin 2
+    400238: lShldrBend
+    400240: lShldrBend 1
+    400242: lShldrTwist
+    400244: lShldrTwist 1
+    400246: lSmallToe1
+    400248: lSmallToe1_2
+    400250: lSmallToe2
+    400252: lSmallToe2_2
+    400254: lSmallToe3
+    400256: lSmallToe3_2
+    400258: lSmallToe4
+    400260: lSmallToe4_2
+    400262: lSquintInner
+    400264: lSquintInner 1
+    400266: lSquintOuter
+    400268: lSquintOuter 1
+    400270: lThighBend
+    400272: lThighBend 1
+    400274: lThighBend 2
+    400276: lThighTwist
+    400278: lThighTwist 1
+    400280: lThighTwist 2
+    400282: lThumb1
+    400284: lThumb2
+    400286: lThumb3
+    400288: lToe
+    400290: MidNoseBridge
+    400292: MidNoseBridge 1
+    400294: MuscleShirt_15736
+    400296: MuscleShirt_15736.Shape
+    400298: neckLower
+    400300: neckLower 1
+    400302: neckLower 2
+    400304: neckUpper
+    400306: neckUpper 1
+    400308: neckUpper 2
+    400310: Nose
+    400312: Nose 1
+    400314: pelvis
+    400316: pelvis 1
+    400318: pelvis 2
+    400320: pelvis 3
+    400322: rBigToe
+    400324: rBigToe_2
+    400326: rBrowInner
+    400328: rBrowInner 1
+    400330: rBrowMid
+    400332: rBrowMid 1
+    400334: rBrowOuter
+    400336: rBrowOuter 1
+    400338: rCarpal1
+    400340: rCarpal2
+    400342: rCarpal3
+    400344: rCarpal4
+    400346: rCheekLower
+    400348: rCheekUpper
+    400350: rCheekUpper 1
+    400352: rCollar
+    400354: rCollar 1
+    400356: rCollar 2
+    400358: rEar
+    400360: rEar 1
+    400362: rEye
+    400364: rEye 1
+    400366: rEyelidInner
+    400368: rEyelidInner 1
+    400370: rEyelidLower
+    400372: rEyelidLower 1
+    400374: rEyelidLowerInner
+    400376: rEyelidLowerInner 1
+    400378: rEyelidLowerOuter
+    400380: rEyelidLowerOuter 1
+    400382: rEyelidOuter
+    400384: rEyelidOuter 1
+    400386: rEyelidUpper
+    400388: rEyelidUpper 1
+    400390: rEyelidUpperInner
+    400392: rEyelidUpperInner 1
+    400394: rEyelidUpperOuter
+    400396: rEyelidUpperOuter 1
+    400398: rFoot
+    400400: rFoot 1
+    400402: rForearmBend
+    400404: rForearmBend 1
+    400406: rForearmTwist
+    400408: rHand
+    400410: rIndex1
+    400412: rIndex2
+    400414: rIndex3
+    400416: rJawClench
+    400418: rLipBelowNose
+    400420: rLipBelowNose 1
+    400422: rLipCorner
+    400424: rLipLowerInner
+    400426: rLipLowerOuter
+    400428: rLipNasolabialCrease
+    400430: rLipNasolabialCrease 1
+    400432: rLipUpperInner
+    400434: rLipUpperOuter
+    400436: rMetatarsals
+    400438: rMid1
+    400440: rMid2
+    400442: rMid3
+    400444: rNasolabialLower
+    400446: rNasolabialMiddle
+    400448: rNasolabialMiddle 1
+    400450: rNasolabialMouthCorner
+    400452: rNasolabialUpper
+    400454: rNasolabialUpper 1
+    400456: rNostril
+    400458: rNostril 1
+    400460: rPectoral
+    400462: rPectoral 1
+    400464: rPectoral 2
+    400466: rPinky1
+    400468: rPinky2
+    400470: rPinky3
+    400472: rRing1
+    400474: rRing2
+    400476: rRing3
+    400478: rShin
+    400480: rShin 1
+    400482: rShin 2
+    400484: rShldrBend
+    400486: rShldrBend 1
+    400488: rShldrTwist
+    400490: rShldrTwist 1
+    400492: rSmallToe1
+    400494: rSmallToe1_2
+    400496: rSmallToe2
+    400498: rSmallToe2_2
+    400500: rSmallToe3
+    400502: rSmallToe3_2
+    400504: rSmallToe4
+    400506: rSmallToe4_2
+    400508: rSquintInner
+    400510: rSquintInner 1
+    400512: rSquintOuter
+    400514: rSquintOuter 1
+    400516: rThighBend
+    400518: rThighBend 1
+    400520: rThighBend 2
+    400522: rThighTwist
+    400524: rThighTwist 1
+    400526: rThighTwist 2
+    400528: rThumb1
+    400530: rThumb2
+    400532: rThumb3
+    400534: rToe
+    400536: tongue01
+    400538: tongue02
+    400540: tongue03
+    400542: tongue04
+    400544: upperFaceRig
+    400546: upperFaceRig 1
+    400548: upperTeeth
+    400550: upperTeeth 1
+    2100000: Eyelashes
+    2100002: EyeMoisture
+    2100004: MuscleShirt
+    2100006: Boxers
+    2100008: BoxersWaistband
+    2100010: Face
+    2100012: Lips
+    2100014: Teeth
+    2100016: Torso
+    2100018: Ears
+    2100020: Legs
+    2100022: EyeSocket
+    2100024: Mouth
+    2100026: Arms
+    2100028: Pupils
+    2100030: Fingernails
+    2100032: Cornea
+    2100034: Irises
+    2100036: Sclera
+    2100038: Toenails
+    4300000: Genesis8MaleEyelashes.Shape
+    4300002: MuscleShirt_15736.Shape
+    4300004: Boxers_8984.Shape
+    4300006: Genesis8Male.Shape
+    7400000: Animation
+    9500000: //RootNode
+    13700000: Boxers_8984.Shape
+    13700002: Genesis8Male.Shape
+    13700004: Genesis8MaleEyelashes.Shape
+    13700006: MuscleShirt_15736.Shape
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
