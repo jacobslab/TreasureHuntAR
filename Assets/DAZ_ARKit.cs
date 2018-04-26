@@ -6,10 +6,12 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using System.Collections;
 using UnityEngine.XR.iOS;
+using UnityEngine.SceneManagement;
 public class DAZ_ARKit : MonoBehaviour {
 	public Camera FirstPersonCamera;
 	public GameObject treasureChestPrefab;
 	public GameObject dazPrefab;
+	public Animator animController;
 	public Text debugText;
 	//ui
 	public Button beginTrialButton;
@@ -17,6 +19,7 @@ public class DAZ_ARKit : MonoBehaviour {
 	public Button acceptUserResponseButton;
 	public Toggle debugVisualsToggle;
 
+	public AudioSource avatarAudioSource;
 
 	//debug visuals
 	public PointCloudParticleExample pointCloudManager;
@@ -138,8 +141,21 @@ void Start () {
 		spawnedModel.transform.parent =  planeAnchor.gameObject.transform;
 		spawnedModel.transform.localPosition = position;
 		spawnedModel.transform.parent = null;
+		avatarAudioSource = spawnedModel.GetComponent<AudioSource> ();
 		//Debug.Log ("about to set current chest ref");
 		yield return null;
+	}
+
+	public void StartTalking()
+	{
+		animController.Play ("Talking");
+		avatarAudioSource.Play();
+	}
+
+	public void StopTalking()
+	{
+		animController.Play ("Idle");
+		avatarAudioSource.Stop ();
 	}
 
 	public void BeginTrial()
@@ -147,5 +163,11 @@ void Start () {
 		beginTrialPanelUIGroup.alpha = 0f;
 		StartCoroutine ("RunTrial");
 	}
+	public void ChangeScene(int sceneIndex)
+	{
+		if (spawnedModel != null)
+			Destroy (spawnedModel);
+		SceneManager.LoadScene (sceneIndex,LoadSceneMode.Single);
 
+	}
 }

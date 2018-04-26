@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using System.Collections;
 using UnityEngine.XR.iOS;
+using UnityEngine.SceneManagement;
 public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public Camera FirstPersonCamera;
@@ -728,5 +729,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		userResponded = false;
 		yield return null;
+	}
+
+	public void ChangeScene(int sceneIndex)
+	{
+		if (spawnChest != null)
+			Destroy (spawnChest);
+		SceneManager.LoadScene (sceneIndex,LoadSceneMode.Single);
+
 	}
 }
