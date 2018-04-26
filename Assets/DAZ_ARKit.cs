@@ -18,6 +18,7 @@ public class DAZ_ARKit : MonoBehaviour {
 	public CanvasGroup beginTrialPanelUIGroup;
 	public Button acceptUserResponseButton;
 	public Toggle debugVisualsToggle;
+	public CanvasGroup talkPanelUIGroup;
 
 	public AudioSource avatarAudioSource;
 
@@ -57,7 +58,7 @@ public class DAZ_ARKit : MonoBehaviour {
 		}
 		_instance = this;
 	
-	beginTrialPanelUIGroup.alpha = 1f;
+		beginTrialPanelUIGroup.gameObject.SetActive (true);
 	acceptUserResponseButton.gameObject.SetActive (false);
 
 	debugVisuals = debugVisualsToggle.isOn;
@@ -65,6 +66,7 @@ public class DAZ_ARKit : MonoBehaviour {
 // Use this for initialization
 void Start () {
 	debugVisuals = true;
+		talkPanelUIGroup.gameObject.SetActive (false);
 	//		ChangeDebugVisualsStatus(true);
 }
 	
@@ -141,6 +143,7 @@ void Start () {
 		spawnedModel.transform.parent =  planeAnchor.gameObject.transform;
 		spawnedModel.transform.localPosition = position;
 		spawnedModel.transform.parent = null;
+		animController = spawnedModel.GetComponent<Animator> ();
 		avatarAudioSource = spawnedModel.GetComponent<AudioSource> ();
 		//Debug.Log ("about to set current chest ref");
 		yield return null;
@@ -148,19 +151,24 @@ void Start () {
 
 	public void StartTalking()
 	{
-		animController.Play ("Talking");
-		avatarAudioSource.Play();
+		if(animController!=null)
+			animController.Play ("Talking");
+		if(avatarAudioSource!=null)
+			avatarAudioSource.Play();
 	}
 
 	public void StopTalking()
 	{
-		animController.Play ("Idle");
-		avatarAudioSource.Stop ();
+		if(animController!=null)
+			animController.Play ("Idle");
+		if(avatarAudioSource!=null)
+			avatarAudioSource.Stop ();
 	}
 
 	public void BeginTrial()
 	{
-		beginTrialPanelUIGroup.alpha = 0f;
+		beginTrialPanelUIGroup.gameObject.SetActive (false);
+		talkPanelUIGroup.gameObject.SetActive(true);
 		StartCoroutine ("RunTrial");
 	}
 	public void ChangeScene(int sceneIndex)
