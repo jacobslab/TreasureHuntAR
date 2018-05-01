@@ -29,6 +29,10 @@ public class VisibilityToggler : MonoBehaviour {
 	//function to turn off (or on) the object without setting it inactive -- because we want to keep logging on
 	public void TurnVisible(bool shouldBeVisible){ 
 
+		//if it is a plane, then turn off the line renderer showing the plane geometry as well
+		if (isPlane) {
+			GetComponent<LineRenderer> ().enabled = shouldBeVisible;
+		}
 		if(GetComponent<MeshRenderer>() != null){
 			GetComponent<MeshRenderer>().enabled = shouldBeVisible;
 		}

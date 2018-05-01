@@ -11,7 +11,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public Camera FirstPersonCamera;
 	public GameObject treasureChestPrefab;
-	public GameObject clownPrefab;
 	public Text debugText;
 
 	private List<GameObject> spawnables;
@@ -32,7 +31,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public GameObject choiceSelectionPrefab;
 	public GameObject correctPositionIndicatorPrefab;
 	//ui
+
 	public Button beginTrialButton;
+	public CanvasGroup preSessionPanelUIGroup;
 	public CanvasGroup beginTrialPanelUIGroup;
 	public CanvasGroup retrievalPanelUIGroup;
 	public CanvasGroup scorePanelUIGroup;
@@ -97,6 +98,28 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		debugVisuals = true;
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
+		StartCoroutine ("PreSessionMapping");
+	}
+
+	IEnumerator PreSessionMapping()
+	{
+		bool needsMapping = true;
+		preSessionPanelUIGroup.alpha = 1f;
+		beginTrialPanelUIGroup.alpha = 0f;
+		while (arGenPlane.GetAnchorManager () == null) {
+			Debug.Log ("waiting for anchor manager to instantiate");
+			yield return null;
+		}
+		Debug.Log ("found anchor manager");
+		UnityARAnchorManager anchorManager = arGenPlane.GetAnchorManager ();
+		while (needsMapping) {
+			if (anchorManager.GetPlaneCount () > 1)
+				needsMapping = false;
+			yield return 0;
+		}
+		preSessionPanelUIGroup.alpha = 0f;
+		beginTrialPanelUIGroup.alpha = 1f;
+		yield return null;
 	}
 
 	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes,out GameObject hitObj)
@@ -129,38 +152,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			spawnChest.gameObject.GetComponent<TreasureChest> ().UpdateDistanceBar (distanceLeft);
 		}
 
-//		if (Input.touchCount > 0 && m_HitTransform != null)
-//		{
-//			var touch = Input.GetTouch(0);
-//			if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
-//			{
-//				var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
-//				ARPoint point = new ARPoint {
-//					x = screenPosition.x,
-//					y = screenPosition.y
-//				};
-//
-//				// prioritize results types
-//				ARHitTestResultType[] resultTypes = {
-//					//ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingGeometry,
-//					ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
-//					// if you want to use infinite planes use this:
-//					//ARHitTestResultType.ARHitTestResultTypeExistingPlane,
-//					//ARHitTestResultType.ARHitTestResultTypeEstimatedHorizontalPlane, 
-//					//ARHitTestResultType.ARHitTestResultTypeEstimatedVerticalPlane, 
-//					//ARHitTestResultType.ARHitTestResultTypeFeaturePoint
-//				}; 
-//
-//				foreach (ARHitTestResultType resultType in resultTypes)
-//				{
-//					if (HitTestWithResultType (point, resultType))
-//					{
-//						return;
-//					}
-//				}
-//			}
-//		}
-
 	}
 
 
@@ -191,18 +182,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			//wait until it's picked up, then spawn an object
 			while (!treasureFound) {
 				// If the player has not touched the screen, we are done with this update.
-
-//				if (Input.touchCount < 1 || (touch = Input.GetTouch (0)).phase != TouchPhase.Began) {
-////					Debug.Log ("NO TOUCH");
-//
-//					noTouch = true;
-//				} else
-//					noTouch = false;
-
-//				if (!noTouch) {
-
-					// Raycast against the location the player touched to search for planes.
-//					Debug.Log("MIGHT have a touch");
 				if (spawnChest != null) {
 
 					Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
@@ -226,13 +205,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 								Debug.Log ("new ar point: " + point.ToString ());
 								// prioritize results types
 								ARHitTestResultType[] resultTypes = {
-									//ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingGeometry,
 									ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
-									// if you want to use infinite planes use this:
-									//ARHitTestResultType.ARHitTestResultTypeExistingPlane,
-									//ARHitTestResultType.ARHitTestResultTypeEstimatedHorizontalPlane, 
-									//ARHitTestResultType.ARHitTestResultTypeEstimatedVerticalPlane, 
-									//ARHitTestResultType.ARHitTestResultTypeFeaturePoint
 								}; 
 
 								foreach (ARHitTestResultType resultType in resultTypes)
@@ -549,13 +522,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 								// prioritize results types
 								ARHitTestResultType[] resultTypes = {
-									//ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingGeometry,
-									ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
-									// if you want to use infinite planes use this:
-									//ARHitTestResultType.ARHitTestResultTypeExistingPlane,
-									//ARHitTestResultType.ARHitTestResultTypeEstimatedHorizontalPlane, 
-									//ARHitTestResultType.ARHitTestResultTypeEstimatedVerticalPlane, 
-									//ARHitTestResultType.ARHitTestResultTypeFeaturePoint
+									ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent
 								}; 
 
 								foreach (ARHitTestResultType resultType in resultTypes)
@@ -596,8 +563,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 			//reset the line color first
 			lineColor = Color.red;
-
-
 			if (retrievalSequenceList [i].GetComponent<VisibilityToggler> () != null) {
 				Debug.Log(retrievalSequenceList[i].gameObject.name + " pos: " + retrievalSequenceList [i].transform.position.ToString ());
 				retrievalSequenceList [i].GetComponent<VisibilityToggler> ().TurnVisible (true);
@@ -704,7 +669,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			Debug.Log ("changing ar plane anchors");
 			foreach (var plane in arPlaneAnchors) {
 				Debug.Log ("trying to find visibility toggler");
-				plane.gameObject.transform.GetChild (0).gameObject.GetComponent<VisibilityToggler> ().TurnVisible (debugVisuals);
+				plane.gameObject.GetComponent<VisibilityToggler> ().TurnVisible (debugVisuals);
 			}
 		}
 		Debug.Log ("about to turn off point cloud system");
@@ -729,6 +694,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		userResponded = false;
 		yield return null;
+	}
+
+	public void ResetScene() {
+		ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration ( UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.HorizontalAndVertical);
+		UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
 	}
 
 	public void ChangeScene(int sceneIndex)

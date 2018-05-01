@@ -17,9 +17,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UnityARKitPlugin/Examples/ARKit1.5/UnityARPlaneMesh/UnityARPlaneMesh.unity
     guid: 80858f7f97efd46c1ae3ee51a3134eef
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/DAZARkit.unity
     guid: 98116e5e4c13741de80887804f88c978
-  - enabled: 1
+  - enabled: 0
     path: Assets/WorldAR.unity
     guid: 651b16e8357334fe0b264096b15a5118
