@@ -19,7 +19,7 @@ namespace UnityEngine.XR.iOS
         private Texture2D _videoTextureCbCr;
 		private Matrix4x4 _displayTransform;
 
-		public Text trackingStateText;
+//		public Text trackingStateText;
 
 		private bool bCommandBufferInitialized;
 
@@ -33,7 +33,7 @@ namespace UnityEngine.XR.iOS
 		void UpdateFrame(UnityARCamera cam)
 		{
 			_displayTransform = new Matrix4x4();
-			trackingStateText.text=cam.trackingState.ToString();
+//			trackingStateText.text=cam.trackingState.ToString();
 			_displayTransform.SetColumn(0, cam.displayTransform.column0);
 			_displayTransform.SetColumn(1, cam.displayTransform.column1);
 			_displayTransform.SetColumn(2, cam.displayTransform.column2);

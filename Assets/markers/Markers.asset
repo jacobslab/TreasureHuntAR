@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c37f7746917f4760aa00e7ff7fd81dc, type: 3}
+  m_Name: Markers
+  m_EditorClassIdentifier: 
+  resourceGroupName: THMarkers
+  referenceImages:
+  - {fileID: 11400000, guid: 99203b763833e41c09f61cafa4c2ba95, type: 2}
+  - {fileID: 11400000, guid: ccfe28fe329dd4e6e830b7f6923f5226, type: 2}
+  - {fileID: 11400000, guid: 9d3e2c98a12da44d6b7274ce4b411c1c, type: 2}
+  - {fileID: 11400000, guid: 28daa24f0f7304107b83e92b98c98aa5, type: 2}

@@ -19,7 +19,7 @@ public class UnityARCameraManager : MonoBehaviour {
 	private bool sessionStarted = false;
 
 	//debug text
-	public Text debugText;
+//	public Text debugText;
 
 	// Use this for initialization
 	void Start () {
