@@ -30,8 +30,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public GameObject choiceSelectionPrefab;
 	public GameObject correctPositionIndicatorPrefab;
-	//ui
 
+	//ui
 	public Button beginTrialButton;
 	public CanvasGroup preSessionPanelUIGroup;
 	public CanvasGroup beginTrialPanelUIGroup;
@@ -40,7 +40,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public Text retrievalText;
 	public Button acceptUserResponseButton;
 	public Toggle debugVisualsToggle;
-
+	public Text preSessionInstructionText;
 
 	//debug visuals
 	public PointCloudParticleExample pointCloudManager;
@@ -63,6 +63,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public UnityARGeneratePlane arGenPlane;
 
 	public Transform m_HitTransform;
+
+	public GameObject markerPrefab;
+	public GameObject[] markerObjArr;
+
+	public GameObject quad;
+
+	public Bounds playBounds;
+	public LineRenderer lineRenderer;
+	bool finishedMapping=false;
+
+	private int markerNeeded = 4; // how many minimum markers to define the playable area
+
 	public float maxRayDistance = 30.0f;
 	public LayerMask collisionLayer = 1 << 10;  //ARKitPlane layer
 	//A SINGLETON
@@ -96,6 +108,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		debugVisuals = true;
+		markerObjArr = new GameObject[markerNeeded];
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
 		StartCoroutine ("PreSessionMapping");
@@ -113,13 +126,182 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		Debug.Log ("found anchor manager");
 		UnityARAnchorManager anchorManager = arGenPlane.GetAnchorManager ();
 		while (needsMapping) {
-			if (anchorManager.GetPlaneCount () > 1)
+			if (anchorManager.GetPlaneCount () > 1) {
+				yield return StartCoroutine ("DefineCornerMarkers");
 				needsMapping = false;
+			}
 			yield return 0;
 		}
 		preSessionPanelUIGroup.alpha = 0f;
 		beginTrialPanelUIGroup.alpha = 1f;
 		yield return null;
+	}
+
+	IEnumerator DefineCornerMarkers()
+	{
+		bool waitingForMarker = true;
+		for (int i = 0; i < 4; i++) {
+			waitingForMarker = true;
+			Debug.Log ("set waiting for marker to true");
+			while (waitingForMarker) {
+				preSessionInstructionText.text = "Tap to mark Corner No." + i.ToString ();
+				if (Input.touchCount > 0) {
+					var touch = Input.GetTouch (0);
+//					Debug.Log ("got a touch");
+					if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved) {
+						var screenPosition = Camera.main.ScreenToViewportPoint (touch.position);
+						ARPoint point = new ARPoint {
+							x = screenPosition.x,
+							y = screenPosition.y
+						};
+						Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
+						// prioritize results types
+						ARHitTestResultType[] resultTypes = {
+							ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
+						}; 
+
+						foreach (ARHitTestResultType resultType in resultTypes) {
+							ARHitTestResult hitResult = new ARHitTestResult ();
+							if (HitTestWithResultType (point, resultType, out hitResult)) {
+								SpawnMarker (hitResult, i);
+								preSessionInstructionText.text = "Great! You marked Corner No." + i.ToString ();
+								yield return new WaitForSeconds (1f);
+								waitingForMarker = false;
+								Debug.Log ("set waiting for marker to false");
+							}
+						}
+					}
+				}
+				Debug.Log ("waiting for touch");
+				yield return 0;
+			}
+		}
+		//make the actual bounds here
+		playBounds = new Bounds(Vector3.Lerp(markerObjArr[0].transform.position,markerObjArr[3].transform.position,0.5f),new Vector3(Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[1].transform.position),1f,Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[2].transform.position)));
+//		playBounds= new Bounds(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z,Vector2.Distance(new Vector2(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z),new Vector2(markerObjArr[1].transform.position.x,markerObjArr[1].transform.position.z)),Vector2.Distance(new Vector2(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z),new Vector2(markerObjArr[2].transform.position.x,markerObjArr[2].transform.position.z)));
+		List<Vector3> markerList = new List<Vector3> ();
+		Vector3[] markerPos = new Vector3[4];
+
+		Debug.Log ("playrect center is: " + playBounds.center.ToString ());
+		Debug.Log ("playrect extents: " + playBounds.extents.ToString ());
+//		for (int j = 0; j < 4; j++) {
+//			Debug.Log ("position at " + j.ToString () + " : " + markerObjArr [j].transform.position.ToString ());
+//			markerPos[j]=markerObjArr [j].transform.position;
+//			markerList.Add (markerObjArr [j].transform.position);
+//		}
+//		markerPos[0]=new Vector3(playRect.x,markerObjArr[0].transform.position.y,playRect.y);
+//		markerPos[1]= new Vector3(playRect.x + playRect.xMax,markerObjArr[0].transform.position.y, playRect.y);
+//		markerPos[2]=new Vector3(playRect.x,markerObjArr[0].transform.position.y, playRect.y + playRect.yMax);
+//		markerPos[3]= new Vector3(playRect.x + playRect.xMax,markerObjArr[0].transform.position.y, playRect.y + playRect.yMax);
+//		lineRenderer.positionCount = 4;
+//		lineRenderer.SetPositions (markerPos);
+//
+//		quad.transform.position = Vector3.Lerp (markerObjArr [0].transform.position, markerObjArr [3].transform.position,0.5f);
+//		Debug.Log ("vertex count in the list: " + markerPos.Count.ToString ());
+//		Debug.Log ("quad vertext count is: " + quad.GetComponent<MeshFilter> ().mesh.vertexCount.ToString ());;
+//		quad.GetComponent<MeshFilter>().mesh.SetVertices (markerList);
+//		quad.GetComponent<MeshRenderer> ().enabled = true;
+//		quad.GetComponent<MeshFilter> ().mesh.RecalculateBounds ();
+//		Vector3[] planeVertices = new Vector3[4];
+//		planeVertices = quad.GetComponent<MeshFilter> ().mesh.vertices;
+//		for (int k = 0; k < planeVertices.Length; k++) {
+//			Debug.Log ("plane vertex: " + planeVertices [k].ToString ());
+//		}
+		Debug.Log ("finished the for loop");
+
+
+		finishedMapping = true;
+
+		//spawn random objects that appear within the playable area
+		for (int k = 0; k < 100; k++) {
+			
+		}
+		yield return null;
+	}
+
+	void Update()
+	{
+		if (finishedMapping) {
+			if (Input.touchCount > 0) {
+				var touch = Input.GetTouch (0);
+//				Debug.Log ("got a touch");
+				if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved) {
+					var screenPosition = Camera.main.ScreenToViewportPoint (touch.position);
+					ARPoint point = new ARPoint {
+						x = screenPosition.x,
+						y = screenPosition.y
+					};
+					Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString () + ")");
+					// prioritize results types
+					ARHitTestResultType[] resultTypes = {
+						ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
+					}; 
+
+					foreach (ARHitTestResultType resultType in resultTypes) {
+						ARHitTestResult hitResult = new ARHitTestResult ();
+						if (HitTestWithResultType (point, resultType, out hitResult)) {
+							Vector3 position = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
+							Debug.Log ("hit position is:  " + position.ToString ());
+							if (playBounds.Contains (position)) {
+								debugText.text = "WITHIN: "+ position.ToString() ;
+								Debug.Log ("WITHIN THE RECT");
+							} else {
+								debugText.text = "outside " + position.ToString(); 
+								Debug.Log ("outside the RECT");
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	void SpawnMarker(ARHitTestResult hitResult, int markerIndex)
+	{
+
+//		GameObject markerObj = Instantiate (markerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+		Vector3 position = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
+		Quaternion rotation = UnityARMatrixOps.GetRotation (hitResult.worldTransform);
+		Color col = Color.black;
+		markerObjArr[markerIndex] = Instantiate<GameObject> (markerPrefab, position, rotation);
+
+		Debug.Log ("spawned the marker obj");
+		switch(markerIndex)
+		{
+		case 0:
+			col = Color.red;
+			break;
+		case 1:
+			col = Color.green;
+			break;
+		case 2:
+			col = Color.blue;
+			break;
+		case 3:
+			col = Color.white;
+			break;
+		}
+		Debug.Log ("selected a color");
+		markerObjArr[markerIndex].GetComponent<MeshRenderer> ().material.color = col;
+		Debug.Log ("finished changing the color");
+	}
+
+	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes, out ARHitTestResult chosenHitResult)
+	{
+		List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface ().HitTest (point, resultTypes);
+		chosenHitResult = new ARHitTestResult();
+		if (hitResults.Count > 0) {
+			foreach (var hitResult in hitResults) {
+//				Debug.Log ("Got hit!");
+//				markerObj.transform.position = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
+//				markerObj.transform.rotation = UnityARMatrixOps.GetRotation (hitResult.worldTransform);
+				chosenHitResult = hitResult;
+//				Debug.Log (string.Format ("x:{0:0.######} y:{1:0.######} z:{2:0.######}", m_HitTransform.position.x, m_HitTransform.position.y, m_HitTransform.position.z));
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes,out GameObject hitObj)
@@ -128,7 +310,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface ().HitTest (point, resultTypes);
 		if (hitResults.Count > 0) {
 			foreach (var hitResult in hitResults) {
-				Debug.Log ("Got hit!");
+//				Debug.Log ("Got hit!");
 				//output the hit position,
 				//NOTE: ONLY THE LAST HIT WILL OUTPUT
 				hitObj.transform.position = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
@@ -194,7 +376,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 						if (Input.touchCount > 0)
 						{
 							var touch = Input.GetTouch(0);
-							Debug.Log ("got a touch");
+//							Debug.Log ("got a touch");
 							if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
 							{
 								var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
@@ -511,7 +693,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				if (Input.touchCount > 0)
 				{
 					var touch = Input.GetTouch(0);
-					Debug.Log ("got a touch");
+//					Debug.Log ("got a touch");
 					if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
 					{
 								var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);

@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TransformTracker : MonoBehaviour {
 
+	public TextMesh posText;
 	// Use this for initialization
 	void Start () {
 		
@@ -11,6 +13,6 @@ public class TransformTracker : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.Log (transform.position.ToString ());
+		posText.text = transform.position.ToString ();
 	}
 }

@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/HelloAR.unity
     guid: e6a6fa04348cb45c9b0221eb19c946da
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/TH_ARKit.unity
     guid: 888dca828edac49c0b99957e7f7cfefd
   - enabled: 0
@@ -32,6 +32,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UnityARKitPlugin/Examples/ARKit1.5/UnityARImageAnchor/UnityARImageAnchor.unity
     guid: befc06ba4fe0046439ef5dac5a33c0e7
-  - enabled: 1
+  - enabled: 0
     path: Assets/anchortest.unity
     guid: 8b1ef17bb47cf4b839d9632bf3e1e189
