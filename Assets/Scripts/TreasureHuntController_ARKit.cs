@@ -640,6 +640,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		return position;
 	}
 
+
 	private int GetPlaneIndex(int chestInt)
 	{
 		return spawnPlaneIndexList [chestInt];
@@ -940,10 +941,27 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		yield return null;
 	}
 
+	void RemoveSpawnedObjects()
+	{
+		for(int i=0;i<spawnedObjList.Count;i++)
+		{
+			Destroy (spawnedObjList [i]);
+		}
+		if (currentChest != null)
+			Destroy (currentChest);
+	}
+
 	public void ResetScene() {
 		sessionValid = false;
 		ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration ( UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.HorizontalAndVertical);
 		UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
+
+		//remove any spawned objects
+		RemoveSpawnedObjects();
+
+		//reload the scene
+		SceneManager.UnloadSceneAsync(0);
+		SceneManager.LoadScene(0);
 	}
 
 	public void ChangeScene(int sceneIndex)

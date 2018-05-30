@@ -6,6 +6,7 @@ using System.Text;
 public class NetworkSyncServer : MonoBehaviour {
 
 	public bool isAtStartup = true;
+	public SyncboxControl syncControl;
 	private short handleID = 888;
 	public int port = 4444;
 	void Update()
@@ -26,6 +27,12 @@ public class NetworkSyncServer : MonoBehaviour {
 
 	public void OnMsgReceived(NetworkMessage netMsg)
 	{
-		Debug.Log ("Received a message: " + netMsg.reader.ReadString());
+		string msgReceived = netMsg.reader.ReadString ();
+		Debug.Log ("Received a message: " + msgReceived);
+		if (msgReceived == "ON")
+			syncControl.ToggleLEDOn ();
+		else if (msgReceived == "OFF")
+			syncControl.ToggleLEDOff ();
+
 	}
 }

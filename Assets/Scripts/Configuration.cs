@@ -8,6 +8,8 @@ public class Configuration : MonoBehaviour {
 	public static float presentationTime=3f;
 	public static int maxObjects =3;
 
+	public static bool isSyncbox = true;
+
 	public static float minRetrievalDistance = 0.1f;
 	public static float minResponseDistance = 0.75f;
 	// Use this for initialization
