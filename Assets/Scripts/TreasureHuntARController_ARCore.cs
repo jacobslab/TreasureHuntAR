@@ -298,7 +298,7 @@ public class TreasureHuntARController_ARCore: MonoBehaviour
 	{
 		for (int i = 0; i < chestLocationList.Count; i++) {
 			if (i != currentIndex) {
-				if (Vector3.Distance (chestLocation, chestLocationList [i]) < 0.1f)
+				if (Vector3.Distance (chestLocation, chestLocationList [i]) < 0.2f)
 					return false;
 			}
 		}

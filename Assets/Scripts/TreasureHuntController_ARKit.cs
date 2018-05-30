@@ -128,10 +128,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		preSessionPanelUIGroup.alpha = 1f;
 		beginTrialPanelUIGroup.alpha = 0f;
 		while (arGenPlane.GetAnchorManager () == null) {
-			Debug.Log ("waiting for anchor manager to instantiate");
+//			Debug.Log ("waiting for anchor manager to instantiate");
 			yield return null;
 		}
-		Debug.Log ("found anchor manager");
+//		Debug.Log ("found anchor manager");
 		UnityARAnchorManager anchorManager = arGenPlane.GetAnchorManager ();
 		while (needsMapping) {
 			if (anchorManager.GetPlaneCount () > 0) {
@@ -150,7 +150,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		bool waitingForMarker = true;
 		for (int i = 0; i < 4; i++) {
 			waitingForMarker = true;
-			Debug.Log ("set waiting for marker to true");
+//			Debug.Log ("set waiting for marker to true");
 			while (waitingForMarker) {
 				preSessionInstructionText.text = "Tap to mark Corner No." + i.ToString ();
 				if (Input.touchCount > 0) {
@@ -162,7 +162,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 							x = screenPosition.x,
 							y = screenPosition.y
 						};
-						Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
+//						Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
 						// prioritize results types
 						ARHitTestResultType[] resultTypes = {
 							ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
@@ -175,24 +175,26 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 								preSessionInstructionText.text = "Great! You marked Corner No." + i.ToString ();
 								yield return new WaitForSeconds (1f);
 								waitingForMarker = false;
-								Debug.Log ("set waiting for marker to false");
+//								Debug.Log ("set waiting for marker to false");
 							}
 						}
 					}
 				}
-				Debug.Log ("waiting for touch");
+//				Debug.Log ("waiting for touch");
 				yield return 0;
 			}
 		}
+
+		debugText.text = Vector3.Distance (markerObjArr [0].transform.position, markerObjArr [3].transform.position).ToString ();
 		//make the actual bounds here
 		playBounds = new Bounds(Vector3.Lerp(markerObjArr[0].transform.position,markerObjArr[3].transform.position,0.5f),new Vector3(Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[1].transform.position),1f,Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[2].transform.position)));
 //		playBounds= new Bounds(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z,Vector2.Distance(new Vector2(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z),new Vector2(markerObjArr[1].transform.position.x,markerObjArr[1].transform.position.z)),Vector2.Distance(new Vector2(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z),new Vector2(markerObjArr[2].transform.position.x,markerObjArr[2].transform.position.z)));
 		List<Vector3> markerList = new List<Vector3> ();
 		Vector3[] markerPos = new Vector3[4];
 
-		Debug.Log ("playrect center is: " + playBounds.center.ToString ());
-		Debug.Log ("playrect extents: " + playBounds.extents.ToString ());
-		Debug.Log ("finished the for loop");
+//		Debug.Log ("playrect center is: " + playBounds.center.ToString ());
+//		Debug.Log ("playrect extents: " + playBounds.extents.ToString ());
+//		Debug.Log ("finished the for loop");
 
 
 		finishedMapping = true;
@@ -220,7 +222,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			testSpawn.transform.localPosition = pos;
 			testSpawn.transform.parent = null;
 			testList.Add (testSpawn);
-			Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
+//			Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
 
 			if (playBounds.Contains (testSpawn.transform.position)) {
 				testSpawn.GetComponent<MeshRenderer> ().material.color = Color.green;
@@ -243,7 +245,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	void Update()
 	{
-		debugText.text = playBounds.center.ToString ();
+//		debugText.text = playBounds.center.ToString ();
 //		if (finishedMapping) {
 //			if (Input.touchCount > 0) {
 //				var touch = Input.GetTouch (0);
@@ -289,7 +291,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		Color col = Color.black;
 		markerObjArr[markerIndex] = Instantiate<GameObject> (markerPrefab, position, rotation);
 
-		Debug.Log ("spawned the marker obj");
+//		Debug.Log ("spawned the marker obj");
 		switch(markerIndex)
 		{
 		case 0:
@@ -305,9 +307,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			col = Color.white;
 			break;
 		}
-		Debug.Log ("selected a color");
 		markerObjArr[markerIndex].GetComponent<MeshRenderer> ().material.color = col;
-		Debug.Log ("finished changing the color");
 	}
 
 	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes, out ARHitTestResult chosenHitResult)
@@ -363,7 +363,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public IEnumerator RunTrial()
 	{
-		Debug.Log ("trial has BEGUN!");
 		bool treasureFound = false;
 		bool noTouch = false;
 		//turn off the retrieval panel, if it hasn't been already
@@ -381,7 +380,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 				treasureFound = false;
 				//spawn a treasure chest at a random location
-				Debug.Log ("about to spawn chest");
 				yield return StartCoroutine (SpawnTreasureChest (chestIndex));
 
 				//wait until it's picked up, then spawn an object
@@ -405,7 +403,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 								x = screenPosition.x,
 								y = screenPosition.y
 							};
-							Debug.Log ("new ar point: " + point.ToString ());
 							// prioritize results types
 							ARHitTestResultType[] resultTypes = {
 								ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
@@ -426,7 +423,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 										canOpen = true;
 									} else {
 										float distanceLeft = Mathf.Clamp (distance - Configuration.minResponseDistance, -0.1f, Configuration.minResponseDistance);
-										debugText.text = distanceLeft.ToString ();
+//										debugText.text = distanceLeft.ToString ();
 										spawnChest.gameObject.GetComponent<TreasureChest> ().UpdateDistanceBar (distanceLeft);
 										if (distanceLeft < 0f) {
 											canOpen = true;
@@ -581,14 +578,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				obj.transform.parent = null;
 				if (playBounds.Contains (obj.transform.position)) {
 					spawnPlaneIndexList [i] = randPlane;
-					Debug.Log ("chosen plane is: " + randPlane.ToString ());
-					testObjList.Add (obj);
 					notInPlayBounds = false;
 				}
-				 else {
-					Destroy (obj);
-				}
-//				Destroy (obj);
+				Destroy (obj);
 
 				yield return 0;
 			}
@@ -601,12 +593,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	private bool CheckSufficientDistanceBetweenChests(Vector3 chestLocation, List<Vector3> chestLocationList,int currentIndex)
 	{
+		float dist = 0f;
 		for (int i = 0; i < chestLocationList.Count; i++) {
 			if (i != currentIndex) {
-				if (Vector3.Distance (chestLocation, chestLocationList [i]) < 0.1f)
+				if (Vector3.Distance (chestLocation, chestLocationList [i]) < 0.4f)
 					return false;
+				dist = Vector3.Distance (chestLocation, chestLocationList [i]);
 			}
 		}
+		Debug.Log ("sufficient distance was:  " + dist.ToString ());
+
+		debugText.text = "Sufficient dist: " + dist.ToString ();
 		return true;
 	}
 
@@ -650,7 +647,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	private Vector3 GetChestPosition(int chestInt)
 	{
-		Debug.Log ("returned chest position: " + chestSpawnLocationList [chestInt].ToString());
 		return chestSpawnLocationList [chestInt];
 	}
 
@@ -663,7 +659,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public IEnumerator SpawnTreasureChest(int chestIndex)
 	{
-		Debug.Log ("spawning chest number: " + chestIndex.ToString ());
 
 		//reset current chest reference
 		currentChest = null;
@@ -788,7 +783,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 							if (HitTestWithResultType (point, resultType, out hitObj))
 									{
 										//Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (hit.Pose.position, Quaternion.identity));
-								Debug.Log("hit position is: " + hitObj.transform.position.ToString());
 								GameObject choiceObj = Instantiate (choiceSelectionPrefab, hitObj.transform.position, hitObj.transform.rotation);
 								choiceSelectionList.Add (choiceObj);
 
@@ -814,7 +808,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		Color lineColor = Color.red; //wrong by default
 		List<GameObject> correctPositionIndicatorList = new List<GameObject> ();
 		retrievalText.text = "Showing feedback...";
-		Debug.Log("retseq count : " + retrievalSequenceList.Count.ToString());
 		//make all the spawned objects and choice selection visible
 		for (int i = 0; i < retrievalSequenceList.Count; i++) {
 
@@ -829,7 +822,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				correctPositionIndicator.transform.localPosition = Vector3.zero;
 				//now determine if the response was within range
 				float responseDistance = Vector3.Distance (retrievalSequenceList [i].transform.position, choiceSelectionList [i].transform.position);
-				Debug.Log("response distance: " + responseDistance.ToString ());
 				if (responseDistance < Configuration.minResponseDistance) {
 					lineColor = Color.green;
 					correctResponseList.Add (true);
@@ -899,7 +891,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public void UpdateNavigationStatus()
 	{
 		canNavigate = canNavigateToggle.isOn;
-		Debug.Log ("CAN NAVIGATE IS: " + canNavigate.ToString ());
 	}
 
 	public void ToggleDebugVisuals()
@@ -912,26 +903,22 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public void ChangeDebugVisualsStatus(bool shouldEnable)
 	{
 		debugVisuals = shouldEnable;
-		Debug.Log ("turning debug visuals off");
 		StartCoroutine("UpdateDebugVisuals");
 	}
 //
 	IEnumerator UpdateDebugVisuals()
 	{
+
+//		debugText.text = "Debug viz: " + debugVisuals.ToString ();
 		//keep things on, else turn it off
 			UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
-		Debug.Log ("found ar anchormanager");
 			LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 		if (arPlaneAnchors.Count > 0) {
-			Debug.Log ("changing ar plane anchors");
 			foreach (var plane in arPlaneAnchors) {
-				Debug.Log ("trying to find visibility toggler");
 				plane.gameObject.GetComponent<VisibilityToggler> ().TurnVisible (debugVisuals);
 			}
 		}
-		Debug.Log ("about to turn off point cloud system");
 		pointCloudManager.TogglePointCloud (debugVisuals);
-		Debug.Log ("debug visuals should be " + debugVisuals.ToString());
 		yield return null;
 	}
 
