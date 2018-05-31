@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 using System.Collections;
 using UnityEngine.XR.iOS;
 using UnityEngine.SceneManagement;
+using System.IO;
 public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public Camera FirstPersonCamera;
@@ -85,11 +86,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	bool sessionValid=false;
 
+	public Logger_Threading eegLog;
+	public Logger_Threading subjectLog;
+
+	public string sessionDirectory=  "" ;
+	public int sessionID=0;
+	public string sessionStartedFileName = "";
+
 	public float maxRayDistance = 30.0f;
 	public LayerMask collisionLayer = 1 << 10;  //ARKitPlane layer
 	//A SINGLETON
 	private static TreasureHuntController_ARKit _instance;
-
 
 
 	public static TreasureHuntController_ARKit Instance {
@@ -97,6 +104,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			return _instance;
 		}
 	}
+
+
 
 	void Awake()
 	{
@@ -122,6 +131,42 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
 		StartCoroutine ("PreSessionMapping");
+	}
+
+
+	void InitLogging(){
+		string subjectDirectory = Configuration.defaultLoggingPath + Configuration.currentSubject.name + "/";
+		sessionDirectory = subjectDirectory + "session_0" + "/";
+
+		sessionID = 0;
+		string sessionIDString = "_0";
+
+		if(!Directory.Exists(subjectDirectory)){
+			Directory.CreateDirectory(subjectDirectory);
+		}
+		while (File.Exists(sessionDirectory + sessionStartedFileName)){//Directory.Exists(sessionDirectory)) {
+			sessionID++;
+
+			sessionIDString = "_" + sessionID.ToString();
+
+			sessionDirectory = subjectDirectory + "session" + sessionIDString + "/";
+		}
+
+		//delete old files.
+		if(Directory.Exists(sessionDirectory)){
+			DirectoryInfo info = new DirectoryInfo(sessionDirectory);
+			FileInfo[] fileInfo = info.GetFiles();
+			for(int i = 0; i < fileInfo.Length; i++){
+				File.Delete(fileInfo[i].ToString());
+			}
+		}
+		else{ //if directory didn't exist, make it!
+			Directory.CreateDirectory(sessionDirectory);
+		}
+
+		subjectLog.fileName = sessionDirectory + Configuration.currentSubject.name + "Log" + ".txt";
+		eegLog.fileName = sessionDirectory + Configuration.currentSubject.name + "EEGLog" + ".txt";
+		Debug.Log ("SUBJECT LOG: " + subjectLog.fileName);
 	}
 
 	IEnumerator PreSessionMapping()

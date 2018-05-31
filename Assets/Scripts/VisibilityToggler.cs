@@ -22,9 +22,9 @@ public class VisibilityToggler : MonoBehaviour {
 
 	}
 
-//	public bool GetVisibility(){
-//		return isVisible;
-//	}
+	public bool GetVisibility(){
+		return isVisible;
+	}
 
 	//function to turn off (or on) the object without setting it inactive -- because we want to keep logging on
 	public void TurnVisible(bool shouldBeVisible){ 
