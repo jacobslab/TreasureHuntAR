@@ -48,6 +48,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	private GameObject currentChest;
 
+	public GameObject coinShowerParticles;
+
 	//scoring
 	private int totalScore = 0;
 
@@ -712,11 +714,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		//Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
 
 		if (currentChest != null) {
-			spawnObj = Instantiate (spawnableTrialList [chestIndex], Vector3.zero, Quaternion.identity);
+			spawnObj = Instantiate (spawnableTrialList [chestIndex], Vector3.zero, Quaternion.identity) as GameObject;
 			spawnObj.transform.parent = currentChest.transform;
 			spawnObj.transform.rotation = currentChest.transform.rotation;
 			spawnObj.transform.localPosition = Vector3.zero;
 			spawnObj.transform.parent = null;
+
+			GameObject particlePrefab = Instantiate (coinShowerParticles, Vector3.zero, Quaternion.identity) as GameObject;
+			particlePrefab.transform.parent = currentChest.transform;
+			particlePrefab.transform.rotation = currentChest.transform.rotation;
+			particlePrefab.transform.localPosition = Vector3.zero;
+			particlePrefab.transform.parent = null;
+
 			//		debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
 
 			//add to the spawn obj list
@@ -943,10 +952,16 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	void RemoveSpawnedObjects()
 	{
+		//first destroy all the spawned objects
 		for(int i=0;i<spawnedObjList.Count;i++)
 		{
 			Destroy (spawnedObjList [i]);
 		}
+
+		//then clear the list
+		spawnedObjList.Clear ();
+
+		//destroy any spawned chests as well
 		if (currentChest != null)
 			Destroy (currentChest);
 	}

@@ -482,6 +482,7 @@ MonoBehaviour:
   preSessionInstructionText: {fileID: 226848941}
   pointCloudManager: {fileID: 903019472}
   debugVisuals: 0
+  coinShowerParticles: {fileID: 181134, guid: 3e6edc8db7c9647c0a94d1e5e855e737, type: 2}
   canNavigate: 0
   canNavigateToggle: {fileID: 714579465}
   arCamManager: {fileID: 1541959972}
@@ -794,13 +795,13 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 467937629}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2012059422}
-  m_Father: {fileID: 1426702380}
-  m_RootOrder: 12
+  m_Father: {fileID: 1387635855}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -3263,6 +3264,7 @@ RectTransform:
   m_Children:
   - {fileID: 1533133237}
   - {fileID: 714579464}
+  - {fileID: 467937630}
   m_Father: {fileID: 1426702380}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3486,7 +3488,6 @@ RectTransform:
   - {fileID: 1084166635}
   - {fileID: 1719555228}
   - {fileID: 918926825}
-  - {fileID: 467937630}
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
