@@ -31,7 +31,7 @@ public class Configuration : MonoBehaviour {
 
 	public static bool isSyncbox = true;
 
-	public static string defaultLoggingPath="";
+	public static string defaultLoggingPath;
 
 	private static Subject _currentSubject;
 
@@ -40,6 +40,11 @@ public class Configuration : MonoBehaviour {
 		set{ 
 			_currentSubject = value;
 		}
+	}
+
+	void Awake()
+	{
+		defaultLoggingPath = Application.persistentDataPath;
 	}
 
 	public static float minRetrievalDistance = 0.1f;

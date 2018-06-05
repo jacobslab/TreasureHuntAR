@@ -42,6 +42,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public Button acceptUserResponseButton;
 	public Toggle debugVisualsToggle;
 	public Text preSessionInstructionText;
+	public Button confirmMarkersButton;
 
 	//debug visuals
 	public PointCloudParticleExample pointCloudManager;
@@ -85,6 +86,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	bool notInPlayBounds = false;
 
 	bool sessionValid=false;
+
+	private bool continueProcess=false;
 
 	public Logger_Threading eegLog;
 	public Logger_Threading subjectLog;
@@ -130,6 +133,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		markerObjArr = new GameObject[markerNeeded];
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
+		StartCoroutine ("InitLogging");
 		StartCoroutine ("PreSessionMapping");
 	}
 
@@ -192,14 +196,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		yield return null;
 	}
 
+	public void CompleteMarkingProcess()
+	{
+		continueProcess = false;
+	}
+
 	IEnumerator DefineCornerMarkers()
 	{
 		bool waitingForMarker = true;
-		for (int i = 0; i < 4; i++) {
+		continueProcess = true;
+		confirmMarkersButton.interactable = false;
+		int index = 0;
+		while(continueProcess)
+		{
 			waitingForMarker = true;
 //			Debug.Log ("set waiting for marker to true");
 			while (waitingForMarker) {
-				preSessionInstructionText.text = "Tap to mark Corner No." + i.ToString ();
+				preSessionInstructionText.text = "Tap to mark Corner No." + index.ToString ();
 				if (Input.touchCount > 0) {
 					var touch = Input.GetTouch (0);
 //					Debug.Log ("got a touch");
@@ -218,8 +231,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 						foreach (ARHitTestResultType resultType in resultTypes) {
 							ARHitTestResult hitResult = new ARHitTestResult ();
 							if (HitTestWithResultType (point, resultType, out hitResult)) {
-								SpawnMarker (hitResult, i);
-								preSessionInstructionText.text = "Great! You marked Corner No." + i.ToString ();
+								SpawnMarker (hitResult, index);
+								preSessionInstructionText.text = "Great! You marked Corner No." + index.ToString ();
 								yield return new WaitForSeconds (1f);
 								waitingForMarker = false;
 //								Debug.Log ("set waiting for marker to false");
@@ -230,6 +243,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 //				Debug.Log ("waiting for touch");
 				yield return 0;
 			}
+			index++;
+
+			//set button to interactable after atleast four points have been selected
+			if(index>4)
+				confirmMarkersButton.interactable = true;
+			yield return 0;
 		}
 
 		debugText.text = Vector3.Distance (markerObjArr [0].transform.position, markerObjArr [3].transform.position).ToString ();
