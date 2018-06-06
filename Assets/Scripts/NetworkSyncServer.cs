@@ -28,11 +28,15 @@ public class NetworkSyncServer : MonoBehaviour {
 	public void OnMsgReceived(NetworkMessage netMsg)
 	{
 		string msgReceived = netMsg.reader.ReadString ();
-		Debug.Log ("Received a message: " + msgReceived);
-		if (msgReceived == "ON")
-			syncControl.ToggleLEDOn ();
-		else if (msgReceived == "OFF")
-			syncControl.ToggleLEDOff ();
+//		Debug.Log ("Received a message: " + msgReceived);
+		long time = long.Parse (msgReceived);
+		long latency = GameClock.SystemTime_Milliseconds - time;
+		Debug.Log ("ipad time: " + time.ToString () + "pc time: " + GameClock.SystemTime_Milliseconds);
+		Debug.Log("latency is : " + latency.ToString ());
+//		if (msgReceived == "ON")
+//			syncControl.ToggleLEDOn ();
+//		else if (msgReceived == "OFF")
+//			syncControl.ToggleLEDOff ();
 
 	}
 }

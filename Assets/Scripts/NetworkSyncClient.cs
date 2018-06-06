@@ -95,7 +95,7 @@ public class NetworkSyncClient : MonoBehaviour {
 	void ToggleLEDOn()
 	{
 		ledStatus.color = Color.green;
-		var msg = new StringMessage ("ON");
+		var msg = new StringMessage (GameClock.SystemTime_MillisecondsString);
 		UnityEngine.Debug.Log ("about to send a message");
 		myClient.Send(RegisterHostMsgId, msg);
 	}
@@ -103,7 +103,7 @@ public class NetworkSyncClient : MonoBehaviour {
 	void ToggleLEDOff()
 	{
 		ledStatus.color = Color.white;
-		var msg = new StringMessage ("OFF");
+		var msg = new StringMessage (GameClock.SystemTime_MillisecondsString);
 		UnityEngine.Debug.Log ("about to send a message");
 		myClient.Send(RegisterHostMsgId, msg);
 	}
