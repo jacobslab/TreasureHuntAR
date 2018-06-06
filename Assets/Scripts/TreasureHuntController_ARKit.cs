@@ -69,7 +69,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public Transform m_HitTransform;
 
 	public GameObject markerPrefab;
-	public GameObject[] markerObjArr;
+	public List<GameObject> markerObjList;
+	private List<Vector2> markerPosList;
+
+	public GeoUtils geoUtils;
 
 	public GameObject quad;
 
@@ -88,6 +91,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	bool sessionValid=false;
 
 	private bool continueProcess=false;
+	private bool waitingForMarker = false;
 
 	public Logger_Threading eegLog;
 	public Logger_Threading subjectLog;
@@ -117,6 +121,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			return;
 		}
 		_instance = this;
+		markerPosList = new List<Vector2> ();
 		spawnables = new List<GameObject> ();
 		testObjList = new List<GameObject> ();
 		spawnArr = Resources.LoadAll ("Prefabs/Objects");
@@ -126,14 +131,16 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		acceptUserResponseButton.gameObject.SetActive (false);
 
 		debugVisuals = debugVisualsToggle.isOn;
+
+		Debug.Log ("persistent path: " + Application.persistentDataPath);
 	}
 	// Use this for initialization
 	void Start () {
 		debugVisuals = true;
-		markerObjArr = new GameObject[markerNeeded];
+		markerObjList = new List<GameObject> ();
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
-		StartCoroutine ("InitLogging");
+//		StartCoroutine ("InitLogging");
 		StartCoroutine ("PreSessionMapping");
 	}
 
@@ -198,13 +205,15 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public void CompleteMarkingProcess()
 	{
+		Debug.Log ("process should be complete");
+		waitingForMarker = false;
 		continueProcess = false;
 	}
 
 	IEnumerator DefineCornerMarkers()
 	{
-		bool waitingForMarker = true;
 		continueProcess = true;
+		confirmMarkersButton.enabled = true;
 		confirmMarkersButton.interactable = false;
 		int index = 0;
 		while(continueProcess)
@@ -215,27 +224,37 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				preSessionInstructionText.text = "Tap to mark Corner No." + index.ToString ();
 				if (Input.touchCount > 0) {
 					var touch = Input.GetTouch (0);
+					int id = touch.fingerId;
+					 
 //					Debug.Log ("got a touch");
-					if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved) {
-						var screenPosition = Camera.main.ScreenToViewportPoint (touch.position);
-						ARPoint point = new ARPoint {
-							x = screenPosition.x,
-							y = screenPosition.y
-						};
+						if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved) {
+						// Check if there is a touch
+							// Check if finger is over a UI element
+							if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+							{
+								Debug.Log("Touched the UI");
+							}
+						else {
+							var screenPosition = Camera.main.ScreenToViewportPoint (touch.position);
+							ARPoint point = new ARPoint {
+								x = screenPosition.x,
+								y = screenPosition.y
+							};
 //						Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
-						// prioritize results types
-						ARHitTestResultType[] resultTypes = {
-							ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
-						}; 
+							// prioritize results types
+							ARHitTestResultType[] resultTypes = {
+								ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
+							}; 
 
-						foreach (ARHitTestResultType resultType in resultTypes) {
-							ARHitTestResult hitResult = new ARHitTestResult ();
-							if (HitTestWithResultType (point, resultType, out hitResult)) {
-								SpawnMarker (hitResult, index);
-								preSessionInstructionText.text = "Great! You marked Corner No." + index.ToString ();
-								yield return new WaitForSeconds (1f);
-								waitingForMarker = false;
+							foreach (ARHitTestResultType resultType in resultTypes) {
+								ARHitTestResult hitResult = new ARHitTestResult ();
+								if (HitTestWithResultType (point, resultType, out hitResult)) {
+									SpawnMarker (hitResult, index);
+									preSessionInstructionText.text = "Great! You marked Corner No." + index.ToString ();
+									yield return new WaitForSeconds (1f);
+									waitingForMarker = false;
 //								Debug.Log ("set waiting for marker to false");
+								}
 							}
 						}
 					}
@@ -250,13 +269,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				confirmMarkersButton.interactable = true;
 			yield return 0;
 		}
+		Debug.Log ("turned off the button");
+		confirmMarkersButton.interactable = false;
+		confirmMarkersButton.enabled = false;
 
-		debugText.text = Vector3.Distance (markerObjArr [0].transform.position, markerObjArr [3].transform.position).ToString ();
+		for (int i = 0; i < markerObjList.Count; i++) {
+			markerPosList.Add (new Vector2 (markerObjList [i].transform.position.x, markerObjList [i].transform.position.z));
+		}
+		Debug.Log ("finished adding marker positions");
 		//make the actual bounds here
-		playBounds = new Bounds(Vector3.Lerp(markerObjArr[0].transform.position,markerObjArr[3].transform.position,0.5f),new Vector3(Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[1].transform.position),1f,Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[2].transform.position)));
-//		playBounds= new Bounds(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z,Vector2.Distance(new Vector2(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z),new Vector2(markerObjArr[1].transform.position.x,markerObjArr[1].transform.position.z)),Vector2.Distance(new Vector2(markerObjArr[0].transform.position.x,markerObjArr[0].transform.position.z),new Vector2(markerObjArr[2].transform.position.x,markerObjArr[2].transform.position.z)));
+//		playBounds = new Bounds(Vector3.Lerp(markerObjArr[0].transform.position,markerObjArr[3].transform.position,0.5f),new Vector3(Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[1].transform.position),1f,Vector3.Distance(markerObjArr[0].transform.position,markerObjArr[2].transform.position)));
 		List<Vector3> markerList = new List<Vector3> ();
-		Vector3[] markerPos = new Vector3[4];
+//		Vector3[] markerPos = new Vector3[4];
 
 //		Debug.Log ("playrect center is: " + playBounds.center.ToString ());
 //		Debug.Log ("playrect extents: " + playBounds.extents.ToString ());
@@ -290,7 +314,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			testList.Add (testSpawn);
 //			Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
 
-			if (playBounds.Contains (testSpawn.transform.position)) {
+			if (geoUtils.IsPointInPolygon(markerPosList,new Vector2(testSpawn.transform.position.x,testSpawn.transform.position.z))) {
 				testSpawn.GetComponent<MeshRenderer> ().material.color = Color.green;
 			} else
 				testSpawn.GetComponent<MeshRenderer> ().material.color = Color.red;
@@ -303,14 +327,27 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			Destroy (testList [i]);
 		}
 		//turn off the marker obj renderers
-		for (int j = 0; j < markerObjArr.Length; j++) {
-			markerObjArr [j].GetComponent<MeshRenderer> ().enabled = false;
+		for (int j = 0; j < markerObjList.Count; j++) {
+			markerObjList [j].GetComponent<MeshRenderer> ().enabled = false;
 		}
 		yield return null;
 	}
 
 	void Update()
 	{
+		// Check if there is a touch
+//		if (Input.touchCount > 0)
+//		{
+//			var touch = Input.GetTouch(0);
+//			if(touch.phase == TouchPhase.Began)
+//			{
+//			// Check if finger is over a UI element
+//			if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+//			{
+//				Debug.Log("Touched the UI");
+//			}
+//			}
+//		}
 //		debugText.text = playBounds.center.ToString ();
 //		if (finishedMapping) {
 //			if (Input.touchCount > 0) {
@@ -355,7 +392,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		Vector3 position = UnityARMatrixOps.GetPosition (hitResult.worldTransform);
 		Quaternion rotation = UnityARMatrixOps.GetRotation (hitResult.worldTransform);
 		Color col = Color.black;
-		markerObjArr[markerIndex] = Instantiate<GameObject> (markerPrefab, position, rotation);
+		markerObjList.Add(Instantiate<GameObject> (markerPrefab, position, rotation));
 
 //		Debug.Log ("spawned the marker obj");
 		switch(markerIndex)
@@ -373,7 +410,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			col = Color.white;
 			break;
 		}
-		markerObjArr[markerIndex].GetComponent<MeshRenderer> ().material.color = col;
+		markerObjList[markerIndex].GetComponent<MeshRenderer> ().material.color = col;
 	}
 
 	bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes, out ARHitTestResult chosenHitResult)
@@ -642,7 +679,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				obj.transform.parent = planeAnchor.gameObject.transform;
 				obj.transform.localPosition = chestSpawnLocationList [i];
 				obj.transform.parent = null;
-				if (playBounds.Contains (obj.transform.position)) {
+				if (geoUtils.IsPointInPolygon(markerPosList,new Vector2(obj.transform.position.x,obj.transform.position.z))) {
 					spawnPlaneIndexList [i] = randPlane;
 					notInPlayBounds = false;
 				}

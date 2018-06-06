@@ -133,7 +133,7 @@ public class Logger_Threading : MonoBehaviour
 		if (Configuration.isLogging)
         {
             myLoggerQueue = new LoggerQueue();
-            StartCoroutine("LogWriter");
+//            StartCoroutine("LogWriter");
             //			myLoggerWriter = new LoggerWriter (fileName, myLoggerQueue);
             //		
             //			myLoggerWriter.Start ();

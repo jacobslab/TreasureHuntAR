@@ -2,28 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GiftWrapping : MonoBehaviour {
+public class GeoUtils : MonoBehaviour {
 
-	public List<GameObject> cubes;
-	private List<Vector2> points;
 	// Use this for initialization
 	void Start () {
-		points = new List<Vector2> ();
-		Debug.Log ("cubes count is: " + cubes.Count.ToString ());
-		for (int i = 0; i < cubes.Count; i++) {
-			points.Add(new Vector2 (cubes [i].transform.position.x, cubes [i].transform.position.z));
-		}
-		Debug.Log ("points size is: " + points.Count.ToString());
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
-		if (Input.GetKeyDown (KeyCode.D)) {
-			StartCoroutine ("PerformGiftWrapping", points);
-			Debug.Log ("point x is: " + points [1].ToString ());
-//			Debug.Log(isLeft(points[0],points[1],points[2]));
-		}
+//		if (Input.GetKeyDown (KeyCode.D)) {
+//			points = new List<Vector2> ();
+//			for (int i = 0; i < cubes.Count; i++) {
+//				points.Add(new Vector2 (cubes [i].transform.position.x, cubes [i].transform.position.z));
+//			}
+//			testObj.Clear ();
+//			for(int j=0;j<100;j++)
+//			{
+//				GameObject test = Instantiate(testSphere,new Vector3(Random.Range(-10f,10f),1f,Random.Range(-10f,10f)),Quaternion.identity) as GameObject;
+//					
+////			StartCoroutine ("PerformGiftWrapping", points);
+//					Vector2 testPos = new Vector2(test.transform.position.x,test.transform.position.z);
+//					bool result = IsPointInPolygon(points,testPos);
+//					if(result)
+//						test.GetComponent<MeshRenderer>().material.color = Color.green;
+//					else
+//						test.GetComponent<MeshRenderer>().material.color= Color.red;
+//					testObj.Add(test);
+////			Debug.Log(isLeft(points[0],points[1],points[2]));
+//			}
+//		}
+
 	}
 
 	public IEnumerator PerformGiftWrapping(List<Vector2> points) // only considering xz-plane
@@ -69,5 +79,23 @@ public class GiftWrapping : MonoBehaviour {
 		bool res = ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) > 0;
 		Debug.Log ("is " + c.ToString () + " left of : " + a.ToString () + " and " + b.ToString () + res.ToString());
 		return ((b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x)) > 0;
+	}
+
+	public bool IsPointInPolygon(List<Vector2> polygon,Vector2 testPoint)
+	{
+		bool result = false;
+		int j = polygon.Count - 1;
+		for (int i = 0; i < polygon.Count; i++)
+		{
+			if (polygon[i].y < testPoint.y && polygon[j].y >= testPoint.y || polygon[j].y < testPoint.y && polygon[i].y >= testPoint.y)
+			{
+				if (polygon[i].x + (testPoint.y - polygon[i].y) / (polygon[j].y - polygon[i].y) * (polygon[j].x - polygon[i].x) < testPoint.x)
+				{
+					result = !result;
+				}
+			}
+			j = i;
+		}
+		return result;
 	}
 }
