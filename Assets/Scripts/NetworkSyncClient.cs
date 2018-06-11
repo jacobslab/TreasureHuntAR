@@ -83,6 +83,8 @@ public class NetworkSyncClient : MonoBehaviour {
 		}
 		yield return null;
 	}
+
+
 	IEnumerator WaitForShortTime(float jitter){
 		float currentTime = 0.0f;
 		while (currentTime < jitter) {
@@ -95,17 +97,20 @@ public class NetworkSyncClient : MonoBehaviour {
 	void ToggleLEDOn()
 	{
 		ledStatus.color = Color.green;
-		var msg = new StringMessage (GameClock.SystemTime_MillisecondsString);
-		UnityEngine.Debug.Log ("about to send a message");
-		myClient.Send(RegisterHostMsgId, msg);
+		StartCoroutine (GameClock.GetNistTime (result => {
+			var msg = new StringMessage (result);
+			UnityEngine.Debug.Log ("about to send a message");
+			myClient.Send(RegisterHostMsgId, msg);
+
+		}));
 	}
 
 	void ToggleLEDOff()
 	{
 		ledStatus.color = Color.white;
-		var msg = new StringMessage (GameClock.SystemTime_MillisecondsString);
-		UnityEngine.Debug.Log ("about to send a message");
-		myClient.Send(RegisterHostMsgId, msg);
+//		var msg = new StringMessage (System.DateTime.Now);
+//		UnityEngine.Debug.Log ("about to send a message");
+//		myClient.Send(RegisterHostMsgId, msg);
 	}
 
 	public void UpdateServerAddress()
