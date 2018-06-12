@@ -48,7 +48,7 @@ public class Configuration : MonoBehaviour {
 	}
 
 	public static float minRetrievalDistance = 0.1f;
-	public static float minResponseDistance = 0.75f;
+	public static float minResponseDistance = 0.15f;
 	// Use this for initialization
 	void Start () {
 		
