@@ -103,7 +103,7 @@ public class GenerateImageAnchor : MonoBehaviour {
 		}
 
 	}
-
+		
 	void OnDestroy()
 	{
 		UnityARSessionNativeInterface.ARImageAnchorAddedEvent -= AddImageAnchor;

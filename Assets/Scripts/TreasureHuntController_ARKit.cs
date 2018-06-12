@@ -455,7 +455,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
 			Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
 			float distance = Vector3.Distance (spawnChest.transform.position, camPos);
-			float distanceLeft = Mathf.Clamp(distance - Configuration.minResponseDistance,-0.1f,Configuration.minResponseDistance);
+			float distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance,-0.1f,Configuration.minOpenDistance);
 //			debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
 			spawnChest.gameObject.GetComponent<TreasureChest> ().UpdateDistanceBar (distanceLeft);
 		}
@@ -525,7 +525,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 									if (!canNavigate) {
 										canOpen = true;
 									} else {
-										float distanceLeft = Mathf.Clamp (distance - Configuration.minResponseDistance, -0.1f, Configuration.minResponseDistance);
+									float distanceLeft = Mathf.Clamp (distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
 //										debugText.text = distanceLeft.ToString ();
 										spawnChest.gameObject.GetComponent<TreasureChest> ().UpdateDistanceBar (distanceLeft);
 										if (distanceLeft < 0f) {

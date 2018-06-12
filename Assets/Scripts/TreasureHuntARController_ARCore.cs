@@ -433,7 +433,6 @@ public class TreasureHuntARController_ARCore: MonoBehaviour
 			//reset the line color first
 			lineColor = Color.red;
 
-
 			if (retrievalSequenceList [i].GetComponent<VisibilityToggler> () != null) {
 				debugText.text = debugText.text.Insert (0, retrievalSequenceList[i].gameObject.name + " pos: " + retrievalSequenceList [i].transform.position.ToString ());
 				retrievalSequenceList [i].GetComponent<VisibilityToggler> ().TurnVisible (true);

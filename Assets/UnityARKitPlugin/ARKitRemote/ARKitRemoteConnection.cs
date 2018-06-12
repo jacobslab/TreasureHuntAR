@@ -160,6 +160,7 @@ namespace UnityEngine.XR.iOS
 		{
 			if (!bTexturesInitialized)
 				return;
+
 			remoteScreenYTex.LoadRawTextureData(mea.data);
 			remoteScreenYTex.Apply ();
 			UnityARVideo arVideo = Camera.main.GetComponent<UnityARVideo>();

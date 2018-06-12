@@ -29,7 +29,7 @@ public class Configuration : MonoBehaviour {
 
 	public static string VersionNumber = "0.3";
 
-	public static bool isSyncbox = true;
+	public static bool isSyncbox = false;
 
 	public static string defaultLoggingPath;
 
@@ -48,7 +48,8 @@ public class Configuration : MonoBehaviour {
 	}
 
 	public static float minRetrievalDistance = 0.1f;
-	public static float minResponseDistance = 0.15f;
+	public static float minOpenDistance = 0.75f;
+	public static float minResponseDistance = 0.15f; //minimum distance to check to see if the response circle is close enough to the actual object position
 	// Use this for initialization
 	void Start () {
 		

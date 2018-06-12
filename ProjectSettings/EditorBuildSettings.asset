@@ -35,3 +35,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/anchortest.unity
     guid: 8b1ef17bb47cf4b839d9632bf3e1e189
+  - enabled: 0
+    path: Assets/UnityARKitPlugin/ARKitRemote/UnityARKitRemote.unity
+    guid: 3ed73c0c9d4b76a418a0541c0cefd3ac

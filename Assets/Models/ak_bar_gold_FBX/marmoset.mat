@@ -1,0 +1,14 @@
+MadeOf Wood
+
+PhongEnvironment
+{
+	DiffuseMap bar_gold_DIF.tga
+	NormalMap bar_gold_NRM.tga
+	SpecularMap bar_gold_SPEC.tga
+	UseSpecular
+	SpecularExponent 256
+	SpecularColor 1 1 1
+	SpecularIntensity 10
+	Fresnel 3
+}
+
