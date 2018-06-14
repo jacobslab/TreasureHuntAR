@@ -38,11 +38,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public CanvasGroup beginTrialPanelUIGroup;
 	public CanvasGroup retrievalPanelUIGroup;
 	public CanvasGroup scorePanelUIGroup;
+	public CanvasGroup endSessionPanelUIGroup;
 	public Text retrievalText;
 	public Button acceptUserResponseButton;
 	public Toggle debugVisualsToggle;
 	public Text preSessionInstructionText;
 	public Button confirmMarkersButton;
+
 
 	//debug visuals
 	public PointCloudParticleExample pointCloudManager;
@@ -93,6 +95,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	private bool continueProcess=false;
 	private bool waitingForMarker = false;
 
+	public int currentTrialIndex = 0;
+	public int maxTrials = 0;
+
 	public Logger_Threading eegLog;
 	public Logger_Threading subjectLog;
 
@@ -126,6 +131,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		testObjList = new List<GameObject> ();
 		spawnArr = Resources.LoadAll ("Prefabs/Objects");
 		retrievalPanelUIGroup.alpha = 0f;
+		endSessionPanelUIGroup.alpha = 0f;
 		scorePanelUIGroup.alpha = 0f;
 		beginTrialPanelUIGroup.alpha = 1f;
 		acceptUserResponseButton.gameObject.SetActive (false);
@@ -185,6 +191,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		bool needsMapping = true;
 		preSessionPanelUIGroup.alpha = 1f;
 		beginTrialPanelUIGroup.alpha = 0f;
+
+
+		//make a simple spawnable list for this trial before the mapping
+		yield return StartCoroutine (MakeSpawnableList ());
+
 		while (arGenPlane.GetAnchorManager () == null) {
 //			Debug.Log ("waiting for anchor manager to instantiate");
 			yield return null;
@@ -475,8 +486,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		ChangeDebugVisualsStatus(false);
 
 
-		//make a simple spawnable list for this trial
-		yield return StartCoroutine (MakeSpawnableList ());
 		yield return StartCoroutine (CreateChestLocationList ());
 		//let's make sure we don't exceed the max spawnables 
 			for (int i = 0; i < Configuration.maxObjects; i++) {
@@ -579,29 +588,43 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		for (int i = 0; i < testObjList.Count; i++) {
 			Destroy (testObjList [i]);
 		}
-
 		retrievalText.text = "End trial";
 		yield return new WaitForSeconds (1f);
 		retrievalPanelUIGroup.alpha = 0f;
 		beginTrialPanelUIGroup.alpha = 1f;
 		ChangeDebugVisualsStatus (true);
+
+		ClearLists ();
+		//reset chest index
+		chestIndex=0;
+		currentTrialIndex++; //increment the trial count
+
 		yield return null;
 	}
 
+
+	void ClearLists()
+	{
+
+		spawnedObjList.Clear ();
+		retrievalSequenceList.Clear ();
+		choiceSelectionList.Clear ();
+	}
+	//gets called in the pre-session mapping
 	IEnumerator MakeSpawnableList()
 	{
 
 		//Debug.Log ("making spawnable lists");
 		//clear any leftovers
 		spawnables.Clear ();
-		spawnedObjList.Clear ();
-		retrievalSequenceList.Clear ();
-		choiceSelectionList.Clear ();
+		ClearLists ();
 		spawnPlaneIndexList.Clear ();
-
-		Configuration.maxObjects = spawnArr.Length; // 0 inclusive
+		maxTrials = spawnArr.Length / Configuration.maxObjects;
+		Debug.Log ("number of trials are: " + maxTrials.ToString ());
+//		Configuration.maxObjects = spawnArr.Length; // 0 inclusive
 		for (int i = 0; i < spawnArr.Length; i++) {
 			spawnables.Add ((GameObject)spawnArr [i]);
+
 		}
 
 		int totalCount = spawnables.Count;
@@ -632,7 +655,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		int planeCount = arAnchorManager.GetPlaneCount ();
 
 		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
-
 		ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
 		int currentIndex = 0;
 
@@ -699,7 +721,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		float dist = 0f;
 		for (int i = 0; i < chestLocationList.Count; i++) {
 			if (i != currentIndex) {
-				if (Vector3.Distance (chestLocation, chestLocationList [i]) < 0.4f)
+				if (Vector3.Distance (chestLocation, chestLocationList [i]) < 0.25f)
 					return false;
 				dist = Vector3.Distance (chestLocation, chestLocationList [i]);
 			}
@@ -754,11 +776,24 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		return chestSpawnLocationList [chestInt];
 	}
 
-	public void BeginTrial()
+	public void BeginTrialSequence()
 	{
-		beginTrialPanelUIGroup.alpha = 0f;
-		sessionValid = true;
-		StartCoroutine ("RunTrial");
+		if (currentTrialIndex < maxTrials) {
+			beginTrialPanelUIGroup.alpha = 0f;
+			sessionValid = true;
+			StartCoroutine ("BeginTrial");
+		} else {
+
+			beginTrialPanelUIGroup.alpha = 0f;
+			sessionValid = true;
+			endSessionPanelUIGroup.alpha = 1f;
+		}
+	}
+
+	IEnumerator BeginTrial()
+	{
+		yield return  StartCoroutine(RunTrial());
+		yield return null;
 	}
 
 	public IEnumerator SpawnTreasureChest(int chestIndex)
@@ -815,7 +850,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		//Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (chestPosition, Quaternion.identity));
 
 		if (currentChest != null) {
-			spawnObj = Instantiate (spawnableTrialList [chestIndex], Vector3.zero, Quaternion.identity) as GameObject;
+			spawnObj = Instantiate (spawnableTrialList [(currentTrialIndex  * 3) + chestIndex], Vector3.zero, Quaternion.identity) as GameObject;
 			spawnObj.transform.parent = currentChest.transform;
 			spawnObj.transform.rotation = currentChest.transform.rotation;
 			spawnObj.transform.localPosition = Vector3.zero;
@@ -902,6 +937,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 										choiceObj.GetComponent<VisibilityToggler> ().TurnVisible (false);
 										//choice made bool set to true so we can exit out of the loop
 										retrievalChoiceMade = true;
+
 									}
 								}
 							}
@@ -1068,6 +1104,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	}
 
 	public void ResetScene() {
+
+		Debug.Log ("ABOUT TO RESET THE SCENE");
 		sessionValid = false;
 		ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration ( UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.HorizontalAndVertical);
 		UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
