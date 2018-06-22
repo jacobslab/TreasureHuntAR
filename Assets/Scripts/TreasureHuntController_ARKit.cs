@@ -105,6 +105,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public int sessionID=0;
 	public string sessionStartedFileName = "";
 
+
+	//save-load
+	public List<string> spawnToJson;
+	public List<GameObject> sceneObjList;
+
 	public float maxRayDistance = 30.0f;
 	public LayerMask collisionLayer = 1 << 10;  //ARKitPlane layer
 	//A SINGLETON
@@ -137,6 +142,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		acceptUserResponseButton.gameObject.SetActive (false);
 
 		debugVisuals = debugVisualsToggle.isOn;
+		sceneObjList = new List<GameObject> ();
 
 		Debug.Log ("persistent path: " + Application.persistentDataPath);
 	}
@@ -219,6 +225,47 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		Debug.Log ("process should be complete");
 		waitingForMarker = false;
 		continueProcess = false;
+	}
+
+
+	public IEnumerator Save()
+	{
+		for(int i=0;i<sceneObjList.Count;i++)
+		{
+			spawnToJson.Add(JsonUtility.ToJson (sceneObjList [i]));
+		}
+
+		yield return null;
+	}
+
+	public IEnumerator Load()
+	{
+		for (int i = 0; i < spawnToJson.Count; i++) {
+			GameObject respawnedObj = JsonUtility.FromJson<GameObject> (spawnToJson [i]);
+			Debug.Log ("the name of the respawned object is: " + respawnedObj.name);
+		}
+
+		yield return null;
+	}
+
+	public void ActivateSaveChangeLoad()
+	{
+		StartCoroutine ("SCLCoroutine");
+	}
+
+	IEnumerator SCLCoroutine()
+	{
+		yield return StartCoroutine (Save ());
+		sessionValid = false;
+
+		SceneManager.LoadScene ("Overview", LoadSceneMode.Additive);
+		Scene currentScene = SceneManager.GetActiveScene ();
+		SceneManager.MoveGameObjectToScene (this.gameObject, SceneManager.GetSceneAt (1));
+		SceneManager.SetActiveScene(SceneManager.GetSceneAt(1));
+		SceneManager.UnloadSceneAsync (currentScene);
+
+		yield return StartCoroutine (Load ());
+		yield return null;
 	}
 
 	IEnumerator DefineCornerMarkers()
@@ -644,6 +691,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		chestIndex=0;
 		yield return null;
 
+	}
+
+	public void SaveAllObjects()
+	{
+		
 	}
 	IEnumerator CreateChestLocationList()
 	{
