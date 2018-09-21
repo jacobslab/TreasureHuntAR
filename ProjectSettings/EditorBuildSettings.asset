@@ -38,6 +38,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UnityARKitPlugin/ARKitRemote/UnityARKitRemote.unity
     guid: 3ed73c0c9d4b76a418a0541c0cefd3ac
-  - enabled: 1
+  - enabled: 0
     path: Assets/Overview.unity
     guid: 2745344161df2416eb083579638f2587

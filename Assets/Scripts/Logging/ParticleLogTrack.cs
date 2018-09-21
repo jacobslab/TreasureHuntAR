@@ -38,11 +38,11 @@ public class ParticleLogTrack : LogTrack {
 		}
 
 		if (particleEmitter != null) {
-			if (!isEmitterPlaying && particleEmitter.emit) {
+			if (!isEmitterPlaying) {
 				isEmitterPlaying = true;
 				LogParticleEmitterPlaying (particleEmitter.transform.position);
 			} 
-			else if (isEmitterPlaying && !particleEmitter.emit) {
+			else if (isEmitterPlaying) {
 				isEmitterPlaying = false;
 				LogParticleEmitterOver (particleEmitter.transform.position);
 			}
@@ -51,11 +51,11 @@ public class ParticleLogTrack : LogTrack {
 
 	//for logging the particle system
 	void LogParticleSystemPlaying(Vector3 systemLocation){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), GetNameToLog() + separator + "PARTICLE_SYSTEM_PLAYING" + separator + particleSystem.name + separator + "IS_LOOPING" + separator + particleSystem.loop + separator + systemLocation.x + separator + systemLocation.y + separator + systemLocation.z);
+		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), GetNameToLog() + separator + "PARTICLE_SYSTEM_PLAYING" + separator + particleSystem.name + separator + "IS_LOOPING" + separator + particleSystem.main.loop + separator + systemLocation.x + separator + systemLocation.y + separator + systemLocation.z);
 	}
 
 	void LogParticleSystemOver(Vector3 systemLocation){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), GetNameToLog() + separator + "PARTICLE_SYSTEM_STOPPED" + separator + particleSystem.name + separator + "IS_LOOPING" + separator + particleSystem.loop + separator + systemLocation.x + separator + systemLocation.y + separator + systemLocation.z);
+		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), GetNameToLog() + separator + "PARTICLE_SYSTEM_STOPPED" + separator + particleSystem.name + separator + "IS_LOOPING" + separator + particleSystem.main.loop + separator + systemLocation.x + separator + systemLocation.y + separator + systemLocation.z);
 	}
 
 	//for logging the particle emitter
@@ -96,7 +96,7 @@ public class ParticleLogTrack : LogTrack {
 		}
 		if (isEmitterPlaying) {
 			isEmitterPlaying = false;
-			particleEmitter.emit = false;
+			//particleEmitter.emit = false;
 			LogParticleEmitterOver(particleEmitter.transform.position);
 		}
 	}

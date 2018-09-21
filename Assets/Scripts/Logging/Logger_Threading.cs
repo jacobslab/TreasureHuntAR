@@ -145,6 +145,7 @@ public class Logger_Threading : MonoBehaviour
     public Logger_Threading(string file)
     {
         fileName = file;
+
     }
 
     IEnumerator LogWriter()

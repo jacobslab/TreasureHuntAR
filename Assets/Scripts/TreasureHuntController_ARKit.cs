@@ -872,8 +872,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			}
 			currentIndex++;
 		}
-
-
 		Vector3 position = GetChestPosition (chestIndex);
 		Vector3 planeRotation = planeAnchor.gameObject.transform.rotation.eulerAngles;
 		Vector3 modChestRot = new Vector3 (planeRotation.x, planeRotation.y, -planeRotation.z);
