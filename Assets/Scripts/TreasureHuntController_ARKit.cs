@@ -96,7 +96,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	private bool waitingForMarker = false;
 
 	public int currentTrialIndex = 0;
-	public int maxTrials = 0;
+	private int maxTrials = 3;
 
 	public Logger_Threading eegLog;
 	public Logger_Threading subjectLog;
@@ -1153,20 +1153,20 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			Destroy (currentChest);
 	}
 
-	public void ResetScene() {
+	//public void ResetScene() {
 
-		Debug.Log ("ABOUT TO RESET THE SCENE");
-		sessionValid = false;
-		ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration ( UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.HorizontalAndVertical);
-		UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
+	//	Debug.Log ("ABOUT TO RESET THE SCENE");
+	//	sessionValid = false;
+	//	ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration ( UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.HorizontalAndVertical);
+	//	UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
 
-		//remove any spawned objects
-		RemoveSpawnedObjects();
+	//	//remove any spawned objects
+	//	RemoveSpawnedObjects();
 
-		//reload the scene
-		SceneManager.UnloadSceneAsync(0);
-		SceneManager.LoadScene(0);
-	}
+	//	//reload the scene
+	//	SceneManager.UnloadSceneAsync(0);
+	//	SceneManager.LoadScene(0);
+	//}
 
 	public void ChangeScene(int sceneIndex)
 	{
