@@ -133,7 +133,7 @@ public class Logger_Threading : MonoBehaviour
 		if (Configuration.isLogging)
         {
             myLoggerQueue = new LoggerQueue();
-//            StartCoroutine("LogWriter");
+            StartCoroutine("LogWriter");
             //			myLoggerWriter = new LoggerWriter (fileName, myLoggerQueue);
             //		
             //			myLoggerWriter.Start ();
@@ -148,11 +148,14 @@ public class Logger_Threading : MonoBehaviour
 
     }
 
+
     IEnumerator LogWriter()
     {
         isRunning = true;
 
         logfile = new StreamWriter(fileName, true, Encoding.ASCII, 0x10000);
+        logfile.AutoFlush = true;
+
         UnityEngine.Debug.Log("running logwriter coroutine writing at " + fileName);
         while (isRunning)
         {
@@ -161,8 +164,9 @@ public class Logger_Threading : MonoBehaviour
             {
                 string msg = myLoggerQueue.GetFromLogQueue();
 
-                //				UnityEngine.Debug.Log ("writing: " + msg);
+                UnityEngine.Debug.Log ("writing: " + msg);
                 logfile.WriteLine(msg);
+                
                 //				yield return 0;
             }
             yield return 0;
@@ -208,6 +212,7 @@ public class Logger_Threading : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        UnityEngine.Debug.Log("quittin application");
         isRunning = false;
     }
 

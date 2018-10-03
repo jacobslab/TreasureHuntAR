@@ -45,6 +45,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public Text preSessionInstructionText;
 	public Button confirmMarkersButton;
 
+    //logging
+    public TrialLogTrack trialLog;
+
 
 	//debug visuals
 	public PointCloudParticleExample pointCloudManager;
@@ -152,16 +155,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		markerObjList = new List<GameObject> ();
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
-//		StartCoroutine ("InitLogging");
+		StartCoroutine ("InitLogging");
 		StartCoroutine ("PreSessionMapping");
 	}
 
 
 	void InitLogging(){
-		string subjectDirectory = Configuration.defaultLoggingPath + Configuration.currentSubject.name + "/";
+		string subjectDirectory = Configuration.defaultLoggingPath + "/test" + "/";
+        UnityEngine.Debug.Log("subj directory is " + subjectDirectory);
 		sessionDirectory = subjectDirectory + "session_0" + "/";
 
-		sessionID = 0;
+        UnityEngine.Debug.Log("session directory is " + sessionDirectory);
+        sessionID = 0;
 		string sessionIDString = "_0";
 
 		if(!Directory.Exists(subjectDirectory)){
@@ -177,6 +182,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		//delete old files.
 		if(Directory.Exists(sessionDirectory)){
+
+            UnityEngine.Debug.Log("deleting old files");
 			DirectoryInfo info = new DirectoryInfo(sessionDirectory);
 			FileInfo[] fileInfo = info.GetFiles();
 			for(int i = 0; i < fileInfo.Length; i++){
@@ -184,11 +191,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			}
 		}
 		else{ //if directory didn't exist, make it!
+            UnityEngine.Debug.Log("creating directory");
 			Directory.CreateDirectory(sessionDirectory);
 		}
 
-		subjectLog.fileName = sessionDirectory + Configuration.currentSubject.name + "Log" + ".txt";
-		eegLog.fileName = sessionDirectory + Configuration.currentSubject.name + "EEGLog" + ".txt";
+		subjectLog.fileName = sessionDirectory + "test" + "Log" + ".txt";
+		eegLog.fileName = sessionDirectory + "test"+ "EEGLog" + ".txt";
 		Debug.Log ("SUBJECT LOG: " + subjectLog.fileName);
 	}
 
@@ -548,6 +556,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 						Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
 						Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+                        trialLog.LogCamPosition(camPos);
 						float distance = Vector3.Distance (spawnChest.transform.position, camPos);
 //					debugText.text = distance.ToString ();
 					} else {
