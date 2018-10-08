@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 
 public class Configuration : MonoBehaviour {
@@ -33,7 +34,12 @@ public class Configuration : MonoBehaviour {
 
 	public static string defaultLoggingPath;
 
-	private static Subject _currentSubject;
+    public static string subjectName = "test";
+
+    public Slider responseDistSlider;
+    public Text responseDistText;
+
+    private static Subject _currentSubject;
 
 	public static Subject currentSubject{ 
 		get{ return _currentSubject; } 
@@ -61,4 +67,10 @@ public class Configuration : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void UpdateResponseDistance()
+    {
+        minResponseDistance = responseDistSlider.value;
+        responseDistText.text = responseDistSlider.value.ToString();
+    }
 }

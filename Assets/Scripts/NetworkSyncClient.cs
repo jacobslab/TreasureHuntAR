@@ -124,7 +124,7 @@ public class NetworkSyncClient : MonoBehaviour {
 	{
 		myClient = new NetworkClient();
 		myClient.RegisterHandler(MsgType.Connect, OnConnected); 
-		UnityEngine.Debug.Log ("attempting to connect");
+        UnityEngine.Debug.Log ("attempting to connect to " + serverAddress + " port 4444");
 		myClient.Connect(serverAddress, 4444);
 //		isAtStartup = false;
 	}

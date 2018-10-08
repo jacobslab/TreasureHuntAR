@@ -161,7 +161,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 
 	void InitLogging(){
-		string subjectDirectory = Configuration.defaultLoggingPath + "/test" + "/";
+		string subjectDirectory = Configuration.defaultLoggingPath + "/" + Configuration.subjectName + "/";
         UnityEngine.Debug.Log("subj directory is " + subjectDirectory);
 		sessionDirectory = subjectDirectory + "session_0" + "/";
 
@@ -195,8 +195,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			Directory.CreateDirectory(sessionDirectory);
 		}
 
-		subjectLog.fileName = sessionDirectory + "test" + "Log" + ".txt";
-		eegLog.fileName = sessionDirectory + "test"+ "EEGLog" + ".txt";
+		subjectLog.fileName = sessionDirectory + Configuration.subjectName + "Log" + ".txt";
+		eegLog.fileName = sessionDirectory + Configuration.subjectName + "EEGLog" + ".txt";
 		Debug.Log ("SUBJECT LOG: " + subjectLog.fileName);
 	}
 
@@ -287,12 +287,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			waitingForMarker = true;
 //			Debug.Log ("set waiting for marker to true");
 			while (waitingForMarker) {
+                UnityEngine.Debug.Log("waiting to mark corners");
 				preSessionInstructionText.text = "Tap to mark Corner No." + index.ToString ();
 				if (Input.touchCount > 0) {
 					var touch = Input.GetTouch (0);
 					int id = touch.fingerId;
 					 
-//					Debug.Log ("got a touch");
+					UnityEngine.Debug.Log ("got a touch");
 						if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved) {
 						// Check if there is a touch
 							// Check if finger is over a UI element
@@ -556,6 +557,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 						Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
 						Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+                        debugText.text = camPos.ToString();
                         trialLog.LogCamPosition(camPos);
 						float distance = Vector3.Distance (spawnChest.transform.position, camPos);
 //					debugText.text = distance.ToString ();
