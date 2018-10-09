@@ -623,8 +623,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				//wait for the needed time
 				yield return new WaitForSeconds (Configuration.presentationTime);
 
-				//destroy only the spawned chest
-				Destroy (spawnChest);
+				//destroy only the spawned chest's parent "ChestPedestal" 
+                Destroy (spawnChest.transform.parent.gameObject);
 
 				//			debugText.text = debugText.text.Insert (0, "spawn: " + spawnObj.gameObject.name.ToString ());
 				//toggle visibility of the item
@@ -891,6 +891,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		spawnChest.transform.parent =  planeAnchor.gameObject.transform;
 		spawnChest.transform.localPosition = position;
 		spawnChest.transform.parent = null;
+
+        //now set the spawnchest reference to the actual treasure chest which is the top-most child in its hierarchy
+        spawnChest = spawnChest.transform.GetChild(0).gameObject;
 		//Debug.Log ("about to set current chest ref");
 		currentChest = spawnChest;
 
@@ -1027,7 +1030,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 				//instantiate a correct position indicator
 				GameObject correctPositionIndicator = Instantiate(correctPositionIndicatorPrefab, Vector3.zero,Quaternion.identity) as GameObject;
 				correctPositionIndicator.transform.parent = retrievalSequenceList [i].gameObject.transform;
-				correctPositionIndicator.transform.localPosition = Vector3.zero;
+				correctPositionIndicator.transform.localPosition = Vector3.zero - new Vector3(0f,0.519f,0f); //adjust so that the indicator is at the foot of the pedestal
 				//now determine if the response was within range
 				float responseDistance = Vector3.Distance (retrievalSequenceList [i].transform.position, choiceSelectionList [i].transform.position);
 				if (responseDistance < Configuration.minResponseDistance) {
@@ -1148,6 +1151,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		yield return null;
 	}
 
+
+    //TODO: NO LONGER USED
 	void RemoveSpawnedObjects()
 	{
 		//first destroy all the spawned objects
@@ -1159,9 +1164,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		//then clear the list
 		spawnedObjList.Clear ();
 
-		//destroy any spawned chests as well
-		if (currentChest != null)
-			Destroy (currentChest);
+        //destroy any spawned chests as well ; make sure to destroy their parent "ChestPedestal" object
+        if (currentChest != null)
+        {
+            UnityEngine.Debug.Log("DESTROYED CHEST");
+            Destroy(currentChest.transform.parent.gameObject);
+        }
 	}
 
 	//public void ResetScene() {
