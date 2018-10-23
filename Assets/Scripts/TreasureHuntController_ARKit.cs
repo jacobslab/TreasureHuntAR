@@ -519,8 +519,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	void FixedUpdate () {
 
 		if (canNavigate && spawnChest != null) {
-			Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
-			Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+            //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
+            //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+            Vector3 camPos = UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
 			float distance = Vector3.Distance (spawnChest.transform.position, camPos);
 			float distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance,-0.1f,Configuration.minOpenDistance);
 //			debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
@@ -555,8 +556,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 					// If the player has not touched the screen, we are done with this update.
 					if (spawnChest != null) {
 
-						Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
-						Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+                    //Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
+                    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+                    Vector3 camPos = UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
                         debugText.text = camPos.ToString();
                         trialLog.LogCamPosition(camPos);
 						float distance = Vector3.Distance (spawnChest.transform.position, camPos);
@@ -585,9 +587,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 //										Debug.Log ("GOT A HIT");
 //										Debug.Log ("opening a chest");
 									bool canOpen = false;
-									Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
-									Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-									float distance = Vector3.Distance (spawnChest.transform.position, camPos);
+									//Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
+									//Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+                                Vector3 camPos = UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
+                                float distance = Vector3.Distance (spawnChest.transform.position, camPos);
 //								Debug.Log("hit distance is: " + distance.ToString ());
 									if (!canNavigate) {
 										canOpen = true;
@@ -713,9 +716,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		//Debug.Log ("creating chest locations");
 		int randPlane = 0;
 		chestSpawnLocationList.Clear ();
-		Matrix4x4 matrix = arCamManager.GetCurrentPose();
-		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
-		int planeCount = arAnchorManager.GetPlaneCount ();
+        //Matrix4x4 matrix = arCamManager.GetCurrentPose();
+        UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+         int planeCount = arAnchorManager.GetPlaneCount ();
 
 		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 		ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
@@ -723,8 +726,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		//instantiate them all to the last recorded device position and first available plane
 		for (int j = 0; j < Configuration.maxObjects; j++) {
-			Vector3 tempPos = UnityARMatrixOps.GetPosition (matrix);
-			chestSpawnLocationList.Add (tempPos);
+			Vector3 tempPos =UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
+
+            chestSpawnLocationList.Add (tempPos);
 			spawnPlaneIndexList.Add (0);
 		}
 		for (int i = 0; i < Configuration.maxObjects; i++) {
