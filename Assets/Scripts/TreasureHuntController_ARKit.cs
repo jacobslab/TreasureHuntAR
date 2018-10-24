@@ -39,7 +39,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public CanvasGroup retrievalPanelUIGroup;
 	public CanvasGroup scorePanelUIGroup;
 	public CanvasGroup endSessionPanelUIGroup;
-	public Text retrievalText;
+    public CanvasGroup waitForReadyUIGroup;
+    public Text retrievalText;
 	public Button acceptUserResponseButton;
 	public Toggle debugVisualsToggle;
 	public Text preSessionInstructionText;
@@ -70,6 +71,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	//arkit components
 	public UnityARCameraManager arCamManager;
 	public UnityARGeneratePlane arGenPlane;
+    public WorldMapManager arWorldMapManager;
 
 	public Transform m_HitTransform;
 
@@ -90,6 +92,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	bool finishedMapping=false;
 
 	private int markerNeeded = 4; // how many minimum markers to define the playable area
+
+    private bool spawnablesReady = false; //whether spawnable list has been prepared or not
 
 	bool notInPlayBounds = false;
 
@@ -155,12 +159,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		markerObjList = new List<GameObject> ();
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
+        //arWorldMapManager.Load();
 		StartCoroutine ("InitLogging");
-		StartCoroutine ("PreSessionMapping");
-	}
+        preSessionPanelUIGroup.alpha = 0f;
+        waitForReadyUIGroup.alpha = 1f;
+        //beginTrialPanelUIGroup.alpha = 1f;
+        //StartCoroutine ("PreSessionMapping");
+    }
+
+    public void LoadSessionMap()
+    {
+        arWorldMapManager.Load();
+        waitForReadyUIGroup.alpha = 0f;
+        StartCoroutine("MakeSpawnableList");
+    }
 
 
-	void InitLogging(){
+	IEnumerator InitLogging(){
 		string subjectDirectory = Configuration.defaultLoggingPath + "/" + Configuration.subjectName + "/";
         UnityEngine.Debug.Log("subj directory is " + subjectDirectory);
 		sessionDirectory = subjectDirectory + "session_0" + "/";
@@ -198,6 +213,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		subjectLog.fileName = sessionDirectory + Configuration.subjectName + "Log" + ".txt";
 		eegLog.fileName = sessionDirectory + Configuration.subjectName + "EEGLog" + ".txt";
 		Debug.Log ("SUBJECT LOG: " + subjectLog.fileName);
+
+        yield return null;
 	}
 
 	IEnumerator PreSessionMapping()
@@ -207,8 +224,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		beginTrialPanelUIGroup.alpha = 0f;
 
 
-		//make a simple spawnable list for this trial before the mapping
-		yield return StartCoroutine (MakeSpawnableList ());
 
 		while (arGenPlane.GetAnchorManager () == null) {
 //			Debug.Log ("waiting for anchor manager to instantiate");
@@ -360,6 +375,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		//spawn random objects that appear within the playable area
 		for (int k = 0; k < 100; k++) {
 			int planeIndex = 0;
+            Debug.Log("picking random positions");
 			Vector3 pos = GetRandomPosition (out planeIndex);
 			GameObject testSpawn = Instantiate (testObj, pos, Quaternion.identity) as GameObject;
 		
@@ -379,9 +395,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			testSpawn.transform.localPosition = pos;
 			testSpawn.transform.parent = null;
 			testList.Add (testSpawn);
-//			Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
 
-			if (geoUtils.IsPointInPolygon(markerPosList,new Vector2(testSpawn.transform.position.x,testSpawn.transform.position.z))) {
+            Debug.Log("instantiated test obj and set plane anchor as its transform parent");
+            //          Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
+
+            if (geoUtils.IsPointInPolygon(markerPosList,new Vector2(testSpawn.transform.position.x,testSpawn.transform.position.z))) {
 				testSpawn.GetComponent<MeshRenderer> ().material.color = Color.green;
 			} else
 				testSpawn.GetComponent<MeshRenderer> ().material.color = Color.red;
@@ -389,12 +407,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		yield return new WaitForSeconds (2.5f);
 
-		//delete all the test spawned objects
-		for (int i = 0; i < testList.Count; i++) {
-			Destroy (testList [i]);
-		}
-		//turn off the marker obj renderers
-		for (int j = 0; j < markerObjList.Count; j++) {
+        //delete all the test spawned objects
+        //for (int i = 0; i < testList.Count; i++) {
+        //	Destroy (testList [i]);
+        //}
+        //turn off the marker obj renderers
+        Debug.Log("turning off marker obj renderers");
+        for (int j = 0; j < markerObjList.Count; j++) {
 			markerObjList [j].GetComponent<MeshRenderer> ().enabled = false;
 		}
 		yield return null;
@@ -703,6 +722,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		//reset chest index
 		chestIndex=0;
+
+        spawnablesReady = true;
 		yield return null;
 
 	}
@@ -720,8 +741,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
         UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
          int planeCount = arAnchorManager.GetPlaneCount ();
 
+        Debug.Log("got anchor manager and plane count");
 		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 		ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
+
+
+        Debug.Log("got the first plane anchor");
 		int currentIndex = 0;
 
 		//instantiate them all to the last recorded device position and first available plane
@@ -731,48 +756,52 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
             chestSpawnLocationList.Add (tempPos);
 			spawnPlaneIndexList.Add (0);
 		}
-		for (int i = 0; i < Configuration.maxObjects; i++) {
-			notInPlayBounds = true;
-			while(notInPlayBounds)
-			{
-			chestSpawnLocationList [i] = GetRandomPosition (out randPlane);
-			currentIndex = 0;
-			foreach(var plane in arPlaneAnchors)
-			{
-				if (currentIndex == randPlane) {
-					planeAnchor = plane;
-				}
-				currentIndex++;
-			}
+
+        Debug.Log("added chest spawn location and spawnplaneindexlist");
+        for (int i = 0; i < Configuration.maxObjects; i++)
+        {
+            notInPlayBounds = true;
+            while (notInPlayBounds)
+            {
+                chestSpawnLocationList[i] = GetRandomPosition(out randPlane);
+                currentIndex = 0;
+                foreach (var plane in arPlaneAnchors)
+                {
+                    if (currentIndex == randPlane)
+                    {
+                        planeAnchor = plane;
+                    }
+                    currentIndex++;
+                }
 
 
-//				testSpawn.transform.parent = planeAnchor.gameObject.transform;
-//				testSpawn.transform.localPosition = pos;
-//				testSpawn.transform.parent = null;
-//				testList.Add (testSpawn);
-//				Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
-					while (!CheckSufficientDistanceBetweenChests (chestSpawnLocationList [i], chestSpawnLocationList, i)) {
-						chestSpawnLocationList [i] = GetRandomPosition (out randPlane);
-						spawnPlaneIndexList [i] = randPlane;
-						currentIndex = 0;
-						foreach (var plane in arPlaneAnchors) {
-							if (currentIndex == randPlane) {
-								planeAnchor = plane;
-							}
-							currentIndex++;
-						}
+                //				testSpawn.transform.parent = planeAnchor.gameObject.transform;
+                //				testSpawn.transform.localPosition = pos;
+                //				testSpawn.transform.parent = null;
+                //				testList.Add (testSpawn);
+                //				Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
+                while (!CheckSufficientDistanceBetweenChests(chestSpawnLocationList[i], chestSpawnLocationList, i))
+                {
+                    chestSpawnLocationList[i] = GetRandomPosition(out randPlane);
+                    spawnPlaneIndexList[i] = randPlane;
+                    currentIndex = 0;
+                    foreach (var plane in arPlaneAnchors)
+                    {
+                        if (currentIndex == randPlane)
+                        {
+                            planeAnchor = plane;
+                        }
+                        currentIndex++;
+                    }
 
-						yield return 0;
-					}
-				GameObject obj = Instantiate (markerPrefab, chestSpawnLocationList[i], Quaternion.identity) as GameObject;
-				obj.transform.parent = planeAnchor.gameObject.transform;
-				obj.transform.localPosition = chestSpawnLocationList [i];
-				obj.transform.parent = null;
-				if (geoUtils.IsPointInPolygon(markerPosList,new Vector2(obj.transform.position.x,obj.transform.position.z))) {
-					spawnPlaneIndexList [i] = randPlane;
-					notInPlayBounds = false;
-				}
-				Destroy (obj);
+                    yield return 0;
+                }
+                notInPlayBounds = false;
+                //if (geoUtils.IsPointInPolygon(markerPosList,new Vector2(obj.transform.position.x,obj.transform.position.z))) {
+                //                Debug.Log("IS INSIDE");
+                //	spawnPlaneIndexList [i] = randPlane;
+                //	notInPlayBounds = false;
+                //}
 
 				yield return 0;
 			}
@@ -859,9 +888,47 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	IEnumerator BeginTrial()
 	{
+        //yield return StartCoroutine(FillMarkerPosList());
+
+        //wait until spawnable list is ready
+        while(!spawnablesReady)
+        {
+            yield return 0;
+        }
 		yield return  StartCoroutine(RunTrial());
 		yield return null;
 	}
+
+    IEnumerator FillMarkerPosList()
+    {
+        UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager();
+        //Debug.Log ("got anchor manager");
+        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+
+        //set it to the default first value
+        ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
+        int randPlaneIndex = Random.Range(0, arPlaneAnchors.Count);
+        int currentIndex = 0;
+        foreach (var plane in arPlaneAnchors)
+        {
+            if (currentIndex == randPlaneIndex)
+            {
+                planeAnchor = plane.planeAnchor;
+            }
+            currentIndex++;
+        }
+        Vector3[] vertices = planeAnchor.planeGeometry.boundaryVertices;
+
+        for (int j = 0; j < vertices.Length/4;j++)
+        {
+            markerPosList.Add(vertices[j*4]);
+            Debug.Log("added " + vertices[j * 4].ToString());
+        }
+
+
+
+        yield return null;
+    }
 
 	public IEnumerator SpawnTreasureChest(int chestIndex)
 	{
@@ -1030,13 +1097,16 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			lineColor = Color.red;
 			if (retrievalSequenceList [i].GetComponent<VisibilityToggler> () != null) {
 				Debug.Log(retrievalSequenceList[i].gameObject.name + " pos: " + retrievalSequenceList [i].transform.position.ToString ());
-				retrievalSequenceList [i].GetComponent<VisibilityToggler> ().TurnVisible (true);
+				
+                retrievalSequenceList [i].GetComponent<VisibilityToggler> ().TurnVisible (true);
 				//instantiate a correct position indicator
 				GameObject correctPositionIndicator = Instantiate(correctPositionIndicatorPrefab, Vector3.zero,Quaternion.identity) as GameObject;
 				correctPositionIndicator.transform.parent = retrievalSequenceList [i].gameObject.transform;
 				correctPositionIndicator.transform.localPosition = Vector3.zero - new Vector3(0f,0.519f,0f); //adjust so that the indicator is at the foot of the pedestal
+
 				//now determine if the response was within range
-				float responseDistance = Vector3.Distance (retrievalSequenceList [i].transform.position, choiceSelectionList [i].transform.position);
+                float responseDistance = Vector2.Distance (new Vector2(retrievalSequenceList [i].transform.position.x,retrievalSequenceList[i].transform.position.z), new Vector2(choiceSelectionList [i].transform.position.x,choiceSelectionList[i].transform.position.z));
+                Debug.Log("response distance is " + responseDistance.ToString());
 				if (responseDistance < Configuration.minResponseDistance) {
 					lineColor = Color.green;
 					correctResponseList.Add (true);

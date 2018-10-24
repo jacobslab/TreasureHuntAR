@@ -69,6 +69,8 @@ public class WorldMapManager : MonoBehaviour
             UnityARPlaneDetection planeDetect = UnityARPlaneDetection.None;
             var config = m_ARCameraManager.sessionConfiguration;
             config.planeDetection = planeDetect;
+            config.getPointCloudData = false;
+            config.alignment = UnityARAlignment.UnityARAlignmentGravity;
             config.worldMap = worldMap;
 			UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
 
