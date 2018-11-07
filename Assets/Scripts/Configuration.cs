@@ -39,6 +39,12 @@ public class Configuration : MonoBehaviour {
     public Slider responseDistSlider;
     public Text responseDistText;
 
+
+    public static float minRetrievalDistance = 0.1f;
+    public static float minOpenDistance = 0.75f;
+    public static float minResponseDistance = 0.25f; //minimum distance to check to see if the response circle is close enough to the actual object position
+    public static float minRabbitSpawnDistance = 1f;
+
     private static Subject _currentSubject;
 
 	public static Subject currentSubject{ 
@@ -51,12 +57,11 @@ public class Configuration : MonoBehaviour {
 	void Awake()
 	{
 		defaultLoggingPath = Application.persistentDataPath;
+
 	}
 
-	public static float minRetrievalDistance = 0.1f;
-	public static float minOpenDistance = 0.75f;
-	public static float minResponseDistance = 0.25f; //minimum distance to check to see if the response circle is close enough to the actual object position
-	// Use this for initialization
+
+    // Use this for initialization
 	void Start () {
 		
 	}

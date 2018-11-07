@@ -32,6 +32,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	public GameObject choiceSelectionPrefab;
 	public GameObject correctPositionIndicatorPrefab;
 
+    //distractor
+    public DistractorGame distractorGame;
+
 	//ui
 	public Button beginTrialButton;
 	public CanvasGroup preSessionPanelUIGroup;
@@ -68,10 +71,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	private Touch touch;
 	private bool userResponded=false;
 
-	//arkit components
-	public UnityARCameraManager arCamManager;
-	public UnityARGeneratePlane arGenPlane;
-    public WorldMapManager arWorldMapManager;
+
+    public ARKitManager arkitManager;
+
 
 	public Transform m_HitTransform;
 
@@ -148,6 +150,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		beginTrialPanelUIGroup.alpha = 1f;
 		acceptUserResponseButton.gameObject.SetActive (false);
 
+
 		debugVisuals = debugVisualsToggle.isOn;
 		sceneObjList = new List<GameObject> ();
 
@@ -159,7 +162,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		markerObjList = new List<GameObject> ();
 //		ChangeDebugVisualsStatus(true);
 		UpdateNavigationStatus ();
-        //arWorldMapManager.Load();
+        //arkitManager.arWorldMapManager.Load();
 		StartCoroutine ("InitLogging");
         preSessionPanelUIGroup.alpha = 0f;
         waitForReadyUIGroup.alpha = 1f;
@@ -169,7 +172,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
     public void LoadSessionMap()
     {
-        arWorldMapManager.Load();
+        arkitManager.arWorldMapManager.Load();
         waitForReadyUIGroup.alpha = 0f;
         StartCoroutine("MakeSpawnableList");
     }
@@ -225,12 +228,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 
 
-		while (arGenPlane.GetAnchorManager () == null) {
+		while (arkitManager.arGenPlane.GetAnchorManager () == null) {
 //			Debug.Log ("waiting for anchor manager to instantiate");
 			yield return null;
 		}
 //		Debug.Log ("found anchor manager");
-		UnityARAnchorManager anchorManager = arGenPlane.GetAnchorManager ();
+		UnityARAnchorManager anchorManager = arkitManager.arGenPlane.GetAnchorManager ();
 		while (needsMapping) {
 			if (anchorManager.GetPlaneCount () > 0) {
 				yield return StartCoroutine ("DefineCornerMarkers");
@@ -379,7 +382,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 			Vector3 pos = GetRandomPosition (out planeIndex);
 			GameObject testSpawn = Instantiate (testObj, pos, Quaternion.identity) as GameObject;
 		
-			UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+			UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager ();
 			LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 
 			ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
@@ -540,7 +543,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		if (canNavigate && spawnChest != null) {
             //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
             //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-            Vector3 camPos = UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
+            Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
 			float distance = Vector3.Distance (spawnChest.transform.position, camPos);
 			float distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance,-0.1f,Configuration.minOpenDistance);
 //			debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
@@ -577,7 +580,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
                     //Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
                     //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-                    Vector3 camPos = UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
+                    Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
                         debugText.text = camPos.ToString();
                         trialLog.LogCamPosition(camPos);
 						float distance = Vector3.Distance (spawnChest.transform.position, camPos);
@@ -608,7 +611,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 									bool canOpen = false;
 									//Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
 									//Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-                                Vector3 camPos = UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
+                                Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
                                 float distance = Vector3.Distance (spawnChest.transform.position, camPos);
 //								Debug.Log("hit distance is: " + distance.ToString ());
 									if (!canNavigate) {
@@ -655,7 +658,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		}
 
-		//have a distractor task here
+        //have a distractor task here
+
+        yield return StartCoroutine(RunDistractor());
 
 
 		//have the retrieval here
@@ -738,7 +743,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		int randPlane = 0;
 		chestSpawnLocationList.Clear ();
         //Matrix4x4 matrix = arCamManager.GetCurrentPose();
-        UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager ();
          int planeCount = arAnchorManager.GetPlaneCount ();
 
         Debug.Log("got anchor manager and plane count");
@@ -751,7 +756,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 		//instantiate them all to the last recorded device position and first available plane
 		for (int j = 0; j < Configuration.maxObjects; j++) {
-			Vector3 tempPos =UnityARMatrixOps.GetPosition(arCamManager.m_camera.transform.localPosition);
+			Vector3 tempPos =UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
 
             chestSpawnLocationList.Add (tempPos);
 			spawnPlaneIndexList.Add (0);
@@ -828,13 +833,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		return true;
 	}
 
-	private Vector3 GetRandomPosition(out int randPlaneIndex)
+	public Vector3 GetRandomPosition(out int randPlaneIndex)
 	{
 		//Debug.Log ("getting a random position");
 		//Session.GetTrackables<TrackedPlane>(m_AllPlanes);
 		// Pick a location.  This is done by selecting a vertex at random and then
 		// a random point between it and the center of the plane.
-		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+		UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager ();
 		//Debug.Log ("got anchor manager");
 		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 		//Debug.Log ("got anchor obj linked list");
@@ -861,6 +866,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		return position;
 	}
 
+
+    IEnumerator RunDistractor()
+    {
+        yield return StartCoroutine(distractorGame.Run());
+        yield return null;
+    }
 
 	private int GetPlaneIndex(int chestInt)
 	{
@@ -901,7 +912,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
     IEnumerator FillMarkerPosList()
     {
-        UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager();
+        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
         //Debug.Log ("got anchor manager");
         LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
 
@@ -942,7 +953,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 
 		int planeIndex = GetPlaneIndex (chestIndex);
-		UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+		UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager ();
 		LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 
 		ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
@@ -1196,7 +1207,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 //		debugText.text = "Debug viz: " + debugVisuals.ToString ();
 		//keep things on, else turn it off
-			UnityARAnchorManager arAnchorManager = arGenPlane.GetAnchorManager ();
+			UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager ();
 			LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors ();
 		if (arPlaneAnchors.Count > 0) {
 			foreach (var plane in arPlaneAnchors) {
