@@ -3,13 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.iOS;
-
+using UnityEngine.UI;
 public class WorldMapManager : MonoBehaviour
 {
     [SerializeField]
     UnityARCameraManager m_ARCameraManager;
 
     public ARWorldMap m_LoadedMap;
+    public Transform canvasParent;
+    public GameObject mapButton;
+
+
+    public static int mapIndex = 0;
 
 	serializableARWorldMap serializedWorldMap;
 
@@ -39,7 +44,7 @@ public class WorldMapManager : MonoBehaviour
 
     static string path
     {
-        get { return Path.Combine(Application.persistentDataPath, "test_map.worldmap"); }
+        get { return Path.Combine(Application.persistentDataPath, "test_map_"+mapIndex.ToString()+ ".worldmap"); }
     }
 
     void OnWorldMap(ARWorldMap worldMap)
@@ -54,12 +59,21 @@ public class WorldMapManager : MonoBehaviour
     public void Save()
     {
         session.GetCurrentWorldMapAsync(OnWorldMap);
+
+        //create button prefab
+        GameObject buttonPrefab = Instantiate(mapButton, Vector3.zero, Quaternion.identity) as GameObject;
+        buttonPrefab.transform.parent = canvasParent;
+        buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * mapIndex, 0f);
+        buttonPrefab.GetComponent<MapButton>().selfMapIndex = mapIndex;
+        buttonPrefab.GetComponent<MapButton>().worldMapManager = this;
+        mapIndex++;
     }
 
-    public void Load()
+    public void Load(out Vector3 extents)
     {
         Debug.LogFormat("Loading ARWorldMap {0}", path);
         var worldMap = ARWorldMap.Load(path);
+        extents = Vector3.zero;
         if (worldMap != null)
         {
             m_LoadedMap = worldMap;
@@ -72,12 +86,19 @@ public class WorldMapManager : MonoBehaviour
             config.getPointCloudData = false;
             config.alignment = UnityARAlignment.UnityARAlignmentGravity;
             config.worldMap = worldMap;
+            extents = worldMap.extent;
 			UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
 
 			Debug.Log("Restarting session with worldMap");
 			session.RunWithConfigAndOptions(config, runOption);
 
         }
+    }
+
+    public void LoadSpecificMap(int selfMapIndex,out Vector3 extents)
+    {
+        string newPath = Path.Combine(Application.persistentDataPath, "test_map_" + selfMapIndex.ToString() + ".worldmap");
+        Load(out extents);
     }
 
 

@@ -856,6 +856,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ARCameraManager: {fileID: 1121666030}
+  canvasParent: {fileID: 520163597}
+  mapButton: {fileID: 1793003559737938, guid: d154161c430684fae8ba9247aa587b5c, type: 2}
 --- !u!4 &744986761
 Transform:
   m_ObjectHideFlags: 0
@@ -1282,7 +1284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31cac8edf84834043ac167deaeba16a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  planePrefab: {fileID: 1372998203143648, guid: f879aaf3eeb0c467eb22cbaf08dc97a4,
+  planePrefab: {fileID: 1454536478891118, guid: 24a8c4888599c4670ba129e2f2345e92,
     type: 2}
 --- !u!4 &1308259104
 Transform:
@@ -1491,8 +1493,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 82.426796, y: -90.240326}
-  m_SizeDelta: {x: 154.85359, y: 170.48065}
+  m_AnchoredPosition: {x: 82.82073, y: -90.604675}
+  m_SizeDelta: {x: 155.64146, y: 171.20935}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1587227113
 MonoBehaviour:
@@ -1614,8 +1616,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 82.426796, y: -270.72098}
-  m_SizeDelta: {x: 154.85359, y: 170.48065}
+  m_AnchoredPosition: {x: 82.82073, y: -271.81403}
+  m_SizeDelta: {x: 155.64146, y: 171.20935}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1841742998
 MonoBehaviour:
@@ -1736,7 +1738,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.032411557, y: 0.72262573}
   m_AnchorMax: {x: 0.19000001, y: 0.9655338}
-  m_AnchoredPosition: {x: 5.360901, y: 0}
+  m_AnchoredPosition: {x: 5.360962, y: 0}
   m_SizeDelta: {x: -10.7, y: -0.00012207}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2073111661

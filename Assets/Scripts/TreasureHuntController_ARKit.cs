@@ -170,9 +170,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
         //StartCoroutine ("PreSessionMapping");
     }
 
-    public void LoadSessionMap()
+    public void LoadSessionMap(int mapIndex)
     {
-        arkitManager.arWorldMapManager.Load();
+        //arkitManager.arWorldMapManager.LoadSpecificMap(mapIndex,);
         waitForReadyUIGroup.alpha = 0f;
         StartCoroutine("MakeSpawnableList");
     }
@@ -217,8 +217,22 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		eegLog.fileName = sessionDirectory + Configuration.subjectName + "EEGLog" + ".txt";
 		Debug.Log ("SUBJECT LOG: " + subjectLog.fileName);
 
+
+        yield return StartCoroutine(PrepareMapList());
         yield return null;
 	}
+
+    IEnumerator PrepareMapList()
+    {
+        int testMapIndex = 0;
+        while(File.Exists(Application.persistentDataPath + "test_map_" + testMapIndex.ToString() + ".worldmap"))
+        {
+
+            testMapIndex++;
+            yield return 0;
+        }
+        yield return null;
+    }
 
 	IEnumerator PreSessionMapping()
 	{
