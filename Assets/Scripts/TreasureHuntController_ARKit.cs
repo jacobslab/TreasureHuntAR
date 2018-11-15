@@ -83,8 +83,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public GeoUtils geoUtils;
 
-	public GameObject quad;
-
 	public Bounds playBounds;
 	public LineRenderer lineRenderer;
 
@@ -174,7 +172,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
     {
         //arkitManager.arWorldMapManager.LoadSpecificMap(mapIndex,);
         waitForReadyUIGroup.alpha = 0f;
-        StartCoroutine("MakeSpawnableList");
+        //StartCoroutine("MakeSpawnableList");
     }
 
 
@@ -224,11 +222,20 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
     IEnumerator PrepareMapList()
     {
-        int testMapIndex = 0;
-        while(File.Exists(Application.persistentDataPath + "test_map_" + testMapIndex.ToString() + ".worldmap"))
+        int testMapIndex = 1;
+        string mapPath = Application.persistentDataPath + "/test_map_" + testMapIndex.ToString() + ".worldmap";
+        Debug.Log("searching for mapPath " + mapPath);
+        while (File.Exists(mapPath))
         {
+            Debug.Log("found!! map path is " + mapPath);
+            GameObject buttonPrefab = Instantiate(arkitManager.arWorldMapManager.mapButton, Vector3.zero, Quaternion.identity) as GameObject;
+            buttonPrefab.transform.parent = arkitManager.arWorldMapManager.canvasParent;
 
+            buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * testMapIndex, 0f);
+            buttonPrefab.GetComponent<MapButton>().selfMapIndex = testMapIndex;
+            buttonPrefab.GetComponent<MapButton>().worldMapManager = arkitManager.arWorldMapManager;
             testMapIndex++;
+            mapPath = Application.persistentDataPath + "test_map_" + testMapIndex.ToString() + ".worldmap";
             yield return 0;
         }
         yield return null;
@@ -246,7 +253,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 //			Debug.Log ("waiting for anchor manager to instantiate");
 			yield return null;
 		}
-//		Debug.Log ("found anchor manager");
+//		Debug.Log ("found anchor manager");tr
 		UnityARAnchorManager anchorManager = arkitManager.arGenPlane.GetAnchorManager ();
 		while (needsMapping) {
 			if (anchorManager.GetPlaneCount () > 0) {
@@ -574,7 +581,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		bool noTouch = false;
 		//turn off the retrieval panel, if it hasn't been already
 		retrievalPanelUIGroup.alpha=0f;
-
+        Debug.Log("running trial");
 		//turn off debug visuals
 		ChangeDebugVisualsStatus(false);
 
@@ -709,8 +716,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 		retrievalSequenceList.Clear ();
 		choiceSelectionList.Clear ();
 	}
-	//gets called in the pre-session mapping
-	IEnumerator MakeSpawnableList()
+	//gets called in the pre-session mapping OR via worldMapManager's Load function
+	public IEnumerator MakeSpawnableList()
 	{
 
 		//Debug.Log ("making spawnable lists");
@@ -899,6 +906,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 
 	public void BeginTrialSequence()
 	{
+        Debug.Log("about to begin trial sequence");
 		if (currentTrialIndex < maxTrials) {
 			beginTrialPanelUIGroup.alpha = 0f;
 			sessionValid = true;
@@ -914,7 +922,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour {
 	IEnumerator BeginTrial()
 	{
         //yield return StartCoroutine(FillMarkerPosList());
-
+        Debug.Log("preparing spawnables");
         //wait until spawnable list is ready
         while(!spawnablesReady)
         {

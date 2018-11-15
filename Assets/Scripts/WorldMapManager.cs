@@ -21,6 +21,7 @@ public class WorldMapManager : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+        mapIndex = 1;
         UnityARSessionNativeInterface.ARFrameUpdatedEvent += OnFrameUpdate;
     }
 
@@ -44,7 +45,7 @@ public class WorldMapManager : MonoBehaviour
 
     static string path
     {
-        get { return Path.Combine(Application.persistentDataPath, "test_map_"+mapIndex.ToString()+ ".worldmap"); }
+        get { return Path.Combine(Application.persistentDataPath, "test_map_" + mapIndex.ToString() + ".worldmap"); }
     }
 
     void OnWorldMap(ARWorldMap worldMap)
@@ -58,6 +59,7 @@ public class WorldMapManager : MonoBehaviour
 
     public void Save()
     {
+        mapIndex++;
         session.GetCurrentWorldMapAsync(OnWorldMap);
 
         //create button prefab
@@ -66,13 +68,12 @@ public class WorldMapManager : MonoBehaviour
         buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * mapIndex, 0f);
         buttonPrefab.GetComponent<MapButton>().selfMapIndex = mapIndex;
         buttonPrefab.GetComponent<MapButton>().worldMapManager = this;
-        mapIndex++;
     }
 
-    public void Load(out Vector3 extents)
+    public void Load(string newPath,out Vector3 extents)
     {
-        Debug.LogFormat("Loading ARWorldMap {0}", path);
-        var worldMap = ARWorldMap.Load(path);
+        Debug.LogFormat("Loading ARWorldMap {0}", newPath);
+        var worldMap = ARWorldMap.Load(newPath);
         extents = Vector3.zero;
         if (worldMap != null)
         {
@@ -92,13 +93,19 @@ public class WorldMapManager : MonoBehaviour
 			Debug.Log("Restarting session with worldMap");
 			session.RunWithConfigAndOptions(config, runOption);
 
+            if(TreasureHuntController_ARKit.Instance!=null)
+            {
+                StartCoroutine(TreasureHuntController_ARKit.Instance.MakeSpawnableList());
+            }
+
         }
     }
 
-    public void LoadSpecificMap(int selfMapIndex,out Vector3 extents)
+    public void LoadSpecificMap(int selfMapIndex, out Vector3 extents)
     {
         string newPath = Path.Combine(Application.persistentDataPath, "test_map_" + selfMapIndex.ToString() + ".worldmap");
-        Load(out extents);
+        Load(newPath,out extents);
+        //Load();
     }
 
 
