@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.iOS;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class WorldMapManager : MonoBehaviour
 {
     [SerializeField]
@@ -13,6 +14,11 @@ public class WorldMapManager : MonoBehaviour
     public Transform canvasParent;
     public GameObject mapButton;
 
+    public Text mapNameText;
+    public CanvasGroup savePanel;
+
+    private string path = "";
+
 
     public static int mapIndex = 0;
 
@@ -21,7 +27,13 @@ public class WorldMapManager : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+        if (savePanel != null)
+        {
+            savePanel.alpha = 0f;
+        }
+        ResetScene();
         mapIndex = 1;
+        path = Path.Combine(Application.persistentDataPath, "test_map_" + mapIndex.ToString() + ".worldmap");
         UnityARSessionNativeInterface.ARFrameUpdatedEvent += OnFrameUpdate;
     }
 
@@ -43,31 +55,41 @@ public class WorldMapManager : MonoBehaviour
         get { return UnityARSessionNativeInterface.GetARSessionNativeInterface(); }
     }
 
-    static string path
-    {
-        get { return Path.Combine(Application.persistentDataPath, "test_map_" + mapIndex.ToString() + ".worldmap"); }
-    }
 
     void OnWorldMap(ARWorldMap worldMap)
     {
         if (worldMap != null)
         {
+            path += " " + worldMap.extent.ToString() + ".worldmap";
             worldMap.Save(path);
+
             Debug.LogFormat("ARWorldMap saved to {0}", path);
         }
     }
 
-    public void Save()
+    public void OpenSavePanel()
     {
+        Debug.Log("opening save panel");
+        savePanel.alpha = 1f;
+    }
+
+    public void SaveMap()
+    {
+        Debug.Log("inside save map");
         mapIndex++;
+        savePanel.alpha = 0f;
+        path = Path.Combine(Application.persistentDataPath, mapNameText.text);
+        Debug.Log("new path is " + path);
         session.GetCurrentWorldMapAsync(OnWorldMap);
 
+        Debug.Log("creating button prefab");
         //create button prefab
         GameObject buttonPrefab = Instantiate(mapButton, Vector3.zero, Quaternion.identity) as GameObject;
         buttonPrefab.transform.parent = canvasParent;
         buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * mapIndex, 0f);
         buttonPrefab.GetComponent<MapButton>().selfMapIndex = mapIndex;
         buttonPrefab.GetComponent<MapButton>().worldMapManager = this;
+
     }
 
     public void Load(string newPath,out Vector3 extents)
@@ -103,6 +125,7 @@ public class WorldMapManager : MonoBehaviour
 
     public void LoadSpecificMap(int selfMapIndex, out Vector3 extents)
     {
+        canvasParent.GetComponent<CanvasGroup>().alpha = 0f;
         string newPath = Path.Combine(Application.persistentDataPath, "test_map_" + selfMapIndex.ToString() + ".worldmap");
         Load(newPath,out extents);
         //Load();
@@ -146,4 +169,20 @@ public class WorldMapManager : MonoBehaviour
 		}
 
 	}
+
+    public void ResetScene()
+    {
+
+        Debug.Log("ABOUT TO RESET THE SCENE");
+        ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration(UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.HorizontalAndVertical);
+        UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
+    }
+
+    public void LoadMainMenu()
+    {
+
+        SceneManager.UnloadSceneAsync(2);
+
+        SceneManager.LoadScene(0);
+    }
 }

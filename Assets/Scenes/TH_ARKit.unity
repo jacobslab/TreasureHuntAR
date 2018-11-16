@@ -6010,6 +6010,8 @@ GameObject:
   - component: {fileID: 1741874997}
   - component: {fileID: 1741874999}
   - component: {fileID: 1741874998}
+  - component: {fileID: 1741875001}
+  - component: {fileID: 1741875000}
   m_Layer: 5
   m_Name: MapButtonPanel
   m_TagString: Untagged
@@ -6069,6 +6071,28 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1741874996}
   m_CullTransparentMesh: 0
+--- !u!114 &1741875000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1741874996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb934f704f82e485a97ac58c8477e68d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!225 &1741875001
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1741874996}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1744551671
 GameObject:
   m_ObjectHideFlags: 0

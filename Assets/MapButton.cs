@@ -23,6 +23,6 @@ public class MapButton : MonoBehaviour {
     {
         Vector3 extents = Vector3.zero;
         worldMapManager.LoadSpecificMap(selfMapIndex, out extents);
-        buttonText.text = "worldmap " + selfMapIndex.ToString() + " \n " + extents.ToString();
+        //buttonText.text = "worldmap " + selfMapIndex.ToString() + " \n " + extents.ToString();
     }
 }

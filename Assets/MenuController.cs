@@ -39,4 +39,10 @@ public class MenuController : MonoBehaviour {
             SceneManager.LoadScene(1); //load the main game scene;
         }
     }
+
+    public void LoadMapMaker()
+    {
+        SceneManager.UnloadSceneAsync(0);
+        SceneManager.LoadScene(2); //load the map maker scene;
+    }
 }
