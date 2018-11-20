@@ -31,6 +31,10 @@ public class WorldMapManager : MonoBehaviour
         {
             savePanel.alpha = 0f;
         }
+        if(canvasParent!=null)
+        {
+            canvasParent.gameObject.SetActive(true);
+        }
         ResetScene();
         mapIndex = 1;
         path = Path.Combine(Application.persistentDataPath, "test_map_" + mapIndex.ToString() + ".worldmap");
@@ -123,10 +127,11 @@ public class WorldMapManager : MonoBehaviour
         }
     }
 
-    public void LoadSpecificMap(int selfMapIndex, out Vector3 extents)
+    public void LoadSpecificMap(string mapName, out Vector3 extents)
     {
         canvasParent.GetComponent<CanvasGroup>().alpha = 0f;
-        string newPath = Path.Combine(Application.persistentDataPath, "test_map_" + selfMapIndex.ToString() + ".worldmap");
+        canvasParent.gameObject.SetActive(false);
+        string newPath = Path.Combine(Application.persistentDataPath, mapName);
         Load(newPath,out extents);
         //Load();
     }

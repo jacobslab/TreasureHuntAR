@@ -42,8 +42,9 @@ public class Configuration : MonoBehaviour {
 
     public static float minRetrievalDistance = 0.1f;
     public static float minOpenDistance = 0.75f;
-    public static float minResponseDistance = 0.25f; //minimum distance to check to see if the response circle is close enough to the actual object position
-    public static float minRabbitSpawnDistance = 1f;
+    public static float minResponseDistance = 0.35f; //minimum distance to check to see if the response circle is close enough to the actual object position
+    public static float minRabbitSpawnDistance = 2f;
+    public static float minRabbitCatchDistance = 0.25f;
 
     private static Subject _currentSubject;
 

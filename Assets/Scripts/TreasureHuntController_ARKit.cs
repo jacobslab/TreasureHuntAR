@@ -640,7 +640,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                     //Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
                     //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
                     Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-                    debugText.text = camPos.ToString();
+                    //debugText.text = camPos.ToString();
                     trialLog.LogCamPosition(camPos);
                     float distance = Vector3.Distance(spawnChest.transform.position, camPos);
                     //					debugText.text = distance.ToString ();
@@ -906,7 +906,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         }
         Debug.Log("sufficient distance was:  " + dist.ToString());
 
-        debugText.text = "Sufficient dist: " + dist.ToString();
+        //debugText.text = "Sufficient dist: " + dist.ToString();
         return true;
     }
 
@@ -1191,6 +1191,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Color lineColor = Color.red; //wrong by default
         List<GameObject> correctPositionIndicatorList = new List<GameObject>();
         retrievalText.text = "Showing feedback...";
+        //debugText.text = "";
         //make all the spawned objects and choice selection visible
         for (int i = 0; i < retrievalSequenceList.Count; i++)
         {
@@ -1206,9 +1207,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 GameObject correctPositionIndicator = Instantiate(correctPositionIndicatorPrefab, Vector3.zero, Quaternion.identity) as GameObject;
                 correctPositionIndicator.transform.parent = retrievalSequenceList[i].gameObject.transform;
                 correctPositionIndicator.transform.localPosition = Vector3.zero - new Vector3(0f, 0.519f, 0f); //adjust so that the indicator is at the foot of the pedestal
-
-                //now determine if the response was within range
-                float responseDistance = Vector2.Distance(new Vector2(retrievalSequenceList[i].transform.position.x, retrievalSequenceList[i].transform.position.z), new Vector2(choiceSelectionList[i].transform.position.x, choiceSelectionList[i].transform.position.z));
+                correctPositionIndicator.transform.parent = null;
+                //now determine if the response was within range; here we can directly use the correctpositionindicator as a comparison metric
+                float responseDistance = Vector2.Distance(new Vector2(correctPositionIndicator.transform.position.x, correctPositionIndicator.transform.position.z), new Vector2(choiceSelectionList[i].transform.position.x, choiceSelectionList[i].transform.position.z));
+                debugText.enabled = true;
+                //debugText.text += responseDistance.ToString() + " \n";
                 Debug.Log("response distance is " + responseDistance.ToString());
                 if (responseDistance < Configuration.minResponseDistance)
                 {

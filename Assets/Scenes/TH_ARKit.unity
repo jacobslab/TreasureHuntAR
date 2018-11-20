@@ -457,7 +457,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: 241.60016}
+  m_AnchoredPosition: {x: 0, y: 241.60016}
   m_SizeDelta: {x: 0, y: -483.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &129738106
@@ -3276,6 +3276,12 @@ MonoBehaviour:
   rabbitObj: {fileID: 1489261119}
   arkitManager: {fileID: 556490309}
   debugText: {fileID: 555101739}
+  distractorPanel: {fileID: 0}
+  distractorText: {fileID: 0}
+  correctParticlePrefab: {fileID: 1015576372813440, guid: fbdb0b280789440678aa36806de97767,
+    type: 2}
+  wrongParticlePrefab: {fileID: 1325963772890730, guid: bad4a586d8c2b4fc1adb20c80b9b13a1,
+    type: 2}
 --- !u!4 &948318432
 Transform:
   m_ObjectHideFlags: 0
@@ -3774,7 +3780,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 84.1, y: -227}
+  m_AnchoredPosition: {x: 84.1001, y: -227}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1084166636
@@ -5756,6 +5762,8 @@ MonoBehaviour:
   m_ARCameraManager: {fileID: 1541959972}
   canvasParent: {fileID: 1741874997}
   mapButton: {fileID: 1793003559737938, guid: d154161c430684fae8ba9247aa587b5c, type: 2}
+  mapNameText: {fileID: 0}
+  savePanel: {fileID: 0}
 --- !u!1 &1617251711
 GameObject:
   m_ObjectHideFlags: 0

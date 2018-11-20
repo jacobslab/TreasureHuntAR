@@ -22,7 +22,7 @@ public class MapButton : MonoBehaviour {
     public void LoadMap()
     {
         Vector3 extents = Vector3.zero;
-        worldMapManager.LoadSpecificMap(selfMapIndex, out extents);
+        worldMapManager.LoadSpecificMap(buttonText.text, out extents);
         //buttonText.text = "worldmap " + selfMapIndex.ToString() + " \n " + extents.ToString();
     }
 }
