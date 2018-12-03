@@ -14,6 +14,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public Camera FirstPersonCamera;
     public GameObject treasureChestPrefab;
     public Text debugText;
+    public Text camPosText;
 
     private List<GameObject> spawnables;
     public ObjectManager objManager;
@@ -594,13 +595,20 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+        //Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
+        camPosText.text = camPos.ToString() + " \n rotation " + arkitManager.arCamManager.m_camera.transform.localEulerAngles.ToString();
+
 
         if (canNavigate && spawnChest != null)
         {
             //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
             //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-            Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-            float distance = Vector3.Distance(spawnChest.transform.position, camPos);
+            //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+            Vector3 spawnPos = UnityARMatrixOps.GetPosition(spawnChest.transform.localPosition);
+            float distance = Vector3.Distance(spawnPos, camPos);
+            debugText.enabled = true;
+            debugText.text = distance.ToString() + " \n parent " + spawnChest.transform.parent.gameObject.name;
             float distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
             //			debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
             spawnChest.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);

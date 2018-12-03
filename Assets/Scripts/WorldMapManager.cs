@@ -14,6 +14,8 @@ public class WorldMapManager : MonoBehaviour
     public Transform canvasParent;
     public GameObject mapButton;
 
+    public Transform worldOrigin;
+
     public Text mapNameText;
     public CanvasGroup savePanel;
 
@@ -114,17 +116,22 @@ public class WorldMapManager : MonoBehaviour
             config.alignment = UnityARAlignment.UnityARAlignmentGravity;
             config.worldMap = worldMap;
             extents = worldMap.extent;
-			UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
+            UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
 
 			Debug.Log("Restarting session with worldMap");
 			session.RunWithConfigAndOptions(config, runOption);
-
-            if(TreasureHuntController_ARKit.Instance!=null)
+            if (TreasureHuntController_ARKit.Instance!=null)
             {
                 StartCoroutine(TreasureHuntController_ARKit.Instance.MakeSpawnableList());
             }
 
         }
+    }
+
+    public void ResetWorldOrigin()
+    {
+        UnityARSessionNativeInterface.GetARSessionNativeInterface().SetWorldOrigin(worldOrigin);
+
     }
 
     public void LoadSpecificMap(string mapName, out Vector3 extents)

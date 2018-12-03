@@ -12,11 +12,17 @@ public class DistractorGame : MonoBehaviour {
     public Text distractorText;
     public GameObject correctParticlePrefab;
     public GameObject wrongParticlePrefab;
+
+    private string catchInstructions = "Catch the rabbit by going near its location!";
+    private string successInstructions = "Success! You caught the rabbit!";
+    private string failureInstructions = "The rabbit escaped! Better luck next time!";
     TreasureHuntController_ARKit taskController { get { return TreasureHuntController_ARKit.Instance; }}
 
 	// Use this for initialization
 	void Start () {
         debugText.enabled = false;
+        distractorPanel.alpha = 0f;
+        distractorText.text = "";
         rabbitObj.SetActive(false);
 	}
 	
@@ -31,6 +37,9 @@ public class DistractorGame : MonoBehaviour {
         debugText.enabled = true;
         //make the rabbit visible
         rabbitObj.SetActive(true);
+
+        distractorPanel.alpha = 1f;
+        distractorText.text = catchInstructions;
 
         UnityEngine.Debug.Log("loaded map extents are "  + arkitManager.arWorldMapManager.m_LoadedMap.extent.ToString());
 
@@ -64,7 +73,7 @@ public class DistractorGame : MonoBehaviour {
             }
             currentIndex++;
         }
-        rabbitObj.transform.parent = planeAnchor.gameObject.transform;
+        //rabbitObj.transform.parent = planeAnchor.gameObject.transform;
         rabbitObj.transform.localPosition = Vector3.zero;
 
         float moveTimer = 0f;
@@ -90,27 +99,27 @@ public class DistractorGame : MonoBehaviour {
             yield return 0;
         }
         rabbitObj.GetComponent<Animator>().SetBool("CanMove?", false);
-        //rabbitObj.transform.parent = null;
+        rabbitObj.transform.parent = null;
 
         //then wait for the player to come closer to the rabbit
-        float distanceLeft = 10f;
+        float distance = 10f;
         float durationTimer = 0f;
-        while (distanceLeft > Configuration.minRabbitCatchDistance && durationTimer < 8f)
+        while (distance > Configuration.minRabbitCatchDistance && durationTimer < 8f)
         {
             //Debug.Log("waiting for the rabbit to be caught");
             durationTimer += Time.deltaTime;
 
             Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-            float distance = Vector3.Distance(rabbitObj.transform.position, camPos);
-            distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
+            distance = Vector3.Distance(rabbitObj.transform.position, camPos);
+            //distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
             //debugText.text = "distance left " + distanceLeft.ToString() +  " timer " + durationTimer.ToString();
-            //                                      debugText.text = distanceLeft.ToString ();
+            debugText.text = distance.ToString ();
             //rabbitObj.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
             yield return 0;
         }
 
         bool caughtRabbit = false;
-        if(distanceLeft<=Configuration.minRabbitCatchDistance)
+        if(distance<=Configuration.minRabbitCatchDistance)
         {
             caughtRabbit = true;
         }
@@ -122,6 +131,7 @@ public class DistractorGame : MonoBehaviour {
 
         if (caughtRabbit)
         {
+            distractorText.text = successInstructions;
             GameObject correctParticleObj = Instantiate(correctParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
             correctParticleObj.transform.parent = planeAnchor.gameObject.transform;
             correctParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
@@ -130,9 +140,14 @@ public class DistractorGame : MonoBehaviour {
         }
         else
         {
-
+            distractorText.text = failureInstructions;
+            GameObject wrongParticleObj = Instantiate(wrongParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+            wrongParticleObj.transform.parent = planeAnchor.gameObject.transform;
+            wrongParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
+            yield return new WaitForSeconds(2.5f);
+            Destroy(wrongParticleObj);
         }
-
+        distractorPanel.alpha = 0f;
 
     yield return null;
     }
