@@ -63,11 +63,14 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     public GameObject coinShowerParticles;
 
+    private float distance = 0f;
+    private float distanceLeft = 0f;
+
     //scoring
     private int totalScore = 0;
 
     //navigation feature
-    public bool canNavigate = false;
+    public bool canNavigate = true;
     public Toggle canNavigateToggle;
 
     private Touch touch;
@@ -595,22 +598,25 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-        //Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
-        camPosText.text = camPos.ToString() + " \n rotation " + arkitManager.arCamManager.m_camera.transform.localEulerAngles.ToString();
+
+        Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+        Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
+        Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+        //Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+        ////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
+        ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
 
         if (canNavigate && spawnChest != null)
         {
-            //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
-            //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-            //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-            Vector3 spawnPos = UnityARMatrixOps.GetPosition(spawnChest.transform.localPosition);
-            float distance = Vector3.Distance(spawnPos, camPos);
-            debugText.enabled = true;
-            debugText.text = distance.ToString() + " \n parent " + spawnChest.transform.parent.gameObject.name;
-            float distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
-            //			debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
+        //    //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
+        //    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+        //    //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+            distance = Vector3.Distance(spawnChest.transform.position, camPos);
+        //    //debugText.enabled = true;
+        //    //debugText.text = distance.ToString() + " \n parent " + spawnChest.transform.parent.gameObject.name;
+            distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
+        //    //debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
             spawnChest.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
         }
 
@@ -650,7 +656,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                     Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
                     //debugText.text = camPos.ToString();
                     trialLog.LogCamPosition(camPos);
-                    float distance = Vector3.Distance(spawnChest.transform.position, camPos);
+                    //float distance = Vector3.Distance(spawnChest.transform.position, camPos);
                     //					debugText.text = distance.ToString ();
                 }
                 else
@@ -683,21 +689,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                                 //										Debug.Log ("GOT A HIT");
                                 //										Debug.Log ("opening a chest");
                                 bool canOpen = false;
-                                //Matrix4x4 camMatrix = arCamManager.GetCurrentPose ();
+                                //Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose ();
                                 //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-                                Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-                                float distance = Vector3.Distance(spawnChest.transform.position, camPos);
-                                //								Debug.Log("hit distance is: " + distance.ToString ());
+                                ////Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+                                //float distance = Vector3.Distance(spawnChest.transform.position, camPos);
+                                ////								Debug.Log("hit distance is: " + distance.ToString ());
                                 if (!canNavigate)
                                 {
                                     canOpen = true;
                                 }
                                 else
                                 {
-                                    float distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
-                                    //										debugText.text = distanceLeft.ToString ();
-                                    spawnChest.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
-                                    if (distanceLeft < 0f)
+                                   if (distanceLeft < 0f)
                                     {
                                         canOpen = true;
                                     }
@@ -907,7 +910,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         {
             if (i != currentIndex)
             {
-                if (Vector3.Distance(chestLocation, chestLocationList[i]) < 0.25f)
+                if (Vector3.Distance(chestLocation, chestLocationList[i]) < Configuration.minDistanceBetweenObjects)
                     return false;
                 dist = Vector3.Distance(chestLocation, chestLocationList[i]);
             }

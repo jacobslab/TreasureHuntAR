@@ -1192,6 +1192,7 @@ MonoBehaviour:
   m_ARCameraManager: {fileID: 1121666030}
   canvasParent: {fileID: 520163597}
   mapButton: {fileID: 1793003559737938, guid: d154161c430684fae8ba9247aa587b5c, type: 2}
+  worldOrigin: {fileID: 0}
   mapNameText: {fileID: 1392348533}
   savePanel: {fileID: 1790816620}
 --- !u!4 &744986761
@@ -1299,7 +1300,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &947883105
 GameObject:
   m_ObjectHideFlags: 0
@@ -2054,8 +2055,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 82.89953, y: -90.726135}
-  m_SizeDelta: {x: 155.79906, y: 171.45227}
+  m_AnchoredPosition: {x: 84.47544, y: -92.30502}
+  m_SizeDelta: {x: 158.95088, y: 174.61005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1587227113
 MonoBehaviour:
@@ -2261,8 +2262,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 82.89953, y: -272.1784}
-  m_SizeDelta: {x: 155.79906, y: 171.45227}
+  m_AnchoredPosition: {x: 84.47544, y: -276.91507}
+  m_SizeDelta: {x: 158.95088, y: 174.61005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1841742998
 MonoBehaviour:

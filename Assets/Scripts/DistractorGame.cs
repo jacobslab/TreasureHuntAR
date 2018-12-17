@@ -53,16 +53,23 @@ public class DistractorGame : MonoBehaviour {
         Vector3 spawnPos = taskController.GetRandomPosition(out randPlaneIndex);
         rabbitObj.transform.parent = planeAnchor.gameObject.transform;
         rabbitObj.transform.localPosition =spawnPos;
+        Debug.Log("put rabbit on a random spawn pos");
 
         //find a random position that is reasonable distance away from the rabbit
         Vector3 targetPos = Vector3.zero;
+
+        Debug.Log("finding targetpos for the rabbit");
         while(Vector3.Distance(targetPos,rabbitObj.transform.localPosition) < Configuration.minRabbitSpawnDistance)
         {
             targetPos = taskController.GetRandomPosition(out randPlaneIndex);
             yield return 0;
         }
+        //wait for the rabbit to move
 
-        rabbitObj.GetComponent<Animator>().SetBool("CanMove?", true);
+        Debug.Log("setting rabbit anim to move");
+
+
+
         //lerp rabbit to the targetpos
         int currentIndex = 0;
         foreach (var plane in arPlaneAnchors)
@@ -76,6 +83,7 @@ public class DistractorGame : MonoBehaviour {
         //rabbitObj.transform.parent = planeAnchor.gameObject.transform;
         rabbitObj.transform.localPosition = Vector3.zero;
 
+
         float moveTimer = 0f;
         //float maxWaitFactor = 4f;
         float smoothTime = 4f;
@@ -85,6 +93,10 @@ public class DistractorGame : MonoBehaviour {
         //first make sure the rabbit is looking at the targetpos
         rabbitObj.transform.LookAt(targetPos);
         rabbitObj.transform.localEulerAngles = new Vector3(0f, rabbitObj.transform.localEulerAngles.y, 0f); //reset x and z axes angles
+
+
+        yield return new WaitForSeconds(Configuration.minRabbitMoveWait);
+        rabbitObj.GetComponent<Animator>().SetBool("CanMove?", true);
         Debug.Log("moving the rabbit");
         while (moveTimer < smoothTime)
         {
@@ -106,14 +118,18 @@ public class DistractorGame : MonoBehaviour {
         float durationTimer = 0f;
         while (distance > Configuration.minRabbitCatchDistance && durationTimer < 8f)
         {
-            //Debug.Log("waiting for the rabbit to be caught");
+            Debug.Log("waiting for the rabbit to be caught");
             durationTimer += Time.deltaTime;
 
-            Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+
+            Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+            Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
+            Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+            //Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
             distance = Vector3.Distance(rabbitObj.transform.position, camPos);
             //distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
             //debugText.text = "distance left " + distanceLeft.ToString() +  " timer " + durationTimer.ToString();
-            debugText.text = distance.ToString ();
+            //debugText.text = distance.ToString ();
             //rabbitObj.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
             yield return 0;
         }

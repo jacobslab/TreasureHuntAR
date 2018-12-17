@@ -102,6 +102,16 @@ public class UnityARCameraManager : MonoBehaviour {
         }
     }
 
+    public Matrix4x4 GetCurrentPose()
+    {
+        if (m_camera != null && sessionStarted)
+        {
+            return m_session.GetCameraPose();
+        }
+        else
+            return Matrix4x4.identity;
+    }
+
     // Update is called once per frame
 
     void Update () {
