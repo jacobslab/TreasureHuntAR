@@ -1292,7 +1292,7 @@
 					"$(SRCROOT)/Libraries/libil2cpp/include",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_GENERATE_MAP_FILE = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1316,12 +1316,12 @@
 					CoreMotion,
 					"-weak-lSystem",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntAR;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntARDeveloper;
 				PRODUCT_NAME = TreasureHuntAR;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				UNITY_RUNTIME_VERSION = 2018.2.8f1;
 				UNITY_SCRIPTING_BACKEND = il2cpp;
 			};
@@ -1354,7 +1354,7 @@
 					"$(SRCROOT)/Libraries/libil2cpp/include",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_GENERATE_MAP_FILE = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1378,12 +1378,12 @@
 					CoreMotion,
 					"-weak-lSystem",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntAR;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntARDeveloper;
 				PRODUCT_NAME = TreasureHuntAR;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				UNITY_RUNTIME_VERSION = 2018.2.8f1;
 				UNITY_SCRIPTING_BACKEND = il2cpp;
 			};
@@ -1561,7 +1561,7 @@
 					"$(SRCROOT)/Libraries/libil2cpp/include",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_GENERATE_MAP_FILE = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1585,12 +1585,12 @@
 					CoreMotion,
 					"-weak-lSystem",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntAR;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntARDeveloper;
 				PRODUCT_NAME = TreasureHuntAR;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				UNITY_RUNTIME_VERSION = 2018.2.8f1;
 				UNITY_SCRIPTING_BACKEND = il2cpp;
 			};
@@ -1713,7 +1713,7 @@
 					"$(SRCROOT)/Libraries/libil2cpp/include",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_GENERATE_MAP_FILE = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1737,12 +1737,12 @@
 					CoreMotion,
 					"-weak-lSystem",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntAR;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacobslab.TreasureHuntARDeveloper;
 				PRODUCT_NAME = TreasureHuntAR;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				UNITY_RUNTIME_VERSION = 2018.2.8f1;
 				UNITY_SCRIPTING_BACKEND = il2cpp;
 			};

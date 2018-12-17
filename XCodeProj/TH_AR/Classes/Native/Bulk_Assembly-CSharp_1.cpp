@@ -145,6 +145,8 @@ struct LoggerWriter_t1828328537;
 struct Logger_Threading_t2019543111;
 // Logger_Threading/<LogWriter>c__Iterator0
 struct U3CLogWriterU3Ec__Iterator0_t3167600906;
+// MenuController
+struct MenuController_t3930949237;
 // ModeSwitcher
 struct ModeSwitcher_t3643344453;
 // NetworkSyncClient
@@ -613,6 +615,8 @@ struct Renderer_t2627027031;
 struct CommandBuffer_t2206337031;
 // UnityEngine.Rendering.SphericalHarmonicsL2[]
 struct SphericalHarmonicsL2U5BU5D_t1321365442;
+// UnityEngine.SceneManagement.SceneManager
+struct SceneManager_t2787271929;
 // UnityEngine.ScriptableObject
 struct ScriptableObject_t2528358522;
 // UnityEngine.Sprite
@@ -663,6 +667,8 @@ struct RawImage_t3182918964;
 struct RectMask2D_t3474889437;
 // UnityEngine.UI.Selectable
 struct Selectable_t3250028441;
+// UnityEngine.UI.Slider
+struct Slider_t3903728902;
 // UnityEngine.UI.Text
 struct Text_t1901882714;
 // UnityEngine.UI.Toggle
@@ -929,6 +935,7 @@ extern String_t* _stringLiteral1252983944;
 extern String_t* _stringLiteral1261680890;
 extern String_t* _stringLiteral1267809405;
 extern String_t* _stringLiteral1275021384;
+extern String_t* _stringLiteral1288156629;
 extern String_t* _stringLiteral1303267434;
 extern String_t* _stringLiteral1328582570;
 extern String_t* _stringLiteral1342282995;
@@ -948,6 +955,7 @@ extern String_t* _stringLiteral1656804335;
 extern String_t* _stringLiteral1671116060;
 extern String_t* _stringLiteral16783768;
 extern String_t* _stringLiteral1713074988;
+extern String_t* _stringLiteral174814117;
 extern String_t* _stringLiteral1792106832;
 extern String_t* _stringLiteral1930776103;
 extern String_t* _stringLiteral1956448335;
@@ -986,18 +994,19 @@ extern String_t* _stringLiteral2560883215;
 extern String_t* _stringLiteral2563048625;
 extern String_t* _stringLiteral2577289790;
 extern String_t* _stringLiteral2591310307;
+extern String_t* _stringLiteral2606063605;
 extern String_t* _stringLiteral2606710484;
 extern String_t* _stringLiteral2614845330;
 extern String_t* _stringLiteral2647956660;
 extern String_t* _stringLiteral2675747985;
 extern String_t* _stringLiteral2694463232;
-extern String_t* _stringLiteral2695983508;
 extern String_t* _stringLiteral2698866946;
 extern String_t* _stringLiteral2715717340;
 extern String_t* _stringLiteral2732787588;
 extern String_t* _stringLiteral276913859;
 extern String_t* _stringLiteral2779120647;
 extern String_t* _stringLiteral2784945572;
+extern String_t* _stringLiteral2793072118;
 extern String_t* _stringLiteral2793332370;
 extern String_t* _stringLiteral2805439620;
 extern String_t* _stringLiteral2808829465;
@@ -1005,6 +1014,7 @@ extern String_t* _stringLiteral2821464637;
 extern String_t* _stringLiteral2827703315;
 extern String_t* _stringLiteral2829018041;
 extern String_t* _stringLiteral2831049193;
+extern String_t* _stringLiteral2832930495;
 extern String_t* _stringLiteral2840702221;
 extern String_t* _stringLiteral2841307652;
 extern String_t* _stringLiteral2844808130;
@@ -1103,6 +1113,7 @@ extern String_t* _stringLiteral46400675;
 extern String_t* _stringLiteral469551359;
 extern String_t* _stringLiteral474955721;
 extern String_t* _stringLiteral488893018;
+extern String_t* _stringLiteral495519384;
 extern String_t* _stringLiteral495613311;
 extern String_t* _stringLiteral50791665;
 extern String_t* _stringLiteral511925810;
@@ -1114,11 +1125,9 @@ extern String_t* _stringLiteral531270037;
 extern String_t* _stringLiteral540840984;
 extern String_t* _stringLiteral554599701;
 extern String_t* _stringLiteral570874235;
-extern String_t* _stringLiteral576114270;
 extern String_t* _stringLiteral577490766;
 extern String_t* _stringLiteral590269816;
 extern String_t* _stringLiteral60981659;
-extern String_t* _stringLiteral611968750;
 extern String_t* _stringLiteral671512872;
 extern String_t* _stringLiteral689474398;
 extern String_t* _stringLiteral694916469;
@@ -1129,7 +1138,6 @@ extern String_t* _stringLiteral7908449;
 extern String_t* _stringLiteral859270128;
 extern String_t* _stringLiteral871425804;
 extern String_t* _stringLiteral874092507;
-extern String_t* _stringLiteral905113713;
 extern String_t* _stringLiteral917497068;
 extern String_t* _stringLiteral922458191;
 extern String_t* _stringLiteral923248526;
@@ -1368,6 +1376,8 @@ extern const uint32_t Logger_Threading_OnApplicationQuit_m436614046_MetadataUsag
 extern const uint32_t Logger_Threading_Start_m4047965775_MetadataUsageId;
 extern const uint32_t Logger_Threading__cctor_m1017067888_MetadataUsageId;
 extern const uint32_t Logger_Threading_close_m4123807480_MetadataUsageId;
+extern const uint32_t MenuController_BeginExperiment_m72728070_MetadataUsageId;
+extern const uint32_t MenuController_UpdateSubjectName_m577453330_MetadataUsageId;
 extern const uint32_t ModeSwitcher_OnGUI_m1227622856_MetadataUsageId;
 extern const uint32_t MyMsgType__cctor_m2270003640_MetadataUsageId;
 extern const uint32_t NetworkSyncClient_AttemptConnection_m3204686454_MetadataUsageId;
@@ -6317,6 +6327,33 @@ struct YieldInstruction_t403091072_marshaled_com
 {
 };
 #endif // YIELDINSTRUCTION_T403091072_H
+#ifndef EXTERNAPI_T1764421814_H
+#define EXTERNAPI_T1764421814_H
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
+// GoogleARCoreInternal.SessionConfigApi/ExternApi
+struct  ExternApi_t1764421814 
+{
+public:
+	union
+	{
+		struct
+		{
+		};
+		uint8_t ExternApi_t1764421814__padding[1];
+	};
+
+public:
+};
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#endif // EXTERNAPI_T1764421814_H
 #ifndef EXTERNAPI_T574091193_H
 #define EXTERNAPI_T574091193_H
 #ifdef __clang__
@@ -9731,6 +9768,64 @@ public:
 #pragma clang diagnostic pop
 #endif
 #endif // TRACKINGSTATE_T1099935182_H
+#ifndef APILIGHTESTIMATIONMODE_T4137554712_H
+#define APILIGHTESTIMATIONMODE_T4137554712_H
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
+// GoogleARCoreInternal.ApiLightEstimationMode
+struct  ApiLightEstimationMode_t4137554712 
+{
+public:
+	// System.Int32 GoogleARCoreInternal.ApiLightEstimationMode::value__
+	int32_t ___value___1;
+
+public:
+	inline static int32_t get_offset_of_value___1() { return static_cast<int32_t>(offsetof(ApiLightEstimationMode_t4137554712, ___value___1)); }
+	inline int32_t get_value___1() const { return ___value___1; }
+	inline int32_t* get_address_of_value___1() { return &___value___1; }
+	inline void set_value___1(int32_t value)
+	{
+		___value___1 = value;
+	}
+};
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#endif // APILIGHTESTIMATIONMODE_T4137554712_H
+#ifndef APIPLANEFINDINGMODE_T590523534_H
+#define APIPLANEFINDINGMODE_T590523534_H
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
+// GoogleARCoreInternal.ApiPlaneFindingMode
+struct  ApiPlaneFindingMode_t590523534 
+{
+public:
+	// System.Int32 GoogleARCoreInternal.ApiPlaneFindingMode::value__
+	int32_t ___value___1;
+
+public:
+	inline static int32_t get_offset_of_value___1() { return static_cast<int32_t>(offsetof(ApiPlaneFindingMode_t590523534, ___value___1)); }
+	inline int32_t get_value___1() const { return ___value___1; }
+	inline int32_t* get_address_of_value___1() { return &___value___1; }
+	inline void set_value___1(int32_t value)
+	{
+		___value___1 = value;
+	}
+};
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#endif // APIPLANEFINDINGMODE_T590523534_H
 #ifndef APITRACKABLETYPE_T702053436_H
 #define APITRACKABLETYPE_T702053436_H
 #ifdef __clang__
@@ -9789,6 +9884,35 @@ public:
 #pragma clang diagnostic pop
 #endif
 #endif // APITRACKINGSTATE_T3318626383_H
+#ifndef APIUPDATEMODE_T3440359817_H
+#define APIUPDATEMODE_T3440359817_H
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
+// GoogleARCoreInternal.ApiUpdateMode
+struct  ApiUpdateMode_t3440359817 
+{
+public:
+	// System.Int32 GoogleARCoreInternal.ApiUpdateMode::value__
+	int32_t ___value___1;
+
+public:
+	inline static int32_t get_offset_of_value___1() { return static_cast<int32_t>(offsetof(ApiUpdateMode_t3440359817, ___value___1)); }
+	inline int32_t get_value___1() const { return ___value___1; }
+	inline int32_t* get_address_of_value___1() { return &___value___1; }
+	inline void set_value___1(int32_t value)
+	{
+		___value___1 = value;
+	}
+};
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#endif // APIUPDATEMODE_T3440359817_H
 #ifndef NATIVESESSION_T1550589577_H
 #define NATIVESESSION_T1550589577_H
 #ifdef __clang__
@@ -18338,8 +18462,29 @@ public:
 struct  Configuration_t2084744999  : public MonoBehaviour_t3962482529
 {
 public:
+	// UnityEngine.UI.Slider Configuration::responseDistSlider
+	Slider_t3903728902 * ___responseDistSlider_13;
+	// UnityEngine.UI.Text Configuration::responseDistText
+	Text_t1901882714 * ___responseDistText_14;
 
 public:
+	inline static int32_t get_offset_of_responseDistSlider_13() { return static_cast<int32_t>(offsetof(Configuration_t2084744999, ___responseDistSlider_13)); }
+	inline Slider_t3903728902 * get_responseDistSlider_13() const { return ___responseDistSlider_13; }
+	inline Slider_t3903728902 ** get_address_of_responseDistSlider_13() { return &___responseDistSlider_13; }
+	inline void set_responseDistSlider_13(Slider_t3903728902 * value)
+	{
+		___responseDistSlider_13 = value;
+		Il2CppCodeGenWriteBarrier((&___responseDistSlider_13), value);
+	}
+
+	inline static int32_t get_offset_of_responseDistText_14() { return static_cast<int32_t>(offsetof(Configuration_t2084744999, ___responseDistText_14)); }
+	inline Text_t1901882714 * get_responseDistText_14() const { return ___responseDistText_14; }
+	inline Text_t1901882714 ** get_address_of_responseDistText_14() { return &___responseDistText_14; }
+	inline void set_responseDistText_14(Text_t1901882714 * value)
+	{
+		___responseDistText_14 = value;
+		Il2CppCodeGenWriteBarrier((&___responseDistText_14), value);
+	}
 };
 
 struct Configuration_t2084744999_StaticFields
@@ -18361,14 +18506,16 @@ public:
 	bool ___isSyncbox_10;
 	// System.String Configuration::defaultLoggingPath
 	String_t* ___defaultLoggingPath_11;
+	// System.String Configuration::subjectName
+	String_t* ___subjectName_12;
 	// Subject Configuration::_currentSubject
-	Subject_t2255083748 * ____currentSubject_12;
+	Subject_t2255083748 * ____currentSubject_15;
 	// System.Single Configuration::minRetrievalDistance
-	float ___minRetrievalDistance_13;
+	float ___minRetrievalDistance_16;
 	// System.Single Configuration::minOpenDistance
-	float ___minOpenDistance_14;
+	float ___minOpenDistance_17;
 	// System.Single Configuration::minResponseDistance
-	float ___minResponseDistance_15;
+	float ___minResponseDistance_18;
 
 public:
 	inline static int32_t get_offset_of_presentationTime_4() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___presentationTime_4)); }
@@ -18437,37 +18584,46 @@ public:
 		Il2CppCodeGenWriteBarrier((&___defaultLoggingPath_11), value);
 	}
 
-	inline static int32_t get_offset_of__currentSubject_12() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ____currentSubject_12)); }
-	inline Subject_t2255083748 * get__currentSubject_12() const { return ____currentSubject_12; }
-	inline Subject_t2255083748 ** get_address_of__currentSubject_12() { return &____currentSubject_12; }
-	inline void set__currentSubject_12(Subject_t2255083748 * value)
+	inline static int32_t get_offset_of_subjectName_12() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___subjectName_12)); }
+	inline String_t* get_subjectName_12() const { return ___subjectName_12; }
+	inline String_t** get_address_of_subjectName_12() { return &___subjectName_12; }
+	inline void set_subjectName_12(String_t* value)
 	{
-		____currentSubject_12 = value;
-		Il2CppCodeGenWriteBarrier((&____currentSubject_12), value);
+		___subjectName_12 = value;
+		Il2CppCodeGenWriteBarrier((&___subjectName_12), value);
 	}
 
-	inline static int32_t get_offset_of_minRetrievalDistance_13() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minRetrievalDistance_13)); }
-	inline float get_minRetrievalDistance_13() const { return ___minRetrievalDistance_13; }
-	inline float* get_address_of_minRetrievalDistance_13() { return &___minRetrievalDistance_13; }
-	inline void set_minRetrievalDistance_13(float value)
+	inline static int32_t get_offset_of__currentSubject_15() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ____currentSubject_15)); }
+	inline Subject_t2255083748 * get__currentSubject_15() const { return ____currentSubject_15; }
+	inline Subject_t2255083748 ** get_address_of__currentSubject_15() { return &____currentSubject_15; }
+	inline void set__currentSubject_15(Subject_t2255083748 * value)
 	{
-		___minRetrievalDistance_13 = value;
+		____currentSubject_15 = value;
+		Il2CppCodeGenWriteBarrier((&____currentSubject_15), value);
 	}
 
-	inline static int32_t get_offset_of_minOpenDistance_14() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minOpenDistance_14)); }
-	inline float get_minOpenDistance_14() const { return ___minOpenDistance_14; }
-	inline float* get_address_of_minOpenDistance_14() { return &___minOpenDistance_14; }
-	inline void set_minOpenDistance_14(float value)
+	inline static int32_t get_offset_of_minRetrievalDistance_16() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minRetrievalDistance_16)); }
+	inline float get_minRetrievalDistance_16() const { return ___minRetrievalDistance_16; }
+	inline float* get_address_of_minRetrievalDistance_16() { return &___minRetrievalDistance_16; }
+	inline void set_minRetrievalDistance_16(float value)
 	{
-		___minOpenDistance_14 = value;
+		___minRetrievalDistance_16 = value;
 	}
 
-	inline static int32_t get_offset_of_minResponseDistance_15() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minResponseDistance_15)); }
-	inline float get_minResponseDistance_15() const { return ___minResponseDistance_15; }
-	inline float* get_address_of_minResponseDistance_15() { return &___minResponseDistance_15; }
-	inline void set_minResponseDistance_15(float value)
+	inline static int32_t get_offset_of_minOpenDistance_17() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minOpenDistance_17)); }
+	inline float get_minOpenDistance_17() const { return ___minOpenDistance_17; }
+	inline float* get_address_of_minOpenDistance_17() { return &___minOpenDistance_17; }
+	inline void set_minOpenDistance_17(float value)
 	{
-		___minResponseDistance_15 = value;
+		___minOpenDistance_17 = value;
+	}
+
+	inline static int32_t get_offset_of_minResponseDistance_18() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minResponseDistance_18)); }
+	inline float get_minResponseDistance_18() const { return ___minResponseDistance_18; }
+	inline float* get_address_of_minResponseDistance_18() { return &___minResponseDistance_18; }
+	inline void set_minResponseDistance_18(float value)
+	{
+		___minResponseDistance_18 = value;
 	}
 };
 
@@ -18916,6 +19072,69 @@ public:
 #pragma clang diagnostic pop
 #endif
 #endif // LOGGER_THREADING_T2019543111_H
+#ifndef MENUCONTROLLER_T3930949237_H
+#define MENUCONTROLLER_T3930949237_H
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
+// MenuController
+struct  MenuController_t3930949237  : public MonoBehaviour_t3962482529
+{
+public:
+	// UnityEngine.UI.InputField MenuController::subjectInputField
+	InputField_t3762917431 * ___subjectInputField_4;
+	// UnityEngine.CanvasGroup MenuController::menuGroup
+	CanvasGroup_t4083511760 * ___menuGroup_5;
+	// UnityEngine.SceneManagement.SceneManager MenuController::sceneManager
+	SceneManager_t2787271929 * ___sceneManager_6;
+	// UnityEngine.UI.Text MenuController::subjectEmptyWarningText
+	Text_t1901882714 * ___subjectEmptyWarningText_7;
+
+public:
+	inline static int32_t get_offset_of_subjectInputField_4() { return static_cast<int32_t>(offsetof(MenuController_t3930949237, ___subjectInputField_4)); }
+	inline InputField_t3762917431 * get_subjectInputField_4() const { return ___subjectInputField_4; }
+	inline InputField_t3762917431 ** get_address_of_subjectInputField_4() { return &___subjectInputField_4; }
+	inline void set_subjectInputField_4(InputField_t3762917431 * value)
+	{
+		___subjectInputField_4 = value;
+		Il2CppCodeGenWriteBarrier((&___subjectInputField_4), value);
+	}
+
+	inline static int32_t get_offset_of_menuGroup_5() { return static_cast<int32_t>(offsetof(MenuController_t3930949237, ___menuGroup_5)); }
+	inline CanvasGroup_t4083511760 * get_menuGroup_5() const { return ___menuGroup_5; }
+	inline CanvasGroup_t4083511760 ** get_address_of_menuGroup_5() { return &___menuGroup_5; }
+	inline void set_menuGroup_5(CanvasGroup_t4083511760 * value)
+	{
+		___menuGroup_5 = value;
+		Il2CppCodeGenWriteBarrier((&___menuGroup_5), value);
+	}
+
+	inline static int32_t get_offset_of_sceneManager_6() { return static_cast<int32_t>(offsetof(MenuController_t3930949237, ___sceneManager_6)); }
+	inline SceneManager_t2787271929 * get_sceneManager_6() const { return ___sceneManager_6; }
+	inline SceneManager_t2787271929 ** get_address_of_sceneManager_6() { return &___sceneManager_6; }
+	inline void set_sceneManager_6(SceneManager_t2787271929 * value)
+	{
+		___sceneManager_6 = value;
+		Il2CppCodeGenWriteBarrier((&___sceneManager_6), value);
+	}
+
+	inline static int32_t get_offset_of_subjectEmptyWarningText_7() { return static_cast<int32_t>(offsetof(MenuController_t3930949237, ___subjectEmptyWarningText_7)); }
+	inline Text_t1901882714 * get_subjectEmptyWarningText_7() const { return ___subjectEmptyWarningText_7; }
+	inline Text_t1901882714 ** get_address_of_subjectEmptyWarningText_7() { return &___subjectEmptyWarningText_7; }
+	inline void set_subjectEmptyWarningText_7(Text_t1901882714 * value)
+	{
+		___subjectEmptyWarningText_7 = value;
+		Il2CppCodeGenWriteBarrier((&___subjectEmptyWarningText_7), value);
+	}
+};
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#endif // MENUCONTROLLER_T3930949237_H
 #ifndef MODESWITCHER_T3643344453_H
 #define MODESWITCHER_T3643344453_H
 #ifdef __clang__
@@ -25263,6 +25482,16 @@ extern "C" IL2CPP_METHOD_ATTR void StreamWriter__ctor_m3973049521 (StreamWriter_
 extern "C" IL2CPP_METHOD_ATTR String_t* String_Concat_m3937257545 (RuntimeObject * __this /* static, unused */, String_t* p0, String_t* p1, const RuntimeMethod* method);
 // System.Void System.NotSupportedException::.ctor()
 extern "C" IL2CPP_METHOD_ATTR void NotSupportedException__ctor_m2730133172 (NotSupportedException_t1314879016 * __this, const RuntimeMethod* method);
+// System.Void UnityEngine.Behaviour::set_enabled(System.Boolean)
+extern "C" IL2CPP_METHOD_ATTR void Behaviour_set_enabled_m20417929 (Behaviour_t1437897464 * __this, bool p0, const RuntimeMethod* method);
+// System.Void UnityEngine.CanvasGroup::set_alpha(System.Single)
+extern "C" IL2CPP_METHOD_ATTR void CanvasGroup_set_alpha_m4032573 (CanvasGroup_t4083511760 * __this, float p0, const RuntimeMethod* method);
+// System.String UnityEngine.UI.InputField::get_text()
+extern "C" IL2CPP_METHOD_ATTR String_t* InputField_get_text_m3534748202 (InputField_t3762917431 * __this, const RuntimeMethod* method);
+// System.Boolean System.String::op_Equality(System.String,System.String)
+extern "C" IL2CPP_METHOD_ATTR bool String_op_Equality_m920492651 (RuntimeObject * __this /* static, unused */, String_t* p0, String_t* p1, const RuntimeMethod* method);
+// System.Void UnityEngine.SceneManagement.SceneManager::LoadScene(System.Int32)
+extern "C" IL2CPP_METHOD_ATTR void SceneManager_LoadScene_m3463216446 (RuntimeObject * __this /* static, unused */, int32_t p0, const RuntimeMethod* method);
 // System.Void UnityEngine.GameObject::SetActive(System.Boolean)
 extern "C" IL2CPP_METHOD_ATTR void GameObject_SetActive_m796801857 (GameObject_t1113636619 * __this, bool p0, const RuntimeMethod* method);
 // System.Int32 UnityEngine.Screen::get_width()
@@ -25273,8 +25502,6 @@ extern "C" IL2CPP_METHOD_ATTR void Rect__ctor_m2614021312 (Rect_t2360479859 * __
 extern "C" IL2CPP_METHOD_ATTR bool GUI_Button_m1518979886 (RuntimeObject * __this /* static, unused */, Rect_t2360479859  p0, String_t* p1, const RuntimeMethod* method);
 // System.Void ModeSwitcher::EnableBallCreation(System.Boolean)
 extern "C" IL2CPP_METHOD_ATTR void ModeSwitcher_EnableBallCreation_m2937399940 (ModeSwitcher_t3643344453 * __this, bool ___enable0, const RuntimeMethod* method);
-// System.Void UnityEngine.CanvasGroup::set_alpha(System.Single)
-extern "C" IL2CPP_METHOD_ATTR void CanvasGroup_set_alpha_m4032573 (CanvasGroup_t4083511760 * __this, float p0, const RuntimeMethod* method);
 // System.Void NetworkSyncClient/<AttemptConnection>c__Iterator0::.ctor()
 extern "C" IL2CPP_METHOD_ATTR void U3CAttemptConnectionU3Ec__Iterator0__ctor_m567353353 (U3CAttemptConnectionU3Ec__Iterator0_t2230166328 * __this, const RuntimeMethod* method);
 // System.Void NetworkSyncClient/<BeginSync>c__Iterator1::.ctor()
@@ -25294,8 +25521,6 @@ extern "C" IL2CPP_METHOD_ATTR RuntimeObject* GameClock_GetNistTime_m4231874443 (
 extern "C" IL2CPP_METHOD_ATTR Coroutine_t3829159415 * MonoBehaviour_StartCoroutine_m3411253000 (MonoBehaviour_t3962482529 * __this, RuntimeObject* p0, const RuntimeMethod* method);
 // UnityEngine.Color UnityEngine.Color::get_white()
 extern "C" IL2CPP_METHOD_ATTR Color_t2555686324  Color_get_white_m332174077 (RuntimeObject * __this /* static, unused */, const RuntimeMethod* method);
-// System.String UnityEngine.UI.InputField::get_text()
-extern "C" IL2CPP_METHOD_ATTR String_t* InputField_get_text_m3534748202 (InputField_t3762917431 * __this, const RuntimeMethod* method);
 // System.Void UnityEngine.Networking.NetworkClient::.ctor()
 extern "C" IL2CPP_METHOD_ATTR void NetworkClient__ctor_m2657672369 (NetworkClient_t3758195968 * __this, const RuntimeMethod* method);
 // System.Void UnityEngine.Networking.NetworkMessageDelegate::.ctor(System.Object,System.IntPtr)
@@ -25418,8 +25643,6 @@ extern "C" IL2CPP_METHOD_ATTR void ObjectLogTrack_LogVisibility_m1030555367 (Obj
 extern "C" IL2CPP_METHOD_ATTR String_t* ObjectLogTrack_get_nameToLog_m803733697 (ObjectLogTrack_t214491521 * __this, const RuntimeMethod* method);
 // System.String UnityEngine.GameObject::get_tag()
 extern "C" IL2CPP_METHOD_ATTR String_t* GameObject_get_tag_m3951609671 (GameObject_t1113636619 * __this, const RuntimeMethod* method);
-// System.Boolean System.String::op_Equality(System.String,System.String)
-extern "C" IL2CPP_METHOD_ATTR bool String_op_Equality_m920492651 (RuntimeObject * __this /* static, unused */, String_t* p0, String_t* p1, const RuntimeMethod* method);
 // !!0 UnityEngine.Component::GetComponent<UnityEngine.RectTransform>()
 inline RectTransform_t3704657025 * Component_GetComponent_TisRectTransform_t3704657025_m3396022872 (Component_t1923634451 * __this, const RuntimeMethod* method)
 {
@@ -26040,12 +26263,12 @@ extern "C" IL2CPP_METHOD_ATTR bool Toggle_get_isOn_m1428293607 (Toggle_t27353770
 extern "C" IL2CPP_METHOD_ATTR String_t* Application_get_persistentDataPath_m1428108154 (RuntimeObject * __this /* static, unused */, const RuntimeMethod* method);
 // System.Void TreasureHuntController_ARKit::UpdateNavigationStatus()
 extern "C" IL2CPP_METHOD_ATTR void TreasureHuntController_ARKit_UpdateNavigationStatus_m312858973 (TreasureHuntController_ARKit_t1158636010 * __this, const RuntimeMethod* method);
+// System.String System.String::Concat(System.String,System.String,System.String,System.String)
+extern "C" IL2CPP_METHOD_ATTR String_t* String_Concat_m2163913788 (RuntimeObject * __this /* static, unused */, String_t* p0, String_t* p1, String_t* p2, String_t* p3, const RuntimeMethod* method);
 // System.Boolean System.IO.Directory::Exists(System.String)
 extern "C" IL2CPP_METHOD_ATTR bool Directory_Exists_m1484791558 (RuntimeObject * __this /* static, unused */, String_t* p0, const RuntimeMethod* method);
 // System.IO.DirectoryInfo System.IO.Directory::CreateDirectory(System.String)
 extern "C" IL2CPP_METHOD_ATTR DirectoryInfo_t35957480 * Directory_CreateDirectory_m751642867 (RuntimeObject * __this /* static, unused */, String_t* p0, const RuntimeMethod* method);
-// System.String System.String::Concat(System.String,System.String,System.String,System.String)
-extern "C" IL2CPP_METHOD_ATTR String_t* String_Concat_m2163913788 (RuntimeObject * __this /* static, unused */, String_t* p0, String_t* p1, String_t* p2, String_t* p3, const RuntimeMethod* method);
 // System.Boolean System.IO.File::Exists(System.String)
 extern "C" IL2CPP_METHOD_ATTR bool File_Exists_m3943585060 (RuntimeObject * __this /* static, unused */, String_t* p0, const RuntimeMethod* method);
 // System.Void System.IO.DirectoryInfo::.ctor(System.String)
@@ -26201,8 +26424,6 @@ extern "C" IL2CPP_METHOD_ATTR bool TreasureHuntController_ARKit_CheckSufficientD
 extern "C" IL2CPP_METHOD_ATTR void Transform_set_localPosition_m4128471975 (Transform_t3600365921 * __this, Vector3_t3722313464  p0, const RuntimeMethod* method);
 // System.Boolean GeoUtils::IsPointInPolygon(System.Collections.Generic.List`1<UnityEngine.Vector2>,UnityEngine.Vector2)
 extern "C" IL2CPP_METHOD_ATTR bool GeoUtils_IsPointInPolygon_m393033066 (GeoUtils_t2713622470 * __this, List_1_t3628304265 * ___polygon0, Vector2_t2156229523  ___testPoint1, const RuntimeMethod* method);
-// System.Void UnityEngine.Behaviour::set_enabled(System.Boolean)
-extern "C" IL2CPP_METHOD_ATTR void Behaviour_set_enabled_m20417929 (Behaviour_t1437897464 * __this, bool p0, const RuntimeMethod* method);
 // System.Void UnityEngine.UI.Selectable::set_interactable(System.Boolean)
 extern "C" IL2CPP_METHOD_ATTR void Selectable_set_interactable_m3105888815 (Selectable_t3250028441 * __this, bool p0, const RuntimeMethod* method);
 // UnityEngine.Vector3 UnityEngine.Vector2::op_Implicit(UnityEngine.Vector2)
@@ -26632,6 +26853,114 @@ extern "C" IL2CPP_METHOD_ATTR void bl_ToggleSwitcher_Set_m1534718789 (bl_ToggleS
 extern "C" IL2CPP_METHOD_ATTR void bl_ToggleSwitcher_Set_m1319101790 (bl_ToggleSwitcher_t2101127633 * __this, bool ___value0, const RuntimeMethod* method);
 // UnityEngine.Vector2 UnityEngine.RectTransform::get_anchoredPosition()
 extern "C" IL2CPP_METHOD_ATTR Vector2_t2156229523  RectTransform_get_anchoredPosition_m1813443094 (RectTransform_t3704657025 * __this, const RuntimeMethod* method);
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_create(System.IntPtr,System.IntPtr&)
+extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_create_m2713931539 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t* ___out_config1, const RuntimeMethod* method)
+{
+	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t*);
+	static PInvokeFunc il2cppPInvokeFunc;
+	if (il2cppPInvokeFunc == NULL)
+	{
+		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t*);
+		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_create", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
+
+		if (il2cppPInvokeFunc == NULL)
+		{
+			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_create'"), NULL, NULL);
+		}
+	}
+
+	// Native function invocation
+	il2cppPInvokeFunc(___session0, ___out_config1);
+
+}
+// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_destroy(System.IntPtr)
+extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_destroy_m2847100758 (RuntimeObject * __this /* static, unused */, intptr_t ___config0, const RuntimeMethod* method)
+{
+	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t);
+	static PInvokeFunc il2cppPInvokeFunc;
+	if (il2cppPInvokeFunc == NULL)
+	{
+		int parameterSize = sizeof(intptr_t);
+		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_destroy", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
+
+		if (il2cppPInvokeFunc == NULL)
+		{
+			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_destroy'"), NULL, NULL);
+		}
+	}
+
+	// Native function invocation
+	il2cppPInvokeFunc(___config0);
+
+}
+// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_setLightEstimationMode(System.IntPtr,System.IntPtr,GoogleARCoreInternal.ApiLightEstimationMode)
+extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_setLightEstimationMode_m1941526606 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t ___config1, int32_t ___light_estimation_mode2, const RuntimeMethod* method)
+{
+	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t, int32_t);
+	static PInvokeFunc il2cppPInvokeFunc;
+	if (il2cppPInvokeFunc == NULL)
+	{
+		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t) + sizeof(int32_t);
+		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_setLightEstimationMode", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
+
+		if (il2cppPInvokeFunc == NULL)
+		{
+			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_setLightEstimationMode'"), NULL, NULL);
+		}
+	}
+
+	// Native function invocation
+	il2cppPInvokeFunc(___session0, ___config1, ___light_estimation_mode2);
+
+}
+// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_setPlaneFindingMode(System.IntPtr,System.IntPtr,GoogleARCoreInternal.ApiPlaneFindingMode)
+extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_setPlaneFindingMode_m1808693701 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t ___config1, int32_t ___plane_finding_mode2, const RuntimeMethod* method)
+{
+	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t, int32_t);
+	static PInvokeFunc il2cppPInvokeFunc;
+	if (il2cppPInvokeFunc == NULL)
+	{
+		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t) + sizeof(int32_t);
+		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_setPlaneFindingMode", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
+
+		if (il2cppPInvokeFunc == NULL)
+		{
+			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_setPlaneFindingMode'"), NULL, NULL);
+		}
+	}
+
+	// Native function invocation
+	il2cppPInvokeFunc(___session0, ___config1, ___plane_finding_mode2);
+
+}
+// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_setUpdateMode(System.IntPtr,System.IntPtr,GoogleARCoreInternal.ApiUpdateMode)
+extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_setUpdateMode_m2252554020 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t ___config1, int32_t ___update_mode2, const RuntimeMethod* method)
+{
+	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t, int32_t);
+	static PInvokeFunc il2cppPInvokeFunc;
+	if (il2cppPInvokeFunc == NULL)
+	{
+		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t) + sizeof(int32_t);
+		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_setUpdateMode", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
+
+		if (il2cppPInvokeFunc == NULL)
+		{
+			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_setUpdateMode'"), NULL, NULL);
+		}
+	}
+
+	// Native function invocation
+	il2cppPInvokeFunc(___session0, ___config1, ___update_mode2);
+
+}
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
@@ -29667,6 +29996,98 @@ extern "C" IL2CPP_METHOD_ATTR void U3CLogWriterU3Ec__Iterator0_Reset_m2775670782
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
+// System.Void MenuController::.ctor()
+extern "C" IL2CPP_METHOD_ATTR void MenuController__ctor_m334417759 (MenuController_t3930949237 * __this, const RuntimeMethod* method)
+{
+	{
+		MonoBehaviour__ctor_m1579109191(__this, /*hidden argument*/NULL);
+		return;
+	}
+}
+// System.Void MenuController::Start()
+extern "C" IL2CPP_METHOD_ATTR void MenuController_Start_m501824375 (MenuController_t3930949237 * __this, const RuntimeMethod* method)
+{
+	{
+		Text_t1901882714 * L_0 = __this->get_subjectEmptyWarningText_7();
+		NullCheck(L_0);
+		Behaviour_set_enabled_m20417929(L_0, (bool)0, /*hidden argument*/NULL);
+		CanvasGroup_t4083511760 * L_1 = __this->get_menuGroup_5();
+		NullCheck(L_1);
+		CanvasGroup_set_alpha_m4032573(L_1, (1.0f), /*hidden argument*/NULL);
+		return;
+	}
+}
+// System.Void MenuController::Update()
+extern "C" IL2CPP_METHOD_ATTR void MenuController_Update_m3231320263 (MenuController_t3930949237 * __this, const RuntimeMethod* method)
+{
+	{
+		return;
+	}
+}
+// System.Void MenuController::UpdateSubjectName()
+extern "C" IL2CPP_METHOD_ATTR void MenuController_UpdateSubjectName_m577453330 (MenuController_t3930949237 * __this, const RuntimeMethod* method)
+{
+	static bool s_Il2CppMethodInitialized;
+	if (!s_Il2CppMethodInitialized)
+	{
+		il2cpp_codegen_initialize_method (MenuController_UpdateSubjectName_m577453330_MetadataUsageId);
+		s_Il2CppMethodInitialized = true;
+	}
+	{
+		InputField_t3762917431 * L_0 = __this->get_subjectInputField_4();
+		NullCheck(L_0);
+		String_t* L_1 = InputField_get_text_m3534748202(L_0, /*hidden argument*/NULL);
+		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
+		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_subjectName_12(L_1);
+		return;
+	}
+}
+// System.Void MenuController::BeginExperiment()
+extern "C" IL2CPP_METHOD_ATTR void MenuController_BeginExperiment_m72728070 (MenuController_t3930949237 * __this, const RuntimeMethod* method)
+{
+	static bool s_Il2CppMethodInitialized;
+	if (!s_Il2CppMethodInitialized)
+	{
+		il2cpp_codegen_initialize_method (MenuController_BeginExperiment_m72728070_MetadataUsageId);
+		s_Il2CppMethodInitialized = true;
+	}
+	{
+		InputField_t3762917431 * L_0 = __this->get_subjectInputField_4();
+		NullCheck(L_0);
+		String_t* L_1 = InputField_get_text_m3534748202(L_0, /*hidden argument*/NULL);
+		IL2CPP_RUNTIME_CLASS_INIT(String_t_il2cpp_TypeInfo_var);
+		String_t* L_2 = ((String_t_StaticFields*)il2cpp_codegen_static_fields_for(String_t_il2cpp_TypeInfo_var))->get_Empty_2();
+		bool L_3 = String_op_Equality_m920492651(NULL /*static, unused*/, L_1, L_2, /*hidden argument*/NULL);
+		if (!L_3)
+		{
+			goto IL_002b;
+		}
+	}
+	{
+		Text_t1901882714 * L_4 = __this->get_subjectEmptyWarningText_7();
+		NullCheck(L_4);
+		Behaviour_set_enabled_m20417929(L_4, (bool)1, /*hidden argument*/NULL);
+		goto IL_0031;
+	}
+
+IL_002b:
+	{
+		SceneManager_LoadScene_m3463216446(NULL /*static, unused*/, 1, /*hidden argument*/NULL);
+	}
+
+IL_0031:
+	{
+		return;
+	}
+}
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
 // System.Void ModeSwitcher::.ctor()
 extern "C" IL2CPP_METHOD_ATTR void ModeSwitcher__ctor_m4097967123 (ModeSwitcher_t3643344453 * __this, const RuntimeMethod* method)
 {
@@ -29945,12 +30366,15 @@ extern "C" IL2CPP_METHOD_ATTR void NetworkSyncClient_SetupClient_m2363637573 (Ne
 		NetworkMessageDelegate__ctor_m1105542957(L_3, __this, L_2, /*hidden argument*/NULL);
 		NullCheck(L_1);
 		NetworkClient_RegisterHandler_m3216283282(L_1, (int16_t)((int32_t)32), L_3, /*hidden argument*/NULL);
+		String_t* L_4 = __this->get_serverAddress_7();
+		IL2CPP_RUNTIME_CLASS_INIT(String_t_il2cpp_TypeInfo_var);
+		String_t* L_5 = String_Concat_m3755062657(NULL /*static, unused*/, _stringLiteral495519384, L_4, _stringLiteral1288156629, /*hidden argument*/NULL);
 		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
-		Debug_Log_m4051431634(NULL /*static, unused*/, _stringLiteral576114270, /*hidden argument*/NULL);
-		NetworkClient_t3758195968 * L_4 = __this->get_myClient_5();
-		String_t* L_5 = __this->get_serverAddress_7();
-		NullCheck(L_4);
-		NetworkClient_Connect_m823985039(L_4, L_5, ((int32_t)4444), /*hidden argument*/NULL);
+		Debug_Log_m4051431634(NULL /*static, unused*/, L_5, /*hidden argument*/NULL);
+		NetworkClient_t3758195968 * L_6 = __this->get_myClient_5();
+		String_t* L_7 = __this->get_serverAddress_7();
+		NullCheck(L_6);
+		NetworkClient_Connect_m823985039(L_6, L_7, ((int32_t)4444), /*hidden argument*/NULL);
 		return;
 	}
 }
@@ -39984,7 +40408,7 @@ IL_015e:
 		IL2CPP_RUNTIME_CLASS_INIT(Vector3_t3722313464_il2cpp_TypeInfo_var);
 		float L_51 = Vector3_Distance_m886789632(NULL /*static, unused*/, L_47, L_50, /*hidden argument*/NULL);
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		float L_52 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minRetrievalDistance_13();
+		float L_52 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minRetrievalDistance_16();
 		if ((!(((float)L_51) < ((float)L_52))))
 		{
 			goto IL_02ec;
@@ -40585,7 +41009,7 @@ IL_00b2:
 		VirtActionInvoker1< String_t* >::Invoke(73 /* System.Void UnityEngine.UI.Text::set_text(System.String) */, L_89, L_95);
 		float L_96 = V_8;
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		float L_97 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minResponseDistance_15();
+		float L_97 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minResponseDistance_18();
 		if ((!(((float)L_96) < ((float)L_97))))
 		{
 			goto IL_02a3;
@@ -41893,143 +42317,147 @@ extern "C" IL2CPP_METHOD_ATTR void TreasureHuntController_ARKit_InitLogging_m136
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
 		String_t* L_0 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_defaultLoggingPath_11();
+		String_t* L_1 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_subjectName_12();
 		IL2CPP_RUNTIME_CLASS_INIT(String_t_il2cpp_TypeInfo_var);
-		String_t* L_1 = String_Concat_m3937257545(NULL /*static, unused*/, L_0, _stringLiteral2695983508, /*hidden argument*/NULL);
-		V_0 = L_1;
-		String_t* L_2 = V_0;
-		String_t* L_3 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral590269816, L_2, /*hidden argument*/NULL);
+		String_t* L_2 = String_Concat_m2163913788(NULL /*static, unused*/, L_0, _stringLiteral3452614529, L_1, _stringLiteral3452614529, /*hidden argument*/NULL);
+		V_0 = L_2;
+		String_t* L_3 = V_0;
+		String_t* L_4 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral590269816, L_3, /*hidden argument*/NULL);
 		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
-		Debug_Log_m4051431634(NULL /*static, unused*/, L_3, /*hidden argument*/NULL);
-		String_t* L_4 = V_0;
-		String_t* L_5 = String_Concat_m3937257545(NULL /*static, unused*/, L_4, _stringLiteral2606710484, /*hidden argument*/NULL);
-		__this->set_sessionDirectory_65(L_5);
-		String_t* L_6 = __this->get_sessionDirectory_65();
-		String_t* L_7 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral4076355022, L_6, /*hidden argument*/NULL);
-		Debug_Log_m4051431634(NULL /*static, unused*/, L_7, /*hidden argument*/NULL);
+		Debug_Log_m4051431634(NULL /*static, unused*/, L_4, /*hidden argument*/NULL);
+		String_t* L_5 = V_0;
+		String_t* L_6 = String_Concat_m3937257545(NULL /*static, unused*/, L_5, _stringLiteral2606710484, /*hidden argument*/NULL);
+		__this->set_sessionDirectory_65(L_6);
+		String_t* L_7 = __this->get_sessionDirectory_65();
+		String_t* L_8 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral4076355022, L_7, /*hidden argument*/NULL);
+		Debug_Log_m4051431634(NULL /*static, unused*/, L_8, /*hidden argument*/NULL);
 		__this->set_sessionID_66(0);
 		V_1 = _stringLiteral3451566065;
-		String_t* L_8 = V_0;
-		bool L_9 = Directory_Exists_m1484791558(NULL /*static, unused*/, L_8, /*hidden argument*/NULL);
-		if (L_9)
+		String_t* L_9 = V_0;
+		bool L_10 = Directory_Exists_m1484791558(NULL /*static, unused*/, L_9, /*hidden argument*/NULL);
+		if (L_10)
 		{
-			goto IL_0065;
+			goto IL_006f;
 		}
 	}
 	{
-		String_t* L_10 = V_0;
-		Directory_CreateDirectory_m751642867(NULL /*static, unused*/, L_10, /*hidden argument*/NULL);
+		String_t* L_11 = V_0;
+		Directory_CreateDirectory_m751642867(NULL /*static, unused*/, L_11, /*hidden argument*/NULL);
 	}
 
-IL_0065:
+IL_006f:
 	{
-		goto IL_00ab;
+		goto IL_00b5;
 	}
 
-IL_006a:
+IL_0074:
 	{
-		int32_t L_11 = __this->get_sessionID_66();
-		__this->set_sessionID_66(((int32_t)il2cpp_codegen_add((int32_t)L_11, (int32_t)1)));
-		int32_t* L_12 = __this->get_address_of_sessionID_66();
-		String_t* L_13 = Int32_ToString_m141394615((int32_t*)L_12, /*hidden argument*/NULL);
+		int32_t L_12 = __this->get_sessionID_66();
+		__this->set_sessionID_66(((int32_t)il2cpp_codegen_add((int32_t)L_12, (int32_t)1)));
+		int32_t* L_13 = __this->get_address_of_sessionID_66();
+		String_t* L_14 = Int32_ToString_m141394615((int32_t*)L_13, /*hidden argument*/NULL);
 		IL2CPP_RUNTIME_CLASS_INIT(String_t_il2cpp_TypeInfo_var);
-		String_t* L_14 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral3452614641, L_13, /*hidden argument*/NULL);
-		V_1 = L_14;
-		String_t* L_15 = V_0;
-		String_t* L_16 = V_1;
-		String_t* L_17 = String_Concat_m2163913788(NULL /*static, unused*/, L_15, _stringLiteral3206363735, L_16, _stringLiteral3452614529, /*hidden argument*/NULL);
-		__this->set_sessionDirectory_65(L_17);
+		String_t* L_15 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral3452614641, L_14, /*hidden argument*/NULL);
+		V_1 = L_15;
+		String_t* L_16 = V_0;
+		String_t* L_17 = V_1;
+		String_t* L_18 = String_Concat_m2163913788(NULL /*static, unused*/, L_16, _stringLiteral3206363735, L_17, _stringLiteral3452614529, /*hidden argument*/NULL);
+		__this->set_sessionDirectory_65(L_18);
 	}
 
-IL_00ab:
+IL_00b5:
 	{
-		String_t* L_18 = __this->get_sessionDirectory_65();
-		String_t* L_19 = __this->get_sessionStartedFileName_67();
+		String_t* L_19 = __this->get_sessionDirectory_65();
+		String_t* L_20 = __this->get_sessionStartedFileName_67();
 		IL2CPP_RUNTIME_CLASS_INIT(String_t_il2cpp_TypeInfo_var);
-		String_t* L_20 = String_Concat_m3937257545(NULL /*static, unused*/, L_18, L_19, /*hidden argument*/NULL);
-		bool L_21 = File_Exists_m3943585060(NULL /*static, unused*/, L_20, /*hidden argument*/NULL);
-		if (L_21)
+		String_t* L_21 = String_Concat_m3937257545(NULL /*static, unused*/, L_19, L_20, /*hidden argument*/NULL);
+		bool L_22 = File_Exists_m3943585060(NULL /*static, unused*/, L_21, /*hidden argument*/NULL);
+		if (L_22)
 		{
-			goto IL_006a;
+			goto IL_0074;
 		}
 	}
 	{
-		String_t* L_22 = __this->get_sessionDirectory_65();
-		bool L_23 = Directory_Exists_m1484791558(NULL /*static, unused*/, L_22, /*hidden argument*/NULL);
-		if (!L_23)
+		String_t* L_23 = __this->get_sessionDirectory_65();
+		bool L_24 = Directory_Exists_m1484791558(NULL /*static, unused*/, L_23, /*hidden argument*/NULL);
+		if (!L_24)
 		{
-			goto IL_011e;
+			goto IL_0128;
 		}
 	}
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
 		Debug_Log_m4051431634(NULL /*static, unused*/, _stringLiteral1585817939, /*hidden argument*/NULL);
-		String_t* L_24 = __this->get_sessionDirectory_65();
-		DirectoryInfo_t35957480 * L_25 = (DirectoryInfo_t35957480 *)il2cpp_codegen_object_new(DirectoryInfo_t35957480_il2cpp_TypeInfo_var);
-		DirectoryInfo__ctor_m1000259829(L_25, L_24, /*hidden argument*/NULL);
-		V_2 = L_25;
-		DirectoryInfo_t35957480 * L_26 = V_2;
-		NullCheck(L_26);
-		FileInfoU5BU5D_t2389029403* L_27 = DirectoryInfo_GetFiles_m220157888(L_26, /*hidden argument*/NULL);
-		V_3 = L_27;
+		String_t* L_25 = __this->get_sessionDirectory_65();
+		DirectoryInfo_t35957480 * L_26 = (DirectoryInfo_t35957480 *)il2cpp_codegen_object_new(DirectoryInfo_t35957480_il2cpp_TypeInfo_var);
+		DirectoryInfo__ctor_m1000259829(L_26, L_25, /*hidden argument*/NULL);
+		V_2 = L_26;
+		DirectoryInfo_t35957480 * L_27 = V_2;
+		NullCheck(L_27);
+		FileInfoU5BU5D_t2389029403* L_28 = DirectoryInfo_GetFiles_m220157888(L_27, /*hidden argument*/NULL);
+		V_3 = L_28;
 		V_4 = 0;
-		goto IL_010f;
+		goto IL_0119;
 	}
 
-IL_00fb:
+IL_0105:
 	{
-		FileInfoU5BU5D_t2389029403* L_28 = V_3;
-		int32_t L_29 = V_4;
-		NullCheck(L_28);
-		int32_t L_30 = L_29;
-		FileInfo_t1169991790 * L_31 = (L_28)->GetAt(static_cast<il2cpp_array_size_t>(L_30));
-		NullCheck(L_31);
-		String_t* L_32 = VirtFuncInvoker0< String_t* >::Invoke(3 /* System.String System.Object::ToString() */, L_31);
-		File_Delete_m321251800(NULL /*static, unused*/, L_32, /*hidden argument*/NULL);
-		int32_t L_33 = V_4;
-		V_4 = ((int32_t)il2cpp_codegen_add((int32_t)L_33, (int32_t)1));
-	}
-
-IL_010f:
-	{
+		FileInfoU5BU5D_t2389029403* L_29 = V_3;
+		int32_t L_30 = V_4;
+		NullCheck(L_29);
+		int32_t L_31 = L_30;
+		FileInfo_t1169991790 * L_32 = (L_29)->GetAt(static_cast<il2cpp_array_size_t>(L_31));
+		NullCheck(L_32);
+		String_t* L_33 = VirtFuncInvoker0< String_t* >::Invoke(3 /* System.String System.Object::ToString() */, L_32);
+		File_Delete_m321251800(NULL /*static, unused*/, L_33, /*hidden argument*/NULL);
 		int32_t L_34 = V_4;
-		FileInfoU5BU5D_t2389029403* L_35 = V_3;
-		NullCheck(L_35);
-		if ((((int32_t)L_34) < ((int32_t)(((int32_t)((int32_t)(((RuntimeArray *)L_35)->max_length)))))))
+		V_4 = ((int32_t)il2cpp_codegen_add((int32_t)L_34, (int32_t)1));
+	}
+
+IL_0119:
+	{
+		int32_t L_35 = V_4;
+		FileInfoU5BU5D_t2389029403* L_36 = V_3;
+		NullCheck(L_36);
+		if ((((int32_t)L_35) < ((int32_t)(((int32_t)((int32_t)(((RuntimeArray *)L_36)->max_length)))))))
 		{
-			goto IL_00fb;
+			goto IL_0105;
 		}
 	}
 	{
-		goto IL_0134;
+		goto IL_013e;
 	}
 
-IL_011e:
+IL_0128:
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
 		Debug_Log_m4051431634(NULL /*static, unused*/, _stringLiteral289831430, /*hidden argument*/NULL);
-		String_t* L_36 = __this->get_sessionDirectory_65();
-		Directory_CreateDirectory_m751642867(NULL /*static, unused*/, L_36, /*hidden argument*/NULL);
+		String_t* L_37 = __this->get_sessionDirectory_65();
+		Directory_CreateDirectory_m751642867(NULL /*static, unused*/, L_37, /*hidden argument*/NULL);
 	}
 
-IL_0134:
+IL_013e:
 	{
-		Logger_Threading_t2019543111 * L_37 = __this->get_subjectLog_64();
-		String_t* L_38 = __this->get_sessionDirectory_65();
+		Logger_Threading_t2019543111 * L_38 = __this->get_subjectLog_64();
+		String_t* L_39 = __this->get_sessionDirectory_65();
+		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
+		String_t* L_40 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_subjectName_12();
 		IL2CPP_RUNTIME_CLASS_INIT(String_t_il2cpp_TypeInfo_var);
-		String_t* L_39 = String_Concat_m3937257545(NULL /*static, unused*/, L_38, _stringLiteral905113713, /*hidden argument*/NULL);
-		NullCheck(L_37);
-		L_37->set_fileName_10(L_39);
-		Logger_Threading_t2019543111 * L_40 = __this->get_eegLog_63();
-		String_t* L_41 = __this->get_sessionDirectory_65();
-		String_t* L_42 = String_Concat_m3937257545(NULL /*static, unused*/, L_41, _stringLiteral611968750, /*hidden argument*/NULL);
-		NullCheck(L_40);
-		L_40->set_fileName_10(L_42);
-		Logger_Threading_t2019543111 * L_43 = __this->get_subjectLog_64();
-		NullCheck(L_43);
-		String_t* L_44 = L_43->get_fileName_10();
-		String_t* L_45 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral3375422929, L_44, /*hidden argument*/NULL);
+		String_t* L_41 = String_Concat_m3755062657(NULL /*static, unused*/, L_39, L_40, _stringLiteral2832930495, /*hidden argument*/NULL);
+		NullCheck(L_38);
+		L_38->set_fileName_10(L_41);
+		Logger_Threading_t2019543111 * L_42 = __this->get_eegLog_63();
+		String_t* L_43 = __this->get_sessionDirectory_65();
+		String_t* L_44 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_subjectName_12();
+		String_t* L_45 = String_Concat_m3755062657(NULL /*static, unused*/, L_43, L_44, _stringLiteral2606063605, /*hidden argument*/NULL);
+		NullCheck(L_42);
+		L_42->set_fileName_10(L_45);
+		Logger_Threading_t2019543111 * L_46 = __this->get_subjectLog_64();
+		NullCheck(L_46);
+		String_t* L_47 = L_46->get_fileName_10();
+		String_t* L_48 = String_Concat_m3937257545(NULL /*static, unused*/, _stringLiteral3375422929, L_47, /*hidden argument*/NULL);
 		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
-		Debug_Log_m4051431634(NULL /*static, unused*/, L_45, /*hidden argument*/NULL);
+		Debug_Log_m4051431634(NULL /*static, unused*/, L_48, /*hidden argument*/NULL);
 		return;
 	}
 }
@@ -42557,8 +42985,8 @@ extern "C" IL2CPP_METHOD_ATTR void TreasureHuntController_ARKit_FixedUpdate_m193
 		V_2 = L_11;
 		float L_12 = V_2;
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		float L_13 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_14();
-		float L_14 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_14();
+		float L_13 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_17();
+		float L_14 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_17();
 		IL2CPP_RUNTIME_CLASS_INIT(Mathf_t3464937446_il2cpp_TypeInfo_var);
 		float L_15 = Mathf_Clamp_m3350697880(NULL /*static, unused*/, ((float)il2cpp_codegen_subtract((float)L_12, (float)L_13)), (-0.1f), L_14, /*hidden argument*/NULL);
 		V_3 = L_15;
@@ -44092,28 +44520,28 @@ extern "C" IL2CPP_METHOD_ATTR bool U3CDefineCornerMarkersU3Ec__Iterator4_MoveNex
 			}
 			case 1:
 			{
-				goto IL_0242;
+				goto IL_0256;
 			}
 			case 2:
 			{
-				goto IL_028f;
+				goto IL_02a3;
 			}
 			case 3:
 			{
-				goto IL_02ea;
+				goto IL_02fe;
 			}
 			case 4:
 			{
-				goto IL_056b;
+				goto IL_057f;
 			}
 			case 5:
 			{
-				goto IL_05fa;
+				goto IL_060e;
 			}
 		}
 	}
 	{
-		goto IL_0601;
+		goto IL_0615;
 	}
 
 IL_0031:
@@ -44132,7 +44560,7 @@ IL_0031:
 		NullCheck(L_6);
 		Selectable_set_interactable_m3105888815(L_6, (bool)0, /*hidden argument*/NULL);
 		__this->set_U3CindexU3E__0_0(0);
-		goto IL_02ea;
+		goto IL_02fe;
 	}
 
 IL_006b:
@@ -44140,11 +44568,13 @@ IL_006b:
 		TreasureHuntController_ARKit_t1158636010 * L_7 = __this->get_U24this_12();
 		NullCheck(L_7);
 		L_7->set_waitingForMarker_60((bool)1);
-		goto IL_028f;
+		goto IL_02a3;
 	}
 
 IL_007c:
 	{
+		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
+		Debug_Log_m4051431634(NULL /*static, unused*/, _stringLiteral174814117, /*hidden argument*/NULL);
 		TreasureHuntController_ARKit_t1158636010 * L_8 = __this->get_U24this_12();
 		NullCheck(L_8);
 		Text_t1901882714 * L_9 = L_8->get_preSessionInstructionText_31();
@@ -44158,7 +44588,7 @@ IL_007c:
 		int32_t L_13 = Input_get_touchCount_m3403849067(NULL /*static, unused*/, /*hidden argument*/NULL);
 		if ((((int32_t)L_13) <= ((int32_t)0)))
 		{
-			goto IL_026f;
+			goto IL_0283;
 		}
 	}
 	{
@@ -44168,11 +44598,13 @@ IL_007c:
 		Touch_t1921856868 * L_15 = __this->get_address_of_U3CtouchU3E__1_1();
 		int32_t L_16 = Touch_get_fingerId_m859576425((Touch_t1921856868 *)L_15, /*hidden argument*/NULL);
 		__this->set_U3CidU3E__1_2(L_16);
+		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
+		Debug_Log_m4051431634(NULL /*static, unused*/, _stringLiteral2793072118, /*hidden argument*/NULL);
 		Touch_t1921856868 * L_17 = __this->get_address_of_U3CtouchU3E__1_1();
 		int32_t L_18 = Touch_get_phase_m214549210((Touch_t1921856868 *)L_17, /*hidden argument*/NULL);
 		if (!L_18)
 		{
-			goto IL_00f0;
+			goto IL_0104;
 		}
 	}
 	{
@@ -44180,11 +44612,11 @@ IL_007c:
 		int32_t L_20 = Touch_get_phase_m214549210((Touch_t1921856868 *)L_19, /*hidden argument*/NULL);
 		if ((!(((uint32_t)L_20) == ((uint32_t)1))))
 		{
-			goto IL_026f;
+			goto IL_0283;
 		}
 	}
 
-IL_00f0:
+IL_0104:
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(EventSystem_t1003666588_il2cpp_TypeInfo_var);
 		EventSystem_t1003666588 * L_21 = EventSystem_get_current_m1416377559(NULL /*static, unused*/, /*hidden argument*/NULL);
@@ -44194,16 +44626,16 @@ IL_00f0:
 		bool L_24 = EventSystem_IsPointerOverGameObject_m301566329(L_21, L_23, /*hidden argument*/NULL);
 		if (!L_24)
 		{
-			goto IL_0119;
+			goto IL_012d;
 		}
 	}
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
 		Debug_Log_m4051431634(NULL /*static, unused*/, _stringLiteral3012117091, /*hidden argument*/NULL);
-		goto IL_026f;
+		goto IL_0283;
 	}
 
-IL_0119:
+IL_012d:
 	{
 		Camera_t4157153871 * L_25 = Camera_get_main_m3643453163(NULL /*static, unused*/, /*hidden argument*/NULL);
 		Touch_t1921856868 * L_26 = __this->get_address_of_U3CtouchU3E__1_1();
@@ -44230,10 +44662,10 @@ IL_0119:
 		ARHitTestResultTypeU5BU5D_t2695410291* L_37 = __this->get_U3CresultTypesU3E__2_5();
 		__this->set_U24locvar0_6(L_37);
 		__this->set_U24locvar1_7(0);
-		goto IL_025c;
+		goto IL_0270;
 	}
 
-IL_0198:
+IL_01ac:
 	{
 		ARHitTestResultTypeU5BU5D_t2695410291* L_38 = __this->get_U24locvar0_6();
 		int32_t L_39 = __this->get_U24locvar1_7();
@@ -44252,7 +44684,7 @@ IL_0198:
 		bool L_47 = TreasureHuntController_ARKit_HitTestWithResultType_m296022721(L_43, L_44, L_45, (ARHitTestResult_t1279023930 *)L_46, /*hidden argument*/NULL);
 		if (!L_47)
 		{
-			goto IL_024e;
+			goto IL_0262;
 		}
 	}
 	{
@@ -44276,43 +44708,43 @@ IL_0198:
 		bool L_57 = __this->get_U24disposing_14();
 		if (L_57)
 		{
-			goto IL_023d;
+			goto IL_0251;
 		}
 	}
 	{
 		__this->set_U24PC_15(1);
 	}
 
-IL_023d:
+IL_0251:
 	{
-		goto IL_0603;
+		goto IL_0617;
 	}
 
-IL_0242:
+IL_0256:
 	{
 		TreasureHuntController_ARKit_t1158636010 * L_58 = __this->get_U24this_12();
 		NullCheck(L_58);
 		L_58->set_waitingForMarker_60((bool)0);
 	}
 
-IL_024e:
+IL_0262:
 	{
 		int32_t L_59 = __this->get_U24locvar1_7();
 		__this->set_U24locvar1_7(((int32_t)il2cpp_codegen_add((int32_t)L_59, (int32_t)1)));
 	}
 
-IL_025c:
+IL_0270:
 	{
 		int32_t L_60 = __this->get_U24locvar1_7();
 		ARHitTestResultTypeU5BU5D_t2695410291* L_61 = __this->get_U24locvar0_6();
 		NullCheck(L_61);
 		if ((((int32_t)L_60) < ((int32_t)(((int32_t)((int32_t)(((RuntimeArray *)L_61)->max_length)))))))
 		{
-			goto IL_0198;
+			goto IL_01ac;
 		}
 	}
 
-IL_026f:
+IL_0283:
 	{
 		int32_t L_62 = 0;
 		RuntimeObject * L_63 = Box(Int32_t2950945753_il2cpp_TypeInfo_var, &L_62);
@@ -44320,19 +44752,19 @@ IL_026f:
 		bool L_64 = __this->get_U24disposing_14();
 		if (L_64)
 		{
-			goto IL_028a;
+			goto IL_029e;
 		}
 	}
 	{
 		__this->set_U24PC_15(2);
 	}
 
-IL_028a:
+IL_029e:
 	{
-		goto IL_0603;
+		goto IL_0617;
 	}
 
-IL_028f:
+IL_02a3:
 	{
 		TreasureHuntController_ARKit_t1158636010 * L_65 = __this->get_U24this_12();
 		NullCheck(L_65);
@@ -44348,7 +44780,7 @@ IL_028f:
 		int32_t L_68 = __this->get_U3CindexU3E__0_0();
 		if ((((int32_t)L_68) <= ((int32_t)4)))
 		{
-			goto IL_02ca;
+			goto IL_02de;
 		}
 	}
 	{
@@ -44359,7 +44791,7 @@ IL_028f:
 		Selectable_set_interactable_m3105888815(L_70, (bool)1, /*hidden argument*/NULL);
 	}
 
-IL_02ca:
+IL_02de:
 	{
 		int32_t L_71 = 0;
 		RuntimeObject * L_72 = Box(Int32_t2950945753_il2cpp_TypeInfo_var, &L_71);
@@ -44367,19 +44799,19 @@ IL_02ca:
 		bool L_73 = __this->get_U24disposing_14();
 		if (L_73)
 		{
-			goto IL_02e5;
+			goto IL_02f9;
 		}
 	}
 	{
 		__this->set_U24PC_15(3);
 	}
 
-IL_02e5:
+IL_02f9:
 	{
-		goto IL_0603;
+		goto IL_0617;
 	}
 
-IL_02ea:
+IL_02fe:
 	{
 		TreasureHuntController_ARKit_t1158636010 * L_74 = __this->get_U24this_12();
 		NullCheck(L_74);
@@ -44403,10 +44835,10 @@ IL_02ea:
 		NullCheck(L_79);
 		Behaviour_set_enabled_m20417929(L_79, (bool)0, /*hidden argument*/NULL);
 		V_3 = 0;
-		goto IL_038e;
+		goto IL_03a2;
 	}
 
-IL_032d:
+IL_0341:
 	{
 		TreasureHuntController_ARKit_t1158636010 * L_80 = __this->get_U24this_12();
 		NullCheck(L_80);
@@ -44444,7 +44876,7 @@ IL_032d:
 		V_3 = ((int32_t)il2cpp_codegen_add((int32_t)L_97, (int32_t)1));
 	}
 
-IL_038e:
+IL_03a2:
 	{
 		int32_t L_98 = V_3;
 		TreasureHuntController_ARKit_t1158636010 * L_99 = __this->get_U24this_12();
@@ -44454,7 +44886,7 @@ IL_038e:
 		int32_t L_101 = List_1_get_Count_m2660017690(L_100, /*hidden argument*/List_1_get_Count_m2660017690_RuntimeMethod_var);
 		if ((((int32_t)L_98) < ((int32_t)L_101)))
 		{
-			goto IL_032d;
+			goto IL_0341;
 		}
 	}
 	{
@@ -44470,10 +44902,10 @@ IL_038e:
 		List_1__ctor_m3861397086(L_104, /*hidden argument*/List_1__ctor_m3861397086_RuntimeMethod_var);
 		__this->set_U3CtestListU3E__0_11(L_104);
 		V_6 = 0;
-		goto IL_053e;
+		goto IL_0552;
 	}
 
-IL_03d8:
+IL_03ec:
 	{
 		V_7 = 0;
 		TreasureHuntController_ARKit_t1158636010 * L_105 = __this->get_U24this_12();
@@ -44512,14 +44944,14 @@ IL_03d8:
 		V_15 = L_121;
 	}
 
-IL_0438:
+IL_044c:
 	try
 	{ // begin try (depth: 1)
 		{
-			goto IL_0459;
+			goto IL_046d;
 		}
 
-IL_043d:
+IL_0451:
 		{
 			ARPlaneAnchorGameObject_t1947719815 * L_122 = Enumerator_get_Current_m2108755883((Enumerator_t3301960671 *)(&V_15), /*hidden argument*/Enumerator_get_Current_m2108755883_RuntimeMethod_var);
 			V_14 = L_122;
@@ -44527,54 +44959,54 @@ IL_043d:
 			int32_t L_124 = V_7;
 			if ((!(((uint32_t)L_123) == ((uint32_t)L_124))))
 			{
-				goto IL_0453;
+				goto IL_0467;
 			}
 		}
 
-IL_044f:
+IL_0463:
 		{
 			ARPlaneAnchorGameObject_t1947719815 * L_125 = V_14;
 			V_12 = L_125;
 		}
 
-IL_0453:
+IL_0467:
 		{
 			int32_t L_126 = V_13;
 			V_13 = ((int32_t)il2cpp_codegen_add((int32_t)L_126, (int32_t)1));
 		}
 
-IL_0459:
+IL_046d:
 		{
 			bool L_127 = Enumerator_MoveNext_m1809033021((Enumerator_t3301960671 *)(&V_15), /*hidden argument*/Enumerator_MoveNext_m1809033021_RuntimeMethod_var);
 			if (L_127)
 			{
-				goto IL_043d;
+				goto IL_0451;
 			}
 		}
 
-IL_0465:
+IL_0479:
 		{
-			IL2CPP_LEAVE(0x478, FINALLY_046a);
+			IL2CPP_LEAVE(0x48C, FINALLY_047e);
 		}
 	} // end try (depth: 1)
 	catch(Il2CppExceptionWrapper& e)
 	{
 		__last_unhandled_exception = (Exception_t *)e.ex;
-		goto FINALLY_046a;
+		goto FINALLY_047e;
 	}
 
-FINALLY_046a:
+FINALLY_047e:
 	{ // begin finally (depth: 1)
 		Enumerator_Dispose_m2256261658((Enumerator_t3301960671 *)(&V_15), /*hidden argument*/Enumerator_Dispose_m2256261658_RuntimeMethod_var);
-		IL2CPP_END_FINALLY(1130)
+		IL2CPP_END_FINALLY(1150)
 	} // end finally (depth: 1)
-	IL2CPP_CLEANUP(1130)
+	IL2CPP_CLEANUP(1150)
 	{
-		IL2CPP_JUMP_TBL(0x478, IL_0478)
+		IL2CPP_JUMP_TBL(0x48C, IL_048c)
 		IL2CPP_RETHROW_IF_UNHANDLED(Exception_t *)
 	}
 
-IL_0478:
+IL_048c:
 	{
 		GameObject_t1113636619 * L_128 = V_9;
 		NullCheck(L_128);
@@ -44628,7 +45060,7 @@ IL_0478:
 		bool L_153 = GeoUtils_IsPointInPolygon_m393033066(L_141, L_143, L_152, /*hidden argument*/NULL);
 		if (!L_153)
 		{
-			goto IL_0522;
+			goto IL_0536;
 		}
 	}
 	{
@@ -44640,10 +45072,10 @@ IL_0478:
 		Color_t2555686324  L_157 = Color_get_green_m490390750(NULL /*static, unused*/, /*hidden argument*/NULL);
 		NullCheck(L_156);
 		Material_set_color_m1794818007(L_156, L_157, /*hidden argument*/NULL);
-		goto IL_0538;
+		goto IL_054c;
 	}
 
-IL_0522:
+IL_0536:
 	{
 		GameObject_t1113636619 * L_158 = V_9;
 		NullCheck(L_158);
@@ -44655,18 +45087,18 @@ IL_0522:
 		Material_set_color_m1794818007(L_160, L_161, /*hidden argument*/NULL);
 	}
 
-IL_0538:
+IL_054c:
 	{
 		int32_t L_162 = V_6;
 		V_6 = ((int32_t)il2cpp_codegen_add((int32_t)L_162, (int32_t)1));
 	}
 
-IL_053e:
+IL_0552:
 	{
 		int32_t L_163 = V_6;
 		if ((((int32_t)L_163) < ((int32_t)((int32_t)100))))
 		{
-			goto IL_03d8;
+			goto IL_03ec;
 		}
 	}
 	{
@@ -44676,25 +45108,25 @@ IL_053e:
 		bool L_165 = __this->get_U24disposing_14();
 		if (L_165)
 		{
-			goto IL_0566;
+			goto IL_057a;
 		}
 	}
 	{
 		__this->set_U24PC_15(4);
 	}
 
-IL_0566:
+IL_057a:
 	{
-		goto IL_0603;
+		goto IL_0617;
 	}
 
-IL_056b:
+IL_057f:
 	{
 		V_18 = 0;
-		goto IL_058b;
+		goto IL_059f;
 	}
 
-IL_0573:
+IL_0587:
 	{
 		List_1_t2585711361 * L_166 = __this->get_U3CtestListU3E__0_11();
 		int32_t L_167 = V_18;
@@ -44706,7 +45138,7 @@ IL_0573:
 		V_18 = ((int32_t)il2cpp_codegen_add((int32_t)L_169, (int32_t)1));
 	}
 
-IL_058b:
+IL_059f:
 	{
 		int32_t L_170 = V_18;
 		List_1_t2585711361 * L_171 = __this->get_U3CtestListU3E__0_11();
@@ -44714,15 +45146,15 @@ IL_058b:
 		int32_t L_172 = List_1_get_Count_m2660017690(L_171, /*hidden argument*/List_1_get_Count_m2660017690_RuntimeMethod_var);
 		if ((((int32_t)L_170) < ((int32_t)L_172)))
 		{
-			goto IL_0573;
+			goto IL_0587;
 		}
 	}
 	{
 		V_19 = 0;
-		goto IL_05c8;
+		goto IL_05dc;
 	}
 
-IL_05a5:
+IL_05b9:
 	{
 		TreasureHuntController_ARKit_t1158636010 * L_173 = __this->get_U24this_12();
 		NullCheck(L_173);
@@ -44738,7 +45170,7 @@ IL_05a5:
 		V_19 = ((int32_t)il2cpp_codegen_add((int32_t)L_178, (int32_t)1));
 	}
 
-IL_05c8:
+IL_05dc:
 	{
 		int32_t L_179 = V_19;
 		TreasureHuntController_ARKit_t1158636010 * L_180 = __this->get_U24this_12();
@@ -44748,7 +45180,7 @@ IL_05c8:
 		int32_t L_182 = List_1_get_Count_m2660017690(L_181, /*hidden argument*/List_1_get_Count_m2660017690_RuntimeMethod_var);
 		if ((((int32_t)L_179) < ((int32_t)L_182)))
 		{
-			goto IL_05a5;
+			goto IL_05b9;
 		}
 	}
 	{
@@ -44756,29 +45188,29 @@ IL_05c8:
 		bool L_183 = __this->get_U24disposing_14();
 		if (L_183)
 		{
-			goto IL_05f5;
+			goto IL_0609;
 		}
 	}
 	{
 		__this->set_U24PC_15(5);
 	}
 
-IL_05f5:
+IL_0609:
 	{
-		goto IL_0603;
+		goto IL_0617;
 	}
 
-IL_05fa:
+IL_060e:
 	{
 		__this->set_U24PC_15((-1));
 	}
 
-IL_0601:
+IL_0615:
 	{
 		return (bool)0;
 	}
 
-IL_0603:
+IL_0617:
 	{
 		return (bool)1;
 	}
@@ -46189,40 +46621,40 @@ extern "C" IL2CPP_METHOD_ATTR bool U3CRunTrialU3Ec__Iterator5_MoveNext_m12494427
 			}
 			case 3:
 			{
-				goto IL_036b;
+				goto IL_0388;
 			}
 			case 4:
 			{
-				goto IL_03b6;
+				goto IL_03d3;
 			}
 			case 5:
 			{
-				goto IL_0460;
+				goto IL_047d;
 			}
 			case 6:
 			{
-				goto IL_048f;
+				goto IL_04ac;
 			}
 			case 7:
 			{
-				goto IL_0503;
+				goto IL_0520;
 			}
 			case 8:
 			{
-				goto IL_0533;
+				goto IL_0550;
 			}
 			case 9:
 			{
-				goto IL_05a9;
+				goto IL_05c6;
 			}
 			case 10:
 			{
-				goto IL_0625;
+				goto IL_0642;
 			}
 		}
 	}
 	{
-		goto IL_062c;
+		goto IL_0649;
 	}
 
 IL_0045:
@@ -46256,13 +46688,13 @@ IL_0045:
 
 IL_009f:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
 IL_00a4:
 	{
 		__this->set_U3CiU3E__1_2(0);
-		goto IL_04c3;
+		goto IL_04e0;
 	}
 
 IL_00b0:
@@ -46290,12 +46722,12 @@ IL_00b0:
 
 IL_00ed:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
 IL_00f2:
 	{
-		goto IL_0460;
+		goto IL_047d;
 	}
 
 IL_00f7:
@@ -46307,7 +46739,7 @@ IL_00f7:
 		bool L_19 = Object_op_Inequality_m4071470834(NULL /*static, unused*/, L_18, (Object_t631007953 *)NULL, /*hidden argument*/NULL);
 		if (!L_19)
 		{
-			goto IL_0157;
+			goto IL_0174;
 		}
 	}
 	{
@@ -46322,539 +46754,545 @@ IL_00f7:
 		V_2 = L_24;
 		TreasureHuntController_ARKit_t1158636010 * L_25 = __this->get_U24this_15();
 		NullCheck(L_25);
-		TrialLogTrack_t2286451450 * L_26 = L_25->get_trialLog_33();
-		Vector3_t3722313464  L_27 = V_2;
+		Text_t1901882714 * L_26 = L_25->get_debugText_6();
+		String_t* L_27 = Vector3_ToString_m759076600((Vector3_t3722313464 *)(&V_2), /*hidden argument*/NULL);
 		NullCheck(L_26);
-		TrialLogTrack_LogCamPosition_m2490716388(L_26, L_27, /*hidden argument*/NULL);
+		VirtActionInvoker1< String_t* >::Invoke(73 /* System.Void UnityEngine.UI.Text::set_text(System.String) */, L_26, L_27);
 		TreasureHuntController_ARKit_t1158636010 * L_28 = __this->get_U24this_15();
 		NullCheck(L_28);
-		GameObject_t1113636619 * L_29 = L_28->get_spawnChest_9();
+		TrialLogTrack_t2286451450 * L_29 = L_28->get_trialLog_33();
+		Vector3_t3722313464  L_30 = V_2;
 		NullCheck(L_29);
-		Transform_t3600365921 * L_30 = GameObject_get_transform_m1369836730(L_29, /*hidden argument*/NULL);
-		NullCheck(L_30);
-		Vector3_t3722313464  L_31 = Transform_get_position_m36019626(L_30, /*hidden argument*/NULL);
-		Vector3_t3722313464  L_32 = V_2;
+		TrialLogTrack_LogCamPosition_m2490716388(L_29, L_30, /*hidden argument*/NULL);
+		TreasureHuntController_ARKit_t1158636010 * L_31 = __this->get_U24this_15();
+		NullCheck(L_31);
+		GameObject_t1113636619 * L_32 = L_31->get_spawnChest_9();
+		NullCheck(L_32);
+		Transform_t3600365921 * L_33 = GameObject_get_transform_m1369836730(L_32, /*hidden argument*/NULL);
+		NullCheck(L_33);
+		Vector3_t3722313464  L_34 = Transform_get_position_m36019626(L_33, /*hidden argument*/NULL);
+		Vector3_t3722313464  L_35 = V_2;
 		IL2CPP_RUNTIME_CLASS_INIT(Vector3_t3722313464_il2cpp_TypeInfo_var);
-		float L_33 = Vector3_Distance_m886789632(NULL /*static, unused*/, L_31, L_32, /*hidden argument*/NULL);
-		V_3 = L_33;
-		goto IL_0157;
+		float L_36 = Vector3_Distance_m886789632(NULL /*static, unused*/, L_34, L_35, /*hidden argument*/NULL);
+		V_3 = L_36;
+		goto IL_0174;
 	}
 
-IL_0157:
+IL_0174:
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Input_t1431474628_il2cpp_TypeInfo_var);
-		int32_t L_34 = Input_get_touchCount_m3403849067(NULL /*static, unused*/, /*hidden argument*/NULL);
-		if ((((int32_t)L_34) <= ((int32_t)0)))
+		int32_t L_37 = Input_get_touchCount_m3403849067(NULL /*static, unused*/, /*hidden argument*/NULL);
+		if ((((int32_t)L_37) <= ((int32_t)0)))
 		{
-			goto IL_0440;
+			goto IL_045d;
 		}
 	}
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Input_t1431474628_il2cpp_TypeInfo_var);
-		Touch_t1921856868  L_35 = Input_GetTouch_m2192712756(NULL /*static, unused*/, 0, /*hidden argument*/NULL);
-		__this->set_U3CtouchU3E__2_3(L_35);
-		Touch_t1921856868 * L_36 = __this->get_address_of_U3CtouchU3E__2_3();
-		int32_t L_37 = Touch_get_phase_m214549210((Touch_t1921856868 *)L_36, /*hidden argument*/NULL);
-		if (!L_37)
+		Touch_t1921856868  L_38 = Input_GetTouch_m2192712756(NULL /*static, unused*/, 0, /*hidden argument*/NULL);
+		__this->set_U3CtouchU3E__2_3(L_38);
+		Touch_t1921856868 * L_39 = __this->get_address_of_U3CtouchU3E__2_3();
+		int32_t L_40 = Touch_get_phase_m214549210((Touch_t1921856868 *)L_39, /*hidden argument*/NULL);
+		if (!L_40)
 		{
-			goto IL_018f;
+			goto IL_01ac;
 		}
 	}
 	{
-		Touch_t1921856868 * L_38 = __this->get_address_of_U3CtouchU3E__2_3();
-		int32_t L_39 = Touch_get_phase_m214549210((Touch_t1921856868 *)L_38, /*hidden argument*/NULL);
-		if ((!(((uint32_t)L_39) == ((uint32_t)1))))
-		{
-			goto IL_0440;
-		}
-	}
-
-IL_018f:
-	{
-		Camera_t4157153871 * L_40 = Camera_get_main_m3643453163(NULL /*static, unused*/, /*hidden argument*/NULL);
 		Touch_t1921856868 * L_41 = __this->get_address_of_U3CtouchU3E__2_3();
-		Vector2_t2156229523  L_42 = Touch_get_position_m3109777936((Touch_t1921856868 *)L_41, /*hidden argument*/NULL);
-		IL2CPP_RUNTIME_CLASS_INIT(Vector2_t2156229523_il2cpp_TypeInfo_var);
-		Vector3_t3722313464  L_43 = Vector2_op_Implicit_m1860157806(NULL /*static, unused*/, L_42, /*hidden argument*/NULL);
-		NullCheck(L_40);
-		Vector3_t3722313464  L_44 = Camera_ScreenToViewportPoint_m3569032523(L_40, L_43, /*hidden argument*/NULL);
-		__this->set_U3CscreenPositionU3E__3_4(L_44);
-		il2cpp_codegen_initobj((&V_4), sizeof(ARPoint_t499615819 ));
-		Vector3_t3722313464 * L_45 = __this->get_address_of_U3CscreenPositionU3E__3_4();
-		float L_46 = L_45->get_x_2();
-		(&V_4)->set_x_0((((double)((double)L_46))));
-		Vector3_t3722313464 * L_47 = __this->get_address_of_U3CscreenPositionU3E__3_4();
-		float L_48 = L_47->get_y_3();
-		(&V_4)->set_y_1((((double)((double)L_48))));
-		ARPoint_t499615819  L_49 = V_4;
-		__this->set_U3CpointU3E__3_5(L_49);
-		ARHitTestResultTypeU5BU5D_t2695410291* L_50 = (ARHitTestResultTypeU5BU5D_t2695410291*)SZArrayNew(ARHitTestResultTypeU5BU5D_t2695410291_il2cpp_TypeInfo_var, (uint32_t)1);
-		ARHitTestResultTypeU5BU5D_t2695410291* L_51 = L_50;
-		NullCheck(L_51);
-		(L_51)->SetAt(static_cast<il2cpp_array_size_t>(0), (int64_t)(((int64_t)((int64_t)((int32_t)16)))));
-		__this->set_U3CresultTypesU3E__3_6(L_51);
-		ARHitTestResultTypeU5BU5D_t2695410291* L_52 = __this->get_U3CresultTypesU3E__3_6();
-		__this->set_U24locvar0_7(L_52);
-		__this->set_U24locvar1_8(0);
-		goto IL_042d;
+		int32_t L_42 = Touch_get_phase_m214549210((Touch_t1921856868 *)L_41, /*hidden argument*/NULL);
+		if ((!(((uint32_t)L_42) == ((uint32_t)1))))
+		{
+			goto IL_045d;
+		}
 	}
 
-IL_020f:
+IL_01ac:
 	{
-		ARHitTestResultTypeU5BU5D_t2695410291* L_53 = __this->get_U24locvar0_7();
-		int32_t L_54 = __this->get_U24locvar1_8();
-		NullCheck(L_53);
-		int32_t L_55 = L_54;
-		int64_t L_56 = (L_53)->GetAt(static_cast<il2cpp_array_size_t>(L_55));
-		__this->set_U3CresultTypeU3E__4_9(L_56);
-		GameObject_t1113636619 * L_57 = (GameObject_t1113636619 *)il2cpp_codegen_object_new(GameObject_t1113636619_il2cpp_TypeInfo_var);
-		GameObject__ctor_m3707688467(L_57, /*hidden argument*/NULL);
-		__this->set_U3ChitObjU3E__5_10(L_57);
-		TreasureHuntController_ARKit_t1158636010 * L_58 = __this->get_U24this_15();
-		ARPoint_t499615819  L_59 = __this->get_U3CpointU3E__3_5();
-		int64_t L_60 = __this->get_U3CresultTypeU3E__4_9();
-		GameObject_t1113636619 ** L_61 = __this->get_address_of_U3ChitObjU3E__5_10();
-		NullCheck(L_58);
-		bool L_62 = TreasureHuntController_ARKit_HitTestWithResultType_m2718151921(L_58, L_59, L_60, (GameObject_t1113636619 **)L_61, /*hidden argument*/NULL);
-		if (!L_62)
+		Camera_t4157153871 * L_43 = Camera_get_main_m3643453163(NULL /*static, unused*/, /*hidden argument*/NULL);
+		Touch_t1921856868 * L_44 = __this->get_address_of_U3CtouchU3E__2_3();
+		Vector2_t2156229523  L_45 = Touch_get_position_m3109777936((Touch_t1921856868 *)L_44, /*hidden argument*/NULL);
+		IL2CPP_RUNTIME_CLASS_INIT(Vector2_t2156229523_il2cpp_TypeInfo_var);
+		Vector3_t3722313464  L_46 = Vector2_op_Implicit_m1860157806(NULL /*static, unused*/, L_45, /*hidden argument*/NULL);
+		NullCheck(L_43);
+		Vector3_t3722313464  L_47 = Camera_ScreenToViewportPoint_m3569032523(L_43, L_46, /*hidden argument*/NULL);
+		__this->set_U3CscreenPositionU3E__3_4(L_47);
+		il2cpp_codegen_initobj((&V_4), sizeof(ARPoint_t499615819 ));
+		Vector3_t3722313464 * L_48 = __this->get_address_of_U3CscreenPositionU3E__3_4();
+		float L_49 = L_48->get_x_2();
+		(&V_4)->set_x_0((((double)((double)L_49))));
+		Vector3_t3722313464 * L_50 = __this->get_address_of_U3CscreenPositionU3E__3_4();
+		float L_51 = L_50->get_y_3();
+		(&V_4)->set_y_1((((double)((double)L_51))));
+		ARPoint_t499615819  L_52 = V_4;
+		__this->set_U3CpointU3E__3_5(L_52);
+		ARHitTestResultTypeU5BU5D_t2695410291* L_53 = (ARHitTestResultTypeU5BU5D_t2695410291*)SZArrayNew(ARHitTestResultTypeU5BU5D_t2695410291_il2cpp_TypeInfo_var, (uint32_t)1);
+		ARHitTestResultTypeU5BU5D_t2695410291* L_54 = L_53;
+		NullCheck(L_54);
+		(L_54)->SetAt(static_cast<il2cpp_array_size_t>(0), (int64_t)(((int64_t)((int64_t)((int32_t)16)))));
+		__this->set_U3CresultTypesU3E__3_6(L_54);
+		ARHitTestResultTypeU5BU5D_t2695410291* L_55 = __this->get_U3CresultTypesU3E__3_6();
+		__this->set_U24locvar0_7(L_55);
+		__this->set_U24locvar1_8(0);
+		goto IL_044a;
+	}
+
+IL_022c:
+	{
+		ARHitTestResultTypeU5BU5D_t2695410291* L_56 = __this->get_U24locvar0_7();
+		int32_t L_57 = __this->get_U24locvar1_8();
+		NullCheck(L_56);
+		int32_t L_58 = L_57;
+		int64_t L_59 = (L_56)->GetAt(static_cast<il2cpp_array_size_t>(L_58));
+		__this->set_U3CresultTypeU3E__4_9(L_59);
+		GameObject_t1113636619 * L_60 = (GameObject_t1113636619 *)il2cpp_codegen_object_new(GameObject_t1113636619_il2cpp_TypeInfo_var);
+		GameObject__ctor_m3707688467(L_60, /*hidden argument*/NULL);
+		__this->set_U3ChitObjU3E__5_10(L_60);
+		TreasureHuntController_ARKit_t1158636010 * L_61 = __this->get_U24this_15();
+		ARPoint_t499615819  L_62 = __this->get_U3CpointU3E__3_5();
+		int64_t L_63 = __this->get_U3CresultTypeU3E__4_9();
+		GameObject_t1113636619 ** L_64 = __this->get_address_of_U3ChitObjU3E__5_10();
+		NullCheck(L_61);
+		bool L_65 = TreasureHuntController_ARKit_HitTestWithResultType_m2718151921(L_61, L_62, L_63, (GameObject_t1113636619 **)L_64, /*hidden argument*/NULL);
+		if (!L_65)
 		{
-			goto IL_041f;
+			goto IL_043c;
 		}
 	}
 	{
 		__this->set_U3CcanOpenU3E__6_11((bool)0);
-		TreasureHuntController_ARKit_t1158636010 * L_63 = __this->get_U24this_15();
-		NullCheck(L_63);
-		UnityARCameraManager_t4002280589 * L_64 = L_63->get_arCamManager_43();
-		NullCheck(L_64);
-		Matrix4x4_t1817901843  L_65 = UnityARCameraManager_GetCurrentPose_m2277243174(L_64, /*hidden argument*/NULL);
-		__this->set_U3CcamMatrixU3E__6_12(L_65);
-		Matrix4x4_t1817901843  L_66 = __this->get_U3CcamMatrixU3E__6_12();
-		Vector3_t3722313464  L_67 = UnityARMatrixOps_GetPosition_m296874797(NULL /*static, unused*/, L_66, /*hidden argument*/NULL);
-		__this->set_U3CcamPosU3E__6_13(L_67);
-		TreasureHuntController_ARKit_t1158636010 * L_68 = __this->get_U24this_15();
-		NullCheck(L_68);
-		GameObject_t1113636619 * L_69 = L_68->get_spawnChest_9();
-		NullCheck(L_69);
-		Transform_t3600365921 * L_70 = GameObject_get_transform_m1369836730(L_69, /*hidden argument*/NULL);
-		NullCheck(L_70);
-		Vector3_t3722313464  L_71 = Transform_get_position_m36019626(L_70, /*hidden argument*/NULL);
-		Vector3_t3722313464  L_72 = __this->get_U3CcamPosU3E__6_13();
+		TreasureHuntController_ARKit_t1158636010 * L_66 = __this->get_U24this_15();
+		NullCheck(L_66);
+		UnityARCameraManager_t4002280589 * L_67 = L_66->get_arCamManager_43();
+		NullCheck(L_67);
+		Matrix4x4_t1817901843  L_68 = UnityARCameraManager_GetCurrentPose_m2277243174(L_67, /*hidden argument*/NULL);
+		__this->set_U3CcamMatrixU3E__6_12(L_68);
+		Matrix4x4_t1817901843  L_69 = __this->get_U3CcamMatrixU3E__6_12();
+		Vector3_t3722313464  L_70 = UnityARMatrixOps_GetPosition_m296874797(NULL /*static, unused*/, L_69, /*hidden argument*/NULL);
+		__this->set_U3CcamPosU3E__6_13(L_70);
+		TreasureHuntController_ARKit_t1158636010 * L_71 = __this->get_U24this_15();
+		NullCheck(L_71);
+		GameObject_t1113636619 * L_72 = L_71->get_spawnChest_9();
+		NullCheck(L_72);
+		Transform_t3600365921 * L_73 = GameObject_get_transform_m1369836730(L_72, /*hidden argument*/NULL);
+		NullCheck(L_73);
+		Vector3_t3722313464  L_74 = Transform_get_position_m36019626(L_73, /*hidden argument*/NULL);
+		Vector3_t3722313464  L_75 = __this->get_U3CcamPosU3E__6_13();
 		IL2CPP_RUNTIME_CLASS_INIT(Vector3_t3722313464_il2cpp_TypeInfo_var);
-		float L_73 = Vector3_Distance_m886789632(NULL /*static, unused*/, L_71, L_72, /*hidden argument*/NULL);
-		__this->set_U3CdistanceU3E__6_14(L_73);
-		TreasureHuntController_ARKit_t1158636010 * L_74 = __this->get_U24this_15();
-		NullCheck(L_74);
-		bool L_75 = L_74->get_canNavigate_39();
-		if (L_75)
+		float L_76 = Vector3_Distance_m886789632(NULL /*static, unused*/, L_74, L_75, /*hidden argument*/NULL);
+		__this->set_U3CdistanceU3E__6_14(L_76);
+		TreasureHuntController_ARKit_t1158636010 * L_77 = __this->get_U24this_15();
+		NullCheck(L_77);
+		bool L_78 = L_77->get_canNavigate_39();
+		if (L_78)
 		{
-			goto IL_02bf;
+			goto IL_02dc;
 		}
 	}
 	{
 		__this->set_U3CcanOpenU3E__6_11((bool)1);
-		goto IL_030b;
+		goto IL_0328;
 	}
 
-IL_02bf:
+IL_02dc:
 	{
-		float L_76 = __this->get_U3CdistanceU3E__6_14();
+		float L_79 = __this->get_U3CdistanceU3E__6_14();
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		float L_77 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_14();
-		float L_78 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_14();
+		float L_80 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_17();
+		float L_81 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minOpenDistance_17();
 		IL2CPP_RUNTIME_CLASS_INIT(Mathf_t3464937446_il2cpp_TypeInfo_var);
-		float L_79 = Mathf_Clamp_m3350697880(NULL /*static, unused*/, ((float)il2cpp_codegen_subtract((float)L_76, (float)L_77)), (-0.1f), L_78, /*hidden argument*/NULL);
-		V_5 = L_79;
-		TreasureHuntController_ARKit_t1158636010 * L_80 = __this->get_U24this_15();
-		NullCheck(L_80);
-		GameObject_t1113636619 * L_81 = L_80->get_spawnChest_9();
-		NullCheck(L_81);
-		GameObject_t1113636619 * L_82 = GameObject_get_gameObject_m3693461266(L_81, /*hidden argument*/NULL);
-		NullCheck(L_82);
-		TreasureChest_t2571345645 * L_83 = GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341(L_82, /*hidden argument*/GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341_RuntimeMethod_var);
-		float L_84 = V_5;
+		float L_82 = Mathf_Clamp_m3350697880(NULL /*static, unused*/, ((float)il2cpp_codegen_subtract((float)L_79, (float)L_80)), (-0.1f), L_81, /*hidden argument*/NULL);
+		V_5 = L_82;
+		TreasureHuntController_ARKit_t1158636010 * L_83 = __this->get_U24this_15();
 		NullCheck(L_83);
-		TreasureChest_UpdateDistanceBar_m705312692(L_83, L_84, /*hidden argument*/NULL);
-		float L_85 = V_5;
-		if ((!(((float)L_85) < ((float)(0.0f)))))
+		GameObject_t1113636619 * L_84 = L_83->get_spawnChest_9();
+		NullCheck(L_84);
+		GameObject_t1113636619 * L_85 = GameObject_get_gameObject_m3693461266(L_84, /*hidden argument*/NULL);
+		NullCheck(L_85);
+		TreasureChest_t2571345645 * L_86 = GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341(L_85, /*hidden argument*/GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341_RuntimeMethod_var);
+		float L_87 = V_5;
+		NullCheck(L_86);
+		TreasureChest_UpdateDistanceBar_m705312692(L_86, L_87, /*hidden argument*/NULL);
+		float L_88 = V_5;
+		if ((!(((float)L_88) < ((float)(0.0f)))))
 		{
-			goto IL_030b;
+			goto IL_0328;
 		}
 	}
 	{
 		__this->set_U3CcanOpenU3E__6_11((bool)1);
 	}
 
-IL_030b:
+IL_0328:
 	{
-		bool L_86 = __this->get_U3CcanOpenU3E__6_11();
-		if (!L_86)
+		bool L_89 = __this->get_U3CcanOpenU3E__6_11();
+		if (!L_89)
 		{
-			goto IL_0415;
+			goto IL_0432;
 		}
 	}
 	{
-		bool L_87 = __this->get_U3CtreasureFoundU3E__0_0();
-		if (L_87)
+		bool L_90 = __this->get_U3CtreasureFoundU3E__0_0();
+		if (L_90)
 		{
-			goto IL_0415;
+			goto IL_0432;
 		}
 	}
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_88 = __this->get_U24this_15();
-		TreasureHuntController_ARKit_t1158636010 * L_89 = __this->get_U24this_15();
-		NullCheck(L_89);
-		GameObject_t1113636619 * L_90 = L_89->get_spawnChest_9();
-		NullCheck(L_90);
-		TreasureChest_t2571345645 * L_91 = GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341(L_90, /*hidden argument*/GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341_RuntimeMethod_var);
+		TreasureHuntController_ARKit_t1158636010 * L_91 = __this->get_U24this_15();
 		TreasureHuntController_ARKit_t1158636010 * L_92 = __this->get_U24this_15();
 		NullCheck(L_92);
-		Camera_t4157153871 * L_93 = L_92->get_FirstPersonCamera_4();
+		GameObject_t1113636619 * L_93 = L_92->get_spawnChest_9();
 		NullCheck(L_93);
-		GameObject_t1113636619 * L_94 = Component_get_gameObject_m442555142(L_93, /*hidden argument*/NULL);
+		TreasureChest_t2571345645 * L_94 = GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341(L_93, /*hidden argument*/GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341_RuntimeMethod_var);
+		TreasureHuntController_ARKit_t1158636010 * L_95 = __this->get_U24this_15();
+		NullCheck(L_95);
+		Camera_t4157153871 * L_96 = L_95->get_FirstPersonCamera_4();
+		NullCheck(L_96);
+		GameObject_t1113636619 * L_97 = Component_get_gameObject_m442555142(L_96, /*hidden argument*/NULL);
+		NullCheck(L_94);
+		RuntimeObject* L_98 = TreasureChest_Open_m2588364693(L_94, L_97, /*hidden argument*/NULL);
 		NullCheck(L_91);
-		RuntimeObject* L_95 = TreasureChest_Open_m2588364693(L_91, L_94, /*hidden argument*/NULL);
-		NullCheck(L_88);
-		Coroutine_t3829159415 * L_96 = MonoBehaviour_StartCoroutine_m3411253000(L_88, L_95, /*hidden argument*/NULL);
-		__this->set_U24current_16(L_96);
-		bool L_97 = __this->get_U24disposing_17();
-		if (L_97)
+		Coroutine_t3829159415 * L_99 = MonoBehaviour_StartCoroutine_m3411253000(L_91, L_98, /*hidden argument*/NULL);
+		__this->set_U24current_16(L_99);
+		bool L_100 = __this->get_U24disposing_17();
+		if (L_100)
 		{
-			goto IL_0366;
+			goto IL_0383;
 		}
 	}
 	{
 		__this->set_U24PC_18(3);
 	}
 
-IL_0366:
+IL_0383:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_036b:
+IL_0388:
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_98 = __this->get_U24this_15();
-		TreasureHuntController_ARKit_t1158636010 * L_99 = __this->get_U24this_15();
-		TreasureHuntController_ARKit_t1158636010 * L_100 = __this->get_U24this_15();
-		NullCheck(L_100);
-		GameObject_t1113636619 * L_101 = L_100->get_spawnChest_9();
-		NullCheck(L_101);
-		Transform_t3600365921 * L_102 = GameObject_get_transform_m1369836730(L_101, /*hidden argument*/NULL);
+		TreasureHuntController_ARKit_t1158636010 * L_101 = __this->get_U24this_15();
+		TreasureHuntController_ARKit_t1158636010 * L_102 = __this->get_U24this_15();
 		TreasureHuntController_ARKit_t1158636010 * L_103 = __this->get_U24this_15();
 		NullCheck(L_103);
-		int32_t L_104 = L_103->get_chestIndex_10();
-		NullCheck(L_99);
-		RuntimeObject* L_105 = TreasureHuntController_ARKit_SpawnTreasure_m3351969250(L_99, L_102, L_104, /*hidden argument*/NULL);
-		NullCheck(L_98);
-		Coroutine_t3829159415 * L_106 = MonoBehaviour_StartCoroutine_m3411253000(L_98, L_105, /*hidden argument*/NULL);
-		__this->set_U24current_16(L_106);
-		bool L_107 = __this->get_U24disposing_17();
-		if (L_107)
+		GameObject_t1113636619 * L_104 = L_103->get_spawnChest_9();
+		NullCheck(L_104);
+		Transform_t3600365921 * L_105 = GameObject_get_transform_m1369836730(L_104, /*hidden argument*/NULL);
+		TreasureHuntController_ARKit_t1158636010 * L_106 = __this->get_U24this_15();
+		NullCheck(L_106);
+		int32_t L_107 = L_106->get_chestIndex_10();
+		NullCheck(L_102);
+		RuntimeObject* L_108 = TreasureHuntController_ARKit_SpawnTreasure_m3351969250(L_102, L_105, L_107, /*hidden argument*/NULL);
+		NullCheck(L_101);
+		Coroutine_t3829159415 * L_109 = MonoBehaviour_StartCoroutine_m3411253000(L_101, L_108, /*hidden argument*/NULL);
+		__this->set_U24current_16(L_109);
+		bool L_110 = __this->get_U24disposing_17();
+		if (L_110)
 		{
-			goto IL_03b1;
+			goto IL_03ce;
 		}
 	}
 	{
 		__this->set_U24PC_18(4);
 	}
 
-IL_03b1:
+IL_03ce:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_03b6:
+IL_03d3:
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_108 = __this->get_U24this_15();
-		NullCheck(L_108);
-		GameObject_t1113636619 * L_109 = L_108->get_spawnObj_12();
-		NullCheck(L_109);
-		VisibilityToggler_t2636248793 * L_110 = GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927(L_109, /*hidden argument*/GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927_RuntimeMethod_var);
-		NullCheck(L_110);
-		VisibilityToggler_TurnVisible_m2223784766(L_110, (bool)1, /*hidden argument*/NULL);
 		TreasureHuntController_ARKit_t1158636010 * L_111 = __this->get_U24this_15();
 		NullCheck(L_111);
-		GameObject_t1113636619 * L_112 = L_111->get_spawnChest_9();
+		GameObject_t1113636619 * L_112 = L_111->get_spawnObj_12();
 		NullCheck(L_112);
-		TreasureChest_t2571345645 * L_113 = GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341(L_112, /*hidden argument*/GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341_RuntimeMethod_var);
+		VisibilityToggler_t2636248793 * L_113 = GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927(L_112, /*hidden argument*/GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927_RuntimeMethod_var);
+		NullCheck(L_113);
+		VisibilityToggler_TurnVisible_m2223784766(L_113, (bool)1, /*hidden argument*/NULL);
 		TreasureHuntController_ARKit_t1158636010 * L_114 = __this->get_U24this_15();
 		NullCheck(L_114);
-		GameObject_t1113636619 * L_115 = L_114->get_spawnObj_12();
+		GameObject_t1113636619 * L_115 = L_114->get_spawnChest_9();
 		NullCheck(L_115);
-		SpawnableObject_t1905376273 * L_116 = GameObject_GetComponent_TisSpawnableObject_t1905376273_m4184104198(L_115, /*hidden argument*/GameObject_GetComponent_TisSpawnableObject_t1905376273_m4184104198_RuntimeMethod_var);
+		TreasureChest_t2571345645 * L_116 = GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341(L_115, /*hidden argument*/GameObject_GetComponent_TisTreasureChest_t2571345645_m2181349341_RuntimeMethod_var);
+		TreasureHuntController_ARKit_t1158636010 * L_117 = __this->get_U24this_15();
+		NullCheck(L_117);
+		GameObject_t1113636619 * L_118 = L_117->get_spawnObj_12();
+		NullCheck(L_118);
+		SpawnableObject_t1905376273 * L_119 = GameObject_GetComponent_TisSpawnableObject_t1905376273_m4184104198(L_118, /*hidden argument*/GameObject_GetComponent_TisSpawnableObject_t1905376273_m4184104198_RuntimeMethod_var);
+		NullCheck(L_119);
+		String_t* L_120 = SpawnableObject_GetName_m2460273350(L_119, /*hidden argument*/NULL);
 		NullCheck(L_116);
-		String_t* L_117 = SpawnableObject_GetName_m2460273350(L_116, /*hidden argument*/NULL);
-		NullCheck(L_113);
-		TreasureChest_SetItemText_m3667095780(L_113, L_117, /*hidden argument*/NULL);
-		TreasureHuntController_ARKit_t1158636010 * L_118 = __this->get_U24this_15();
-		TreasureHuntController_ARKit_t1158636010 * L_119 = L_118;
-		NullCheck(L_119);
-		int32_t L_120 = L_119->get_chestIndex_10();
-		NullCheck(L_119);
-		L_119->set_chestIndex_10(((int32_t)il2cpp_codegen_add((int32_t)L_120, (int32_t)1)));
+		TreasureChest_SetItemText_m3667095780(L_116, L_120, /*hidden argument*/NULL);
+		TreasureHuntController_ARKit_t1158636010 * L_121 = __this->get_U24this_15();
+		TreasureHuntController_ARKit_t1158636010 * L_122 = L_121;
+		NullCheck(L_122);
+		int32_t L_123 = L_122->get_chestIndex_10();
+		NullCheck(L_122);
+		L_122->set_chestIndex_10(((int32_t)il2cpp_codegen_add((int32_t)L_123, (int32_t)1)));
 		__this->set_U3CtreasureFoundU3E__0_0((bool)1);
-		goto IL_041f;
+		goto IL_043c;
 	}
 
-IL_0415:
+IL_0432:
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Debug_t3317548046_il2cpp_TypeInfo_var);
 		Debug_Log_m4051431634(NULL /*static, unused*/, _stringLiteral227670463, /*hidden argument*/NULL);
 	}
 
-IL_041f:
+IL_043c:
 	{
-		int32_t L_121 = __this->get_U24locvar1_8();
-		__this->set_U24locvar1_8(((int32_t)il2cpp_codegen_add((int32_t)L_121, (int32_t)1)));
+		int32_t L_124 = __this->get_U24locvar1_8();
+		__this->set_U24locvar1_8(((int32_t)il2cpp_codegen_add((int32_t)L_124, (int32_t)1)));
 	}
 
-IL_042d:
+IL_044a:
 	{
-		int32_t L_122 = __this->get_U24locvar1_8();
-		ARHitTestResultTypeU5BU5D_t2695410291* L_123 = __this->get_U24locvar0_7();
-		NullCheck(L_123);
-		if ((((int32_t)L_122) < ((int32_t)(((int32_t)((int32_t)(((RuntimeArray *)L_123)->max_length)))))))
+		int32_t L_125 = __this->get_U24locvar1_8();
+		ARHitTestResultTypeU5BU5D_t2695410291* L_126 = __this->get_U24locvar0_7();
+		NullCheck(L_126);
+		if ((((int32_t)L_125) < ((int32_t)(((int32_t)((int32_t)(((RuntimeArray *)L_126)->max_length)))))))
 		{
-			goto IL_020f;
+			goto IL_022c;
 		}
 	}
 
-IL_0440:
+IL_045d:
 	{
-		int32_t L_124 = 0;
-		RuntimeObject * L_125 = Box(Int32_t2950945753_il2cpp_TypeInfo_var, &L_124);
-		__this->set_U24current_16(L_125);
-		bool L_126 = __this->get_U24disposing_17();
-		if (L_126)
+		int32_t L_127 = 0;
+		RuntimeObject * L_128 = Box(Int32_t2950945753_il2cpp_TypeInfo_var, &L_127);
+		__this->set_U24current_16(L_128);
+		bool L_129 = __this->get_U24disposing_17();
+		if (L_129)
 		{
-			goto IL_045b;
+			goto IL_0478;
 		}
 	}
 	{
 		__this->set_U24PC_18(5);
 	}
 
-IL_045b:
+IL_0478:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_0460:
+IL_047d:
 	{
-		bool L_127 = __this->get_U3CtreasureFoundU3E__0_0();
-		if (!L_127)
+		bool L_130 = __this->get_U3CtreasureFoundU3E__0_0();
+		if (!L_130)
 		{
 			goto IL_00f7;
 		}
 	}
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		float L_128 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_presentationTime_4();
-		WaitForSeconds_t1699091251 * L_129 = (WaitForSeconds_t1699091251 *)il2cpp_codegen_object_new(WaitForSeconds_t1699091251_il2cpp_TypeInfo_var);
-		WaitForSeconds__ctor_m2199082655(L_129, L_128, /*hidden argument*/NULL);
-		__this->set_U24current_16(L_129);
-		bool L_130 = __this->get_U24disposing_17();
-		if (L_130)
+		float L_131 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_presentationTime_4();
+		WaitForSeconds_t1699091251 * L_132 = (WaitForSeconds_t1699091251 *)il2cpp_codegen_object_new(WaitForSeconds_t1699091251_il2cpp_TypeInfo_var);
+		WaitForSeconds__ctor_m2199082655(L_132, L_131, /*hidden argument*/NULL);
+		__this->set_U24current_16(L_132);
+		bool L_133 = __this->get_U24disposing_17();
+		if (L_133)
 		{
-			goto IL_048a;
+			goto IL_04a7;
 		}
 	}
 	{
 		__this->set_U24PC_18(6);
 	}
 
-IL_048a:
+IL_04a7:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_048f:
+IL_04ac:
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_131 = __this->get_U24this_15();
-		NullCheck(L_131);
-		GameObject_t1113636619 * L_132 = L_131->get_spawnChest_9();
-		IL2CPP_RUNTIME_CLASS_INIT(Object_t631007953_il2cpp_TypeInfo_var);
-		Object_Destroy_m565254235(NULL /*static, unused*/, L_132, /*hidden argument*/NULL);
-		TreasureHuntController_ARKit_t1158636010 * L_133 = __this->get_U24this_15();
-		NullCheck(L_133);
-		GameObject_t1113636619 * L_134 = L_133->get_spawnObj_12();
+		TreasureHuntController_ARKit_t1158636010 * L_134 = __this->get_U24this_15();
 		NullCheck(L_134);
-		VisibilityToggler_t2636248793 * L_135 = GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927(L_134, /*hidden argument*/GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927_RuntimeMethod_var);
-		NullCheck(L_135);
-		VisibilityToggler_TurnVisible_m2223784766(L_135, (bool)0, /*hidden argument*/NULL);
-		int32_t L_136 = __this->get_U3CiU3E__1_2();
-		__this->set_U3CiU3E__1_2(((int32_t)il2cpp_codegen_add((int32_t)L_136, (int32_t)1)));
+		GameObject_t1113636619 * L_135 = L_134->get_spawnChest_9();
+		IL2CPP_RUNTIME_CLASS_INIT(Object_t631007953_il2cpp_TypeInfo_var);
+		Object_Destroy_m565254235(NULL /*static, unused*/, L_135, /*hidden argument*/NULL);
+		TreasureHuntController_ARKit_t1158636010 * L_136 = __this->get_U24this_15();
+		NullCheck(L_136);
+		GameObject_t1113636619 * L_137 = L_136->get_spawnObj_12();
+		NullCheck(L_137);
+		VisibilityToggler_t2636248793 * L_138 = GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927(L_137, /*hidden argument*/GameObject_GetComponent_TisVisibilityToggler_t2636248793_m3599268927_RuntimeMethod_var);
+		NullCheck(L_138);
+		VisibilityToggler_TurnVisible_m2223784766(L_138, (bool)0, /*hidden argument*/NULL);
+		int32_t L_139 = __this->get_U3CiU3E__1_2();
+		__this->set_U3CiU3E__1_2(((int32_t)il2cpp_codegen_add((int32_t)L_139, (int32_t)1)));
 	}
 
-IL_04c3:
+IL_04e0:
 	{
-		int32_t L_137 = __this->get_U3CiU3E__1_2();
+		int32_t L_140 = __this->get_U3CiU3E__1_2();
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		int32_t L_138 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_maxObjects_5();
-		if ((((int32_t)L_137) < ((int32_t)L_138)))
+		int32_t L_141 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_maxObjects_5();
+		if ((((int32_t)L_140) < ((int32_t)L_141)))
 		{
 			goto IL_00b0;
 		}
 	}
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_139 = __this->get_U24this_15();
-		TreasureHuntController_ARKit_t1158636010 * L_140 = __this->get_U24this_15();
-		NullCheck(L_140);
-		RuntimeObject* L_141 = TreasureHuntController_ARKit_PerformRetrieval_m753804533(L_140, /*hidden argument*/NULL);
-		NullCheck(L_139);
-		Coroutine_t3829159415 * L_142 = MonoBehaviour_StartCoroutine_m3411253000(L_139, L_141, /*hidden argument*/NULL);
-		__this->set_U24current_16(L_142);
-		bool L_143 = __this->get_U24disposing_17();
-		if (L_143)
+		TreasureHuntController_ARKit_t1158636010 * L_142 = __this->get_U24this_15();
+		TreasureHuntController_ARKit_t1158636010 * L_143 = __this->get_U24this_15();
+		NullCheck(L_143);
+		RuntimeObject* L_144 = TreasureHuntController_ARKit_PerformRetrieval_m753804533(L_143, /*hidden argument*/NULL);
+		NullCheck(L_142);
+		Coroutine_t3829159415 * L_145 = MonoBehaviour_StartCoroutine_m3411253000(L_142, L_144, /*hidden argument*/NULL);
+		__this->set_U24current_16(L_145);
+		bool L_146 = __this->get_U24disposing_17();
+		if (L_146)
 		{
-			goto IL_04fe;
+			goto IL_051b;
 		}
 	}
 	{
 		__this->set_U24PC_18(7);
 	}
 
-IL_04fe:
+IL_051b:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_0503:
+IL_0520:
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_144 = __this->get_U24this_15();
-		TreasureHuntController_ARKit_t1158636010 * L_145 = __this->get_U24this_15();
-		NullCheck(L_145);
-		RuntimeObject* L_146 = TreasureHuntController_ARKit_ShowFeedback_m1583868847(L_145, /*hidden argument*/NULL);
-		NullCheck(L_144);
-		Coroutine_t3829159415 * L_147 = MonoBehaviour_StartCoroutine_m3411253000(L_144, L_146, /*hidden argument*/NULL);
-		__this->set_U24current_16(L_147);
-		bool L_148 = __this->get_U24disposing_17();
-		if (L_148)
+		TreasureHuntController_ARKit_t1158636010 * L_147 = __this->get_U24this_15();
+		TreasureHuntController_ARKit_t1158636010 * L_148 = __this->get_U24this_15();
+		NullCheck(L_148);
+		RuntimeObject* L_149 = TreasureHuntController_ARKit_ShowFeedback_m1583868847(L_148, /*hidden argument*/NULL);
+		NullCheck(L_147);
+		Coroutine_t3829159415 * L_150 = MonoBehaviour_StartCoroutine_m3411253000(L_147, L_149, /*hidden argument*/NULL);
+		__this->set_U24current_16(L_150);
+		bool L_151 = __this->get_U24disposing_17();
+		if (L_151)
 		{
-			goto IL_052e;
+			goto IL_054b;
 		}
 	}
 	{
 		__this->set_U24PC_18(8);
 	}
 
-IL_052e:
+IL_054b:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_0533:
+IL_0550:
 	{
 		V_6 = 0;
-		goto IL_0558;
-	}
-
-IL_053b:
-	{
-		TreasureHuntController_ARKit_t1158636010 * L_149 = __this->get_U24this_15();
-		NullCheck(L_149);
-		List_1_t2585711361 * L_150 = L_149->get_testObjList_53();
-		int32_t L_151 = V_6;
-		NullCheck(L_150);
-		GameObject_t1113636619 * L_152 = List_1_get_Item_m3052194546(L_150, L_151, /*hidden argument*/List_1_get_Item_m3052194546_RuntimeMethod_var);
-		IL2CPP_RUNTIME_CLASS_INIT(Object_t631007953_il2cpp_TypeInfo_var);
-		Object_Destroy_m565254235(NULL /*static, unused*/, L_152, /*hidden argument*/NULL);
-		int32_t L_153 = V_6;
-		V_6 = ((int32_t)il2cpp_codegen_add((int32_t)L_153, (int32_t)1));
+		goto IL_0575;
 	}
 
 IL_0558:
 	{
+		TreasureHuntController_ARKit_t1158636010 * L_152 = __this->get_U24this_15();
+		NullCheck(L_152);
+		List_1_t2585711361 * L_153 = L_152->get_testObjList_53();
 		int32_t L_154 = V_6;
-		TreasureHuntController_ARKit_t1158636010 * L_155 = __this->get_U24this_15();
-		NullCheck(L_155);
-		List_1_t2585711361 * L_156 = L_155->get_testObjList_53();
-		NullCheck(L_156);
-		int32_t L_157 = List_1_get_Count_m2660017690(L_156, /*hidden argument*/List_1_get_Count_m2660017690_RuntimeMethod_var);
-		if ((((int32_t)L_154) < ((int32_t)L_157)))
+		NullCheck(L_153);
+		GameObject_t1113636619 * L_155 = List_1_get_Item_m3052194546(L_153, L_154, /*hidden argument*/List_1_get_Item_m3052194546_RuntimeMethod_var);
+		IL2CPP_RUNTIME_CLASS_INIT(Object_t631007953_il2cpp_TypeInfo_var);
+		Object_Destroy_m565254235(NULL /*static, unused*/, L_155, /*hidden argument*/NULL);
+		int32_t L_156 = V_6;
+		V_6 = ((int32_t)il2cpp_codegen_add((int32_t)L_156, (int32_t)1));
+	}
+
+IL_0575:
+	{
+		int32_t L_157 = V_6;
+		TreasureHuntController_ARKit_t1158636010 * L_158 = __this->get_U24this_15();
+		NullCheck(L_158);
+		List_1_t2585711361 * L_159 = L_158->get_testObjList_53();
+		NullCheck(L_159);
+		int32_t L_160 = List_1_get_Count_m2660017690(L_159, /*hidden argument*/List_1_get_Count_m2660017690_RuntimeMethod_var);
+		if ((((int32_t)L_157) < ((int32_t)L_160)))
 		{
-			goto IL_053b;
+			goto IL_0558;
 		}
 	}
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_158 = __this->get_U24this_15();
-		NullCheck(L_158);
-		Text_t1901882714 * L_159 = L_158->get_retrievalText_28();
-		NullCheck(L_159);
-		VirtActionInvoker1< String_t* >::Invoke(73 /* System.Void UnityEngine.UI.Text::set_text(System.String) */, L_159, _stringLiteral1604198853);
-		WaitForSeconds_t1699091251 * L_160 = (WaitForSeconds_t1699091251 *)il2cpp_codegen_object_new(WaitForSeconds_t1699091251_il2cpp_TypeInfo_var);
-		WaitForSeconds__ctor_m2199082655(L_160, (1.0f), /*hidden argument*/NULL);
-		__this->set_U24current_16(L_160);
-		bool L_161 = __this->get_U24disposing_17();
-		if (L_161)
+		TreasureHuntController_ARKit_t1158636010 * L_161 = __this->get_U24this_15();
+		NullCheck(L_161);
+		Text_t1901882714 * L_162 = L_161->get_retrievalText_28();
+		NullCheck(L_162);
+		VirtActionInvoker1< String_t* >::Invoke(73 /* System.Void UnityEngine.UI.Text::set_text(System.String) */, L_162, _stringLiteral1604198853);
+		WaitForSeconds_t1699091251 * L_163 = (WaitForSeconds_t1699091251 *)il2cpp_codegen_object_new(WaitForSeconds_t1699091251_il2cpp_TypeInfo_var);
+		WaitForSeconds__ctor_m2199082655(L_163, (1.0f), /*hidden argument*/NULL);
+		__this->set_U24current_16(L_163);
+		bool L_164 = __this->get_U24disposing_17();
+		if (L_164)
 		{
-			goto IL_05a4;
+			goto IL_05c1;
 		}
 	}
 	{
 		__this->set_U24PC_18(((int32_t)9));
 	}
 
-IL_05a4:
+IL_05c1:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_05a9:
+IL_05c6:
 	{
-		TreasureHuntController_ARKit_t1158636010 * L_162 = __this->get_U24this_15();
-		NullCheck(L_162);
-		CanvasGroup_t4083511760 * L_163 = L_162->get_retrievalPanelUIGroup_25();
-		NullCheck(L_163);
-		CanvasGroup_set_alpha_m4032573(L_163, (0.0f), /*hidden argument*/NULL);
-		TreasureHuntController_ARKit_t1158636010 * L_164 = __this->get_U24this_15();
-		NullCheck(L_164);
-		CanvasGroup_t4083511760 * L_165 = L_164->get_beginTrialPanelUIGroup_24();
+		TreasureHuntController_ARKit_t1158636010 * L_165 = __this->get_U24this_15();
 		NullCheck(L_165);
-		CanvasGroup_set_alpha_m4032573(L_165, (1.0f), /*hidden argument*/NULL);
-		TreasureHuntController_ARKit_t1158636010 * L_166 = __this->get_U24this_15();
+		CanvasGroup_t4083511760 * L_166 = L_165->get_retrievalPanelUIGroup_25();
 		NullCheck(L_166);
-		TreasureHuntController_ARKit_ChangeDebugVisualsStatus_m2039229800(L_166, (bool)1, /*hidden argument*/NULL);
+		CanvasGroup_set_alpha_m4032573(L_166, (0.0f), /*hidden argument*/NULL);
 		TreasureHuntController_ARKit_t1158636010 * L_167 = __this->get_U24this_15();
 		NullCheck(L_167);
-		TreasureHuntController_ARKit_ClearLists_m1996642798(L_167, /*hidden argument*/NULL);
-		TreasureHuntController_ARKit_t1158636010 * L_168 = __this->get_U24this_15();
+		CanvasGroup_t4083511760 * L_168 = L_167->get_beginTrialPanelUIGroup_24();
 		NullCheck(L_168);
-		L_168->set_chestIndex_10(0);
+		CanvasGroup_set_alpha_m4032573(L_168, (1.0f), /*hidden argument*/NULL);
 		TreasureHuntController_ARKit_t1158636010 * L_169 = __this->get_U24this_15();
-		TreasureHuntController_ARKit_t1158636010 * L_170 = L_169;
+		NullCheck(L_169);
+		TreasureHuntController_ARKit_ChangeDebugVisualsStatus_m2039229800(L_169, (bool)1, /*hidden argument*/NULL);
+		TreasureHuntController_ARKit_t1158636010 * L_170 = __this->get_U24this_15();
 		NullCheck(L_170);
-		int32_t L_171 = L_170->get_currentTrialIndex_61();
-		NullCheck(L_170);
-		L_170->set_currentTrialIndex_61(((int32_t)il2cpp_codegen_add((int32_t)L_171, (int32_t)1)));
+		TreasureHuntController_ARKit_ClearLists_m1996642798(L_170, /*hidden argument*/NULL);
+		TreasureHuntController_ARKit_t1158636010 * L_171 = __this->get_U24this_15();
+		NullCheck(L_171);
+		L_171->set_chestIndex_10(0);
+		TreasureHuntController_ARKit_t1158636010 * L_172 = __this->get_U24this_15();
+		TreasureHuntController_ARKit_t1158636010 * L_173 = L_172;
+		NullCheck(L_173);
+		int32_t L_174 = L_173->get_currentTrialIndex_61();
+		NullCheck(L_173);
+		L_173->set_currentTrialIndex_61(((int32_t)il2cpp_codegen_add((int32_t)L_174, (int32_t)1)));
 		__this->set_U24current_16(NULL);
-		bool L_172 = __this->get_U24disposing_17();
-		if (L_172)
+		bool L_175 = __this->get_U24disposing_17();
+		if (L_175)
 		{
-			goto IL_0620;
+			goto IL_063d;
 		}
 	}
 	{
 		__this->set_U24PC_18(((int32_t)10));
 	}
 
-IL_0620:
+IL_063d:
 	{
-		goto IL_062e;
+		goto IL_064b;
 	}
 
-IL_0625:
+IL_0642:
 	{
 		__this->set_U24PC_18((-1));
 	}
 
-IL_062c:
+IL_0649:
 	{
 		return (bool)0;
 	}
 
-IL_062e:
+IL_064b:
 	{
 		return (bool)1;
 	}
@@ -47442,7 +47880,7 @@ IL_005f:
 		V_4 = L_60;
 		float L_61 = V_4;
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		float L_62 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minResponseDistance_15();
+		float L_62 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get_minResponseDistance_18();
 		if ((!(((float)L_61) < ((float)L_62))))
 		{
 			goto IL_01b5;

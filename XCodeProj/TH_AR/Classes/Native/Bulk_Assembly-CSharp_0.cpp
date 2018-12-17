@@ -1306,6 +1306,7 @@ extern String_t* _stringLiteral3902473660;
 extern String_t* _stringLiteral3902652265;
 extern String_t* _stringLiteral3936371146;
 extern String_t* _stringLiteral3938468298;
+extern String_t* _stringLiteral3940781687;
 extern String_t* _stringLiteral400319307;
 extern String_t* _stringLiteral4012842256;
 extern String_t* _stringLiteral4051390885;
@@ -1639,6 +1640,7 @@ extern const uint32_t ComputerVisionController__HandleTouchInput_m4049649691_Met
 extern const uint32_t ComputerVisionController__QuitOnConnectionErrors_m213837359_MetadataUsageId;
 extern const uint32_t ComputerVisionController__ShowAndroidToastMessage_m4015799591_MetadataUsageId;
 extern const uint32_t Configuration_Awake_m98910324_MetadataUsageId;
+extern const uint32_t Configuration_UpdateResponseDistance_m648834345_MetadataUsageId;
 extern const uint32_t Configuration__cctor_m2788445856_MetadataUsageId;
 extern const uint32_t Configuration_get_currentSubject_m962848107_MetadataUsageId;
 extern const uint32_t Configuration_set_currentSubject_m2583861926_MetadataUsageId;
@@ -7307,33 +7309,6 @@ public:
 #pragma clang diagnostic pop
 #endif
 #endif // EXTERNAPI_T1767614075_H
-#ifndef EXTERNAPI_T1764421814_H
-#define EXTERNAPI_T1764421814_H
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winvalid-offsetof"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#endif
-
-// GoogleARCoreInternal.SessionConfigApi/ExternApi
-struct  ExternApi_t1764421814 
-{
-public:
-	union
-	{
-		struct
-		{
-		};
-		uint8_t ExternApi_t1764421814__padding[1];
-	};
-
-public:
-};
-
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
-#endif // EXTERNAPI_T1764421814_H
 #ifndef HSVCOLOR_T2280895388_H
 #define HSVCOLOR_T2280895388_H
 #ifdef __clang__
@@ -20066,8 +20041,29 @@ public:
 struct  Configuration_t2084744999  : public MonoBehaviour_t3962482529
 {
 public:
+	// UnityEngine.UI.Slider Configuration::responseDistSlider
+	Slider_t3903728902 * ___responseDistSlider_13;
+	// UnityEngine.UI.Text Configuration::responseDistText
+	Text_t1901882714 * ___responseDistText_14;
 
 public:
+	inline static int32_t get_offset_of_responseDistSlider_13() { return static_cast<int32_t>(offsetof(Configuration_t2084744999, ___responseDistSlider_13)); }
+	inline Slider_t3903728902 * get_responseDistSlider_13() const { return ___responseDistSlider_13; }
+	inline Slider_t3903728902 ** get_address_of_responseDistSlider_13() { return &___responseDistSlider_13; }
+	inline void set_responseDistSlider_13(Slider_t3903728902 * value)
+	{
+		___responseDistSlider_13 = value;
+		Il2CppCodeGenWriteBarrier((&___responseDistSlider_13), value);
+	}
+
+	inline static int32_t get_offset_of_responseDistText_14() { return static_cast<int32_t>(offsetof(Configuration_t2084744999, ___responseDistText_14)); }
+	inline Text_t1901882714 * get_responseDistText_14() const { return ___responseDistText_14; }
+	inline Text_t1901882714 ** get_address_of_responseDistText_14() { return &___responseDistText_14; }
+	inline void set_responseDistText_14(Text_t1901882714 * value)
+	{
+		___responseDistText_14 = value;
+		Il2CppCodeGenWriteBarrier((&___responseDistText_14), value);
+	}
 };
 
 struct Configuration_t2084744999_StaticFields
@@ -20089,14 +20085,16 @@ public:
 	bool ___isSyncbox_10;
 	// System.String Configuration::defaultLoggingPath
 	String_t* ___defaultLoggingPath_11;
+	// System.String Configuration::subjectName
+	String_t* ___subjectName_12;
 	// Subject Configuration::_currentSubject
-	Subject_t2255083748 * ____currentSubject_12;
+	Subject_t2255083748 * ____currentSubject_15;
 	// System.Single Configuration::minRetrievalDistance
-	float ___minRetrievalDistance_13;
+	float ___minRetrievalDistance_16;
 	// System.Single Configuration::minOpenDistance
-	float ___minOpenDistance_14;
+	float ___minOpenDistance_17;
 	// System.Single Configuration::minResponseDistance
-	float ___minResponseDistance_15;
+	float ___minResponseDistance_18;
 
 public:
 	inline static int32_t get_offset_of_presentationTime_4() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___presentationTime_4)); }
@@ -20165,37 +20163,46 @@ public:
 		Il2CppCodeGenWriteBarrier((&___defaultLoggingPath_11), value);
 	}
 
-	inline static int32_t get_offset_of__currentSubject_12() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ____currentSubject_12)); }
-	inline Subject_t2255083748 * get__currentSubject_12() const { return ____currentSubject_12; }
-	inline Subject_t2255083748 ** get_address_of__currentSubject_12() { return &____currentSubject_12; }
-	inline void set__currentSubject_12(Subject_t2255083748 * value)
+	inline static int32_t get_offset_of_subjectName_12() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___subjectName_12)); }
+	inline String_t* get_subjectName_12() const { return ___subjectName_12; }
+	inline String_t** get_address_of_subjectName_12() { return &___subjectName_12; }
+	inline void set_subjectName_12(String_t* value)
 	{
-		____currentSubject_12 = value;
-		Il2CppCodeGenWriteBarrier((&____currentSubject_12), value);
+		___subjectName_12 = value;
+		Il2CppCodeGenWriteBarrier((&___subjectName_12), value);
 	}
 
-	inline static int32_t get_offset_of_minRetrievalDistance_13() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minRetrievalDistance_13)); }
-	inline float get_minRetrievalDistance_13() const { return ___minRetrievalDistance_13; }
-	inline float* get_address_of_minRetrievalDistance_13() { return &___minRetrievalDistance_13; }
-	inline void set_minRetrievalDistance_13(float value)
+	inline static int32_t get_offset_of__currentSubject_15() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ____currentSubject_15)); }
+	inline Subject_t2255083748 * get__currentSubject_15() const { return ____currentSubject_15; }
+	inline Subject_t2255083748 ** get_address_of__currentSubject_15() { return &____currentSubject_15; }
+	inline void set__currentSubject_15(Subject_t2255083748 * value)
 	{
-		___minRetrievalDistance_13 = value;
+		____currentSubject_15 = value;
+		Il2CppCodeGenWriteBarrier((&____currentSubject_15), value);
 	}
 
-	inline static int32_t get_offset_of_minOpenDistance_14() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minOpenDistance_14)); }
-	inline float get_minOpenDistance_14() const { return ___minOpenDistance_14; }
-	inline float* get_address_of_minOpenDistance_14() { return &___minOpenDistance_14; }
-	inline void set_minOpenDistance_14(float value)
+	inline static int32_t get_offset_of_minRetrievalDistance_16() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minRetrievalDistance_16)); }
+	inline float get_minRetrievalDistance_16() const { return ___minRetrievalDistance_16; }
+	inline float* get_address_of_minRetrievalDistance_16() { return &___minRetrievalDistance_16; }
+	inline void set_minRetrievalDistance_16(float value)
 	{
-		___minOpenDistance_14 = value;
+		___minRetrievalDistance_16 = value;
 	}
 
-	inline static int32_t get_offset_of_minResponseDistance_15() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minResponseDistance_15)); }
-	inline float get_minResponseDistance_15() const { return ___minResponseDistance_15; }
-	inline float* get_address_of_minResponseDistance_15() { return &___minResponseDistance_15; }
-	inline void set_minResponseDistance_15(float value)
+	inline static int32_t get_offset_of_minOpenDistance_17() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minOpenDistance_17)); }
+	inline float get_minOpenDistance_17() const { return ___minOpenDistance_17; }
+	inline float* get_address_of_minOpenDistance_17() { return &___minOpenDistance_17; }
+	inline void set_minOpenDistance_17(float value)
 	{
-		___minResponseDistance_15 = value;
+		___minOpenDistance_17 = value;
+	}
+
+	inline static int32_t get_offset_of_minResponseDistance_18() { return static_cast<int32_t>(offsetof(Configuration_t2084744999_StaticFields, ___minResponseDistance_18)); }
+	inline float get_minResponseDistance_18() const { return ___minResponseDistance_18; }
+	inline float* get_address_of_minResponseDistance_18() { return &___minResponseDistance_18; }
+	inline void set_minResponseDistance_18(float value)
+	{
+		___minResponseDistance_18 = value;
 	}
 };
 
@@ -32776,7 +32783,7 @@ extern "C" IL2CPP_METHOD_ATTR Subject_t2255083748 * Configuration_get_currentSub
 	}
 	{
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		Subject_t2255083748 * L_0 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get__currentSubject_12();
+		Subject_t2255083748 * L_0 = ((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->get__currentSubject_15();
 		return L_0;
 	}
 }
@@ -32792,7 +32799,7 @@ extern "C" IL2CPP_METHOD_ATTR void Configuration_set_currentSubject_m2583861926 
 	{
 		Subject_t2255083748 * L_0 = ___value0;
 		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
-		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set__currentSubject_12(L_0);
+		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set__currentSubject_15(L_0);
 		return;
 	}
 }
@@ -32826,6 +32833,33 @@ extern "C" IL2CPP_METHOD_ATTR void Configuration_Update_m2037566025 (Configurati
 		return;
 	}
 }
+// System.Void Configuration::UpdateResponseDistance()
+extern "C" IL2CPP_METHOD_ATTR void Configuration_UpdateResponseDistance_m648834345 (Configuration_t2084744999 * __this, const RuntimeMethod* method)
+{
+	static bool s_Il2CppMethodInitialized;
+	if (!s_Il2CppMethodInitialized)
+	{
+		il2cpp_codegen_initialize_method (Configuration_UpdateResponseDistance_m648834345_MetadataUsageId);
+		s_Il2CppMethodInitialized = true;
+	}
+	float V_0 = 0.0f;
+	{
+		Slider_t3903728902 * L_0 = __this->get_responseDistSlider_13();
+		NullCheck(L_0);
+		float L_1 = VirtFuncInvoker0< float >::Invoke(46 /* System.Single UnityEngine.UI.Slider::get_value() */, L_0);
+		IL2CPP_RUNTIME_CLASS_INIT(Configuration_t2084744999_il2cpp_TypeInfo_var);
+		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_minResponseDistance_18(L_1);
+		Text_t1901882714 * L_2 = __this->get_responseDistText_14();
+		Slider_t3903728902 * L_3 = __this->get_responseDistSlider_13();
+		NullCheck(L_3);
+		float L_4 = VirtFuncInvoker0< float >::Invoke(46 /* System.Single UnityEngine.UI.Slider::get_value() */, L_3);
+		V_0 = L_4;
+		String_t* L_5 = Single_ToString_m3947131094((float*)(&V_0), /*hidden argument*/NULL);
+		NullCheck(L_2);
+		VirtActionInvoker1< String_t* >::Invoke(73 /* System.Void UnityEngine.UI.Text::set_text(System.String) */, L_2, L_5);
+		return;
+	}
+}
 // System.Void Configuration::.cctor()
 extern "C" IL2CPP_METHOD_ATTR void Configuration__cctor_m2788445856 (RuntimeObject * __this /* static, unused */, const RuntimeMethod* method)
 {
@@ -32840,9 +32874,10 @@ extern "C" IL2CPP_METHOD_ATTR void Configuration__cctor_m2788445856 (RuntimeObje
 		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_maxObjects_5(3);
 		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_isLogging_7((bool)1);
 		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_VersionNumber_9(_stringLiteral2670441723);
-		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_minRetrievalDistance_13((0.1f));
-		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_minOpenDistance_14((0.75f));
-		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_minResponseDistance_15((0.25f));
+		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_subjectName_12(_stringLiteral3940781687);
+		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_minRetrievalDistance_16((0.1f));
+		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_minOpenDistance_17((0.75f));
+		((Configuration_t2084744999_StaticFields*)il2cpp_codegen_static_fields_for(Configuration_t2084744999_il2cpp_TypeInfo_var))->set_minResponseDistance_18((0.25f));
 		return;
 	}
 }
@@ -53831,114 +53866,6 @@ IL_0057:
 		ExternApi_ArConfig_setUpdateMode_m2252554020(NULL /*static, unused*/, L_15, L_16, L_17, /*hidden argument*/NULL);
 		return;
 	}
-}
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winvalid-offsetof"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#endif
-// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_create(System.IntPtr,System.IntPtr&)
-extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_create_m2713931539 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t* ___out_config1, const RuntimeMethod* method)
-{
-	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t*);
-	static PInvokeFunc il2cppPInvokeFunc;
-	if (il2cppPInvokeFunc == NULL)
-	{
-		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t*);
-		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_create", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
-
-		if (il2cppPInvokeFunc == NULL)
-		{
-			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_create'"), NULL, NULL);
-		}
-	}
-
-	// Native function invocation
-	il2cppPInvokeFunc(___session0, ___out_config1);
-
-}
-// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_destroy(System.IntPtr)
-extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_destroy_m2847100758 (RuntimeObject * __this /* static, unused */, intptr_t ___config0, const RuntimeMethod* method)
-{
-	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t);
-	static PInvokeFunc il2cppPInvokeFunc;
-	if (il2cppPInvokeFunc == NULL)
-	{
-		int parameterSize = sizeof(intptr_t);
-		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_destroy", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
-
-		if (il2cppPInvokeFunc == NULL)
-		{
-			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_destroy'"), NULL, NULL);
-		}
-	}
-
-	// Native function invocation
-	il2cppPInvokeFunc(___config0);
-
-}
-// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_setLightEstimationMode(System.IntPtr,System.IntPtr,GoogleARCoreInternal.ApiLightEstimationMode)
-extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_setLightEstimationMode_m1941526606 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t ___config1, int32_t ___light_estimation_mode2, const RuntimeMethod* method)
-{
-	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t, int32_t);
-	static PInvokeFunc il2cppPInvokeFunc;
-	if (il2cppPInvokeFunc == NULL)
-	{
-		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t) + sizeof(int32_t);
-		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_setLightEstimationMode", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
-
-		if (il2cppPInvokeFunc == NULL)
-		{
-			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_setLightEstimationMode'"), NULL, NULL);
-		}
-	}
-
-	// Native function invocation
-	il2cppPInvokeFunc(___session0, ___config1, ___light_estimation_mode2);
-
-}
-// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_setPlaneFindingMode(System.IntPtr,System.IntPtr,GoogleARCoreInternal.ApiPlaneFindingMode)
-extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_setPlaneFindingMode_m1808693701 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t ___config1, int32_t ___plane_finding_mode2, const RuntimeMethod* method)
-{
-	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t, int32_t);
-	static PInvokeFunc il2cppPInvokeFunc;
-	if (il2cppPInvokeFunc == NULL)
-	{
-		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t) + sizeof(int32_t);
-		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_setPlaneFindingMode", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
-
-		if (il2cppPInvokeFunc == NULL)
-		{
-			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_setPlaneFindingMode'"), NULL, NULL);
-		}
-	}
-
-	// Native function invocation
-	il2cppPInvokeFunc(___session0, ___config1, ___plane_finding_mode2);
-
-}
-// System.Void GoogleARCoreInternal.SessionConfigApi/ExternApi::ArConfig_setUpdateMode(System.IntPtr,System.IntPtr,GoogleARCoreInternal.ApiUpdateMode)
-extern "C" IL2CPP_METHOD_ATTR void ExternApi_ArConfig_setUpdateMode_m2252554020 (RuntimeObject * __this /* static, unused */, intptr_t ___session0, intptr_t ___config1, int32_t ___update_mode2, const RuntimeMethod* method)
-{
-	typedef void (DEFAULT_CALL *PInvokeFunc) (intptr_t, intptr_t, int32_t);
-	static PInvokeFunc il2cppPInvokeFunc;
-	if (il2cppPInvokeFunc == NULL)
-	{
-		int parameterSize = sizeof(intptr_t) + sizeof(intptr_t) + sizeof(int32_t);
-		il2cppPInvokeFunc = il2cpp_codegen_resolve_pinvoke<PInvokeFunc>(IL2CPP_NATIVE_STRING("arcore_sdk"), "ArConfig_setUpdateMode", IL2CPP_CALL_DEFAULT, CHARSET_UNICODE, parameterSize, false);
-
-		if (il2cppPInvokeFunc == NULL)
-		{
-			IL2CPP_RAISE_MANAGED_EXCEPTION(il2cpp_codegen_get_not_supported_exception("Unable to find method for p/invoke: 'ArConfig_setUpdateMode'"), NULL, NULL);
-		}
-	}
-
-	// Native function invocation
-	il2cppPInvokeFunc(___session0, ___config1, ___update_mode2);
-
 }
 #ifdef __clang__
 #pragma clang diagnostic pop

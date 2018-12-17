@@ -479,11 +479,11 @@ RegisterBuiltinTypes();
 	RegisterUnityClass<UnityAnalyticsManager>("UnityAnalytics");
 	//84. BoxCollider
 	RegisterUnityClass<BoxCollider>("Physics");
-	//85. FlareLayer
-	RegisterUnityClass<FlareLayer>("Core");
-	//86. Avatar
+	//85. Avatar
 	RegisterUnityClass<Avatar>("Animation");
-	//87. SphereCollider
+	//86. SphereCollider
 	RegisterUnityClass<SphereCollider>("Physics");
+	//87. FlareLayer
+	RegisterUnityClass<FlareLayer>("Core");
 
 }

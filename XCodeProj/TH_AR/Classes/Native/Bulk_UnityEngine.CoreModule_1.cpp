@@ -10592,6 +10592,8 @@ extern "C" IL2CPP_METHOD_ATTR Delegate_t1188392813 * Delegate_Remove_m334097152 
 extern "C" IL2CPP_METHOD_ATTR AsyncOperation_t1445031843 * SceneManager_LoadSceneAsyncNameIndexInternal_m4031498323 (RuntimeObject * __this /* static, unused */, String_t* ___sceneName0, int32_t ___sceneBuildIndex1, bool ___isAdditive2, bool ___mustCompleteNextFrame3, const RuntimeMethod* method);
 // System.Void UnityEngine.SceneManagement.SceneManager::LoadScene(System.String,UnityEngine.SceneManagement.LoadSceneMode)
 extern "C" IL2CPP_METHOD_ATTR void SceneManager_LoadScene_m2298600132 (RuntimeObject * __this /* static, unused */, String_t* ___sceneName0, int32_t ___mode1, const RuntimeMethod* method);
+// System.Void UnityEngine.SceneManagement.SceneManager::LoadScene(System.Int32,UnityEngine.SceneManagement.LoadSceneMode)
+extern "C" IL2CPP_METHOD_ATTR void SceneManager_LoadScene_m3267304740 (RuntimeObject * __this /* static, unused */, int32_t ___sceneBuildIndex0, int32_t ___mode1, const RuntimeMethod* method);
 // UnityEngine.AsyncOperation UnityEngine.SceneManagement.SceneManager::LoadSceneAsync(System.String,UnityEngine.SceneManagement.LoadSceneMode)
 extern "C" IL2CPP_METHOD_ATTR AsyncOperation_t1445031843 * SceneManager_LoadSceneAsync_m3146814238 (RuntimeObject * __this /* static, unused */, String_t* ___sceneName0, int32_t ___mode1, const RuntimeMethod* method);
 // UnityEngine.AsyncOperation UnityEngine.SceneManagement.SceneManager::UnloadSceneAsyncInternal(UnityEngine.SceneManagement.Scene)
@@ -13302,6 +13304,18 @@ IL_0010:
 IL_0011:
 	{
 		SceneManager_LoadSceneAsyncNameIndexInternal_m4031498323(NULL /*static, unused*/, (String_t*)G_B3_2, G_B3_1, (bool)G_B3_0, (bool)1, /*hidden argument*/NULL);
+		return;
+	}
+}
+// System.Void UnityEngine.SceneManagement.SceneManager::LoadScene(System.Int32)
+extern "C" IL2CPP_METHOD_ATTR void SceneManager_LoadScene_m3463216446 (RuntimeObject * __this /* static, unused */, int32_t ___sceneBuildIndex0, const RuntimeMethod* method)
+{
+	int32_t V_0 = 0;
+	{
+		V_0 = 0;
+		int32_t L_0 = ___sceneBuildIndex0;
+		int32_t L_1 = V_0;
+		SceneManager_LoadScene_m3267304740(NULL /*static, unused*/, L_0, L_1, /*hidden argument*/NULL);
 		return;
 	}
 }
