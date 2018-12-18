@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 23826419390459234}
   - component: {fileID: 102624487355322322}
   - component: {fileID: 114222739458553518}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Special Item Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 4045087467748722}
   - component: {fileID: 33468642213525858}
   - component: {fileID: 23605117705695078}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4363831686490122}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: TreasureSpawnPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 4949891053043958}
   - component: {fileID: 33280052763105180}
   - component: {fileID: 23181437958960908}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4693318404013054}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Empty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 4257067871801582}
   - component: {fileID: 33873555901832998}
   - component: {fileID: 23760907626824278}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 223617686373024174}
   - component: {fileID: 114444702609726486}
   - component: {fileID: 114587251753227930}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 4376829221645768}
   - component: {fileID: 33824960862633642}
   - component: {fileID: 23069142729192966}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ GameObject:
   - component: {fileID: 222250694726153914}
   - component: {fileID: 114576070039452808}
   - component: {fileID: 114273197715134510}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Mask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4149269637476274}
   - component: {fileID: 33585686456250674}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: TopPivot B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 4998624271498114}
   - component: {fileID: 33670316653850720}
   - component: {fileID: 23842042163941244}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -204,7 +204,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4284549368834300}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Empty_001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,7 +220,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4747070875557070}
   - component: {fileID: 33000922072333786}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: TopPivot A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,7 +237,7 @@ GameObject:
   - component: {fileID: 4165321430448536}
   - component: {fileID: 33341509383115728}
   - component: {fileID: 23841861741557474}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 224603577334925622}
   - component: {fileID: 222759544469314082}
   - component: {fileID: 114523085624876338}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 4189120202692112}
   - component: {fileID: 33875184852673384}
   - component: {fileID: 23068338459438420}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 4867506046331598}
   - component: {fileID: 33848780603903960}
   - component: {fileID: 23735121494861492}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 4181470018149974}
   - component: {fileID: 33940253460145594}
   - component: {fileID: 23743140999729622}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Circle_001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -322,7 +322,7 @@ GameObject:
   - component: {fileID: 4735622242784448}
   - component: {fileID: 33637265049577480}
   - component: {fileID: 23030851045757856}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Circle_000
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 4047300101595526}
   - component: {fileID: 33465662021294088}
   - component: {fileID: 23700454656591746}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_014
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 4112758044765104}
   - component: {fileID: 33344414802119490}
   - component: {fileID: 23832050682796096}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -388,7 +388,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4055558880171984}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Empty_002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -405,7 +405,7 @@ GameObject:
   - component: {fileID: 4194913511406100}
   - component: {fileID: 33575742270725340}
   - component: {fileID: 23082227276880316}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -423,7 +423,7 @@ GameObject:
   - component: {fileID: 95328930524587966}
   - component: {fileID: 65090433012052500}
   - component: {fileID: 114152144215171262}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: TreasureChest
   m_TagString: DefaultObject
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -439,7 +439,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4753151835811272}
   - component: {fileID: 82528146152470250}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: SpecialAudio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -457,7 +457,7 @@ GameObject:
   - component: {fileID: 222141086747060016}
   - component: {fileID: 114132937048702724}
   - component: {fileID: 114419939433820134}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: ProgressQuad 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -474,7 +474,7 @@ GameObject:
   - component: {fileID: 4092692282038726}
   - component: {fileID: 198681295890900990}
   - component: {fileID: 199688727722211618}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Particles_Diamonds
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -505,7 +505,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4562598579208800}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -522,7 +522,7 @@ GameObject:
   - component: {fileID: 4140293279171182}
   - component: {fileID: 198568985045019150}
   - component: {fileID: 199489076814511632}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: DustPoof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -540,7 +540,7 @@ GameObject:
   - component: {fileID: 222410222795988558}
   - component: {fileID: 114136398190596254}
   - component: {fileID: 114078604961835338}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -556,7 +556,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4949432447182336}
   - component: {fileID: 82101236032314632}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: DefaultAudio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -573,7 +573,7 @@ GameObject:
   - component: {fileID: 224247936368458946}
   - component: {fileID: 222124690279567732}
   - component: {fileID: 114588750802637444}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -588,7 +588,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4512446749993632}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -605,7 +605,7 @@ GameObject:
   - component: {fileID: 4667205287506060}
   - component: {fileID: 33662670092715068}
   - component: {fileID: 23294998437841028}
-  m_Layer: 14
+  m_Layer: 0
   m_Name: Plane_001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1739,7 +1739,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.65, y: 0.9, z: 0.65}
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!82 &82101236032314632
 AudioSource:

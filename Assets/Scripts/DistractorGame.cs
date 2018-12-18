@@ -13,6 +13,10 @@ public class DistractorGame : MonoBehaviour {
     public GameObject correctParticlePrefab;
     public GameObject wrongParticlePrefab;
 
+    public GameObject foundCube;
+
+    public static bool rabbitLooking = false;
+
     private string catchInstructions = "Catch the rabbit by going near its location!";
     private string successInstructions = "Success! You caught the rabbit!";
     private string failureInstructions = "The rabbit escaped! Better luck next time!";
@@ -24,6 +28,7 @@ public class DistractorGame : MonoBehaviour {
         distractorPanel.alpha = 0f;
         distractorText.text = "";
         rabbitObj.SetActive(false);
+        Debug.Log("rabbit tag is " + rabbitObj.tag);
 	}
 	
 	// Update is called once per frame
@@ -66,7 +71,6 @@ public class DistractorGame : MonoBehaviour {
         }
         //wait for the rabbit to move
 
-        Debug.Log("setting rabbit anim to move");
 
 
 
@@ -94,8 +98,9 @@ public class DistractorGame : MonoBehaviour {
         rabbitObj.transform.LookAt(targetPos);
         rabbitObj.transform.localEulerAngles = new Vector3(0f, rabbitObj.transform.localEulerAngles.y, 0f); //reset x and z axes angles
 
-
-        yield return new WaitForSeconds(Configuration.minRabbitMoveWait);
+        Debug.Log("waiting for rabbit to be looked at");
+        yield return StartCoroutine(WaitTillRabbitLooked());
+        Debug.Log("setting rabbit anim to move");
         rabbitObj.GetComponent<Animator>().SetBool("CanMove?", true);
         Debug.Log("moving the rabbit");
         while (moveTimer < smoothTime)
@@ -163,8 +168,58 @@ public class DistractorGame : MonoBehaviour {
             yield return new WaitForSeconds(2.5f);
             Destroy(wrongParticleObj);
         }
+
+        //reset rabbit looking var
+        rabbitLooking = false;
         distractorPanel.alpha = 0f;
 
     yield return null;
+    }
+
+    bool HitTestWithResultType(ARPoint point, ARHitTestResultType resultTypes)
+    {
+        List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface().HitTest(point, resultTypes);
+        if (hitResults.Count > 0)
+        {
+            foreach (var hitResult in hitResults)
+            {
+                foundCube.transform.position = UnityARMatrixOps.GetPosition(hitResult.worldTransform);
+                foundCube.transform.rotation = UnityARMatrixOps.GetRotation(hitResult.worldTransform);
+                Debug.Log(string.Format("x:{0:0.######} y:{1:0.######} z:{2:0.######}", foundCube.transform.position.x, foundCube.transform.position.y, foundCube.transform.position.z));
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    IEnumerator WaitTillRabbitLooked()
+    {
+        Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2, 0.5f);
+        while (!rabbitLooking)
+        {
+            var screenPosition = Camera.main.ScreenToViewportPoint(center);
+            ARPoint point = new ARPoint
+            {
+                x = screenPosition.x,
+                y = screenPosition.y
+            };
+                                  Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
+            // prioritize results types
+            ARHitTestResultType[] resultTypes = {
+                                ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent,
+                            };
+
+            foreach (ARHitTestResultType resultType in resultTypes)
+            {
+                GameObject hitObj = new GameObject();
+                if (HitTestWithResultType(point, resultType))
+                {
+                    continue;
+                }
+            }
+            yield return 0;
+        }
+        yield return null;
     }
 }

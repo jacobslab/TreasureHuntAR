@@ -556,7 +556,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         markerObjList[markerIndex].GetComponent<MeshRenderer>().material.color = col;
     }
 
-    bool HitTestWithResultType(ARPoint point, ARHitTestResultType resultTypes, out ARHitTestResult chosenHitResult)
+    public bool HitTestWithResultType(ARPoint point, ARHitTestResultType resultTypes, out ARHitTestResult chosenHitResult)
     {
         List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface().HitTest(point, resultTypes);
         chosenHitResult = new ARHitTestResult();
@@ -575,7 +575,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         return false;
     }
 
-    bool HitTestWithResultType(ARPoint point, ARHitTestResultType resultTypes, out GameObject hitObj)
+    public bool HitTestWithResultType(ARPoint point, ARHitTestResultType resultTypes, out GameObject hitObj)
     {
         hitObj = new GameObject();
         List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface().HitTest(point, resultTypes);
@@ -948,7 +948,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Vector3[] vertices = planeAnchor.planeGeometry.boundaryVertices;
         //Debug.Log ("vertex count: " + vertices.Length.ToString ());
         Vector3 pt = vertices[Random.Range(0, vertices.Length)];
-        float dist = Random.Range(0.05f, 1f);
+        float dist = Random.Range(0.05f, 0.8f);
         Vector3 position = Vector3.Lerp(pt, planeAnchor.center, dist); //add center pose of the plane here in the to
                                                                        // Move the object above the plane.
                                                                        //		position.y += .05f;

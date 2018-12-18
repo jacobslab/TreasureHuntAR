@@ -116,6 +116,12 @@ public class WorldMapManager : MonoBehaviour
             config.alignment = UnityARAlignment.UnityARAlignmentGravity;
             config.worldMap = worldMap;
             extents = worldMap.extent;
+            float extent_x = extents.x;
+            float extent_z = extents.z;
+
+            //update the map variables
+            Configuration.AdjustMapVariables((extent_x > extent_z) ? extent_x : extent_z);
+
             UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
 
 			Debug.Log("Restarting session with worldMap");
