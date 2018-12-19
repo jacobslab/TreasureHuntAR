@@ -24,7 +24,7 @@ public class DistractorGame : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        debugText.enabled = false;
+        //debugText.enabled = false;
         distractorPanel.alpha = 0f;
         distractorText.text = "";
         rabbitObj.SetActive(false);
@@ -39,7 +39,7 @@ public class DistractorGame : MonoBehaviour {
     public IEnumerator Run()
     {
 
-        debugText.enabled = true;
+        //debugText.enabled = true;
         //make the rabbit visible
         rabbitObj.SetActive(true);
 
@@ -85,7 +85,7 @@ public class DistractorGame : MonoBehaviour {
             currentIndex++;
         }
         //rabbitObj.transform.parent = planeAnchor.gameObject.transform;
-        rabbitObj.transform.localPosition = Vector3.zero;
+        //rabbitObj.transform.localPosition = Vector3.zero;
 
 
         float moveTimer = 0f;
@@ -148,7 +148,7 @@ public class DistractorGame : MonoBehaviour {
         //show a caught animation;display success message 
         Debug.Log("done with the distractor");
         rabbitObj.SetActive(false);
-        debugText.enabled = false;
+        //debugText.enabled = false;
 
         if (caughtRabbit)
         {
@@ -204,7 +204,7 @@ public class DistractorGame : MonoBehaviour {
                 x = screenPosition.x,
                 y = screenPosition.y
             };
-                                  Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
+                                  //Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
             // prioritize results types
             ARHitTestResultType[] resultTypes = {
                                 ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent,

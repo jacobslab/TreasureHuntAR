@@ -80,7 +80,7 @@ public class Configuration : MonoBehaviour
         Debug.Log("the extent factor is " + extentFactor.ToString());
 
         minRabbitSpawnDistance = Mathf.Clamp(1.5f * extentFactor,0.5f,1.5f);
-        minRabbitCatchDistance = Mathf.Clamp(1.2f * extentFactor,1f,1.2f);
+        minRabbitCatchDistance = Mathf.Clamp(1.3f * extentFactor,1.1f,1.3f);
         minDistanceBetweenObjects = Mathf.Clamp(1.5f * extentFactor,0.5f,1.5f);
 
         //TreasureHuntController_ARKit.Instance.debugText.text = " Rabbit Spawn Dist : " + minRabbitSpawnDistance.ToString() + " \n Rabbit Catch Dist: " + minRabbitCatchDistance.ToString() + " \n  Distance bw objs " + minDistanceBetweenObjects.ToString();

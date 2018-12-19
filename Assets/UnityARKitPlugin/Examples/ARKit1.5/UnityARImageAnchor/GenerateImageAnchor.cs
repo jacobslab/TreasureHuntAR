@@ -143,7 +143,7 @@ public class GenerateImageAnchor : MonoBehaviour {
 					x = screenPosition.x,
 					y = screenPosition.y
 				};
-				Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
+				//Debug.Log ("new ar point: (" + point.x.ToString () + ", " + point.y.ToString() + ")");
 				// prioritize results types
 				ARHitTestResultType[] resultTypes = {
 					ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 

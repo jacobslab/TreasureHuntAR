@@ -159,7 +159,7 @@ public class TrialLogTrack : LogTrack {
 
     public void LogCamPosition(Vector3 camPos)
     {
-        UnityEngine.Debug.Log("logging cam position");
+        //UnityEngine.Debug.Log("logging cam position");
         subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CAM_POS" + separator + camPos.x.ToString() + separator + camPos.y.ToString() + separator + camPos.z.ToString());
     }
 	//THE FOLLOWING ARE EVENTS

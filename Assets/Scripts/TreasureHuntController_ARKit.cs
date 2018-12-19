@@ -29,7 +29,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     private List<GameObject> retrievalSequenceList = new List<GameObject>();
     private List<GameObject> choiceSelectionList = new List<GameObject>();
     private List<bool> correctResponseList = new List<bool>();
+    private List<GameObject> testSpawnList = new List<GameObject>();
     private Object[] spawnArr;
+
+    private bool treasureFound = false;
+    private bool forcingOpen = false;
+
+    public Button forceOpenChestButton;
+
+    public GameObject testCube;
+    public GameObject centerSphere;
+    public GameObject anchorCylinder;
 
     public GameObject choiceSelectionPrefab;
     public GameObject correctPositionIndicatorPrefab;
@@ -154,6 +164,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         endSessionPanelUIGroup.alpha = 0f;
         scorePanelUIGroup.alpha = 0f;
         beginTrialPanelUIGroup.alpha = 1f;
+        forceOpenChestButton.gameObject.SetActive(false);
         acceptUserResponseButton.gameObject.SetActive(false);
 
 
@@ -607,6 +618,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
 
+        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+
+        ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+
         if (canNavigate && spawnChest != null)
         {
         //    //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
@@ -626,16 +642,51 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     public IEnumerator RunTrial()
     {
-        bool treasureFound = false;
+        treasureFound = false;
         bool noTouch = false;
         //turn off the retrieval panel, if it hasn't been already
         retrievalPanelUIGroup.alpha = 0f;
         Debug.Log("running trial");
         //turn off debug visuals
-        ChangeDebugVisualsStatus(false);
 
 
         yield return StartCoroutine(CreateChestLocationList());
+        //UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        //LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+
+        //ARPlaneAnchorGameObject planeAnchorObj= arPlaneAnchors.First.Value;
+
+        //for (int i = 0; i < 100;i++)
+        //{
+        //    //GameObject test = Instantiate(testCube, Vector3.zero, Quaternion.identity) as GameObject;
+
+        //    int planeIndex = GetPlaneIndex(chestIndex);
+        //      int currentIndex = 0;
+        //    foreach (var plane in arPlaneAnchors)
+        //    {
+        //        if (currentIndex == planeIndex)
+        //        {
+        //            planeAnchorObj = plane;
+        //        }
+        //        currentIndex++;
+        //    }
+        //    int randPlaneIndex = 0;
+        //    Vector3 position = GetRandomPosition(out randPlaneIndex);
+        //    Vector3 planeRotation = planeAnchorObj.gameObject.transform.rotation.eulerAngles;
+        //    Vector3 modChestRot = new Vector3(planeRotation.x, planeRotation.y, -planeRotation.z);
+        //    //Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
+        //    GameObject testSpawn = Instantiate(testCube, Vector3.zero, Quaternion.Euler(modChestRot)) as GameObject;
+        //    testSpawn.transform.parent = planeAnchorObj.gameObject.transform;
+        //    testSpawn.transform.localPosition = position;
+        //    testSpawn.transform.parent = null;
+
+        //    testSpawnList.Add(testSpawn);
+
+        //}
+
+        //turning it off by default
+        ChangeDebugVisualsStatus(false);
+
         //let's make sure we don't exceed the max spawnables 
         for (int i = 0; i < Configuration.maxObjects; i++)
         {
@@ -643,6 +694,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             treasureFound = false;
             //spawn a treasure chest at a random location
             yield return StartCoroutine(SpawnTreasureChest(chestIndex));
+
+            //enable force open chest button
+            forceOpenChestButton.gameObject.SetActive(true);
 
             //wait until it's picked up, then spawn an object
             while (!treasureFound)
@@ -663,6 +717,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 {
                     //					debugText.text = "No chest exists";
                 }
+
+
+
                 if (Input.touchCount > 0)
                 {
                     var touch = Input.GetTouch(0);
@@ -705,16 +762,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                                         canOpen = true;
                                     }
                                 }
-                                if (canOpen && !treasureFound)
+                                if (canOpen && !treasureFound && !forcingOpen)
                                 {
-                                    yield return StartCoroutine(spawnChest.GetComponent<TreasureChest>().Open(FirstPersonCamera.gameObject));
-                                    yield return StartCoroutine(SpawnTreasure(spawnChest.transform, chestIndex));
-                                    spawnObj.GetComponent<VisibilityToggler>().TurnVisible(true);
-                                    //set the text mesh to display the object name
-                                    spawnChest.GetComponent<TreasureChest>().SetItemText(spawnObj.GetComponent<SpawnableObject>().GetName());
-                                    chestIndex++;
-                                    //set treasure found as true so we can exit out of the while loop
-                                    treasureFound = true;
+                                    Debug.Log("forcing open due to touch");
+                                    forcingOpen = true;
+                                    yield return StartCoroutine(OpenTreasureChest());
                                 }
                                 else
                                     Debug.Log("cannot open yet");
@@ -728,6 +780,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 yield return 0;
             }
 
+            Debug.Log("waiting for presentation");
             //wait for the needed time
             yield return new WaitForSeconds(Configuration.presentationTime);
 
@@ -739,6 +792,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             spawnObj.GetComponent<VisibilityToggler>().TurnVisible(false);
             //				sessionValid = false;
 
+            forceOpenChestButton.gameObject.SetActive(false);
+
+            //make forcing chest open possible again
+            forcingOpen = false;
+            Debug.Log("made forcing open possible again");
         }
 
         //have a distractor task here
@@ -761,13 +819,28 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return new WaitForSeconds(1f);
         retrievalPanelUIGroup.alpha = 0f;
         beginTrialPanelUIGroup.alpha = 1f;
-        ChangeDebugVisualsStatus(true);
+        //ChangeDebugVisualsStatus(true);
 
         ClearLists();
         //reset chest index
         chestIndex = 0;
         currentTrialIndex++; //increment the trial count
 
+        yield return null;
+    }
+
+    IEnumerator OpenTreasureChest()
+    {
+
+        Debug.Log("forcing open coroutine");
+        yield return StartCoroutine(spawnChest.GetComponent<TreasureChest>().Open(FirstPersonCamera.gameObject));
+        yield return StartCoroutine(SpawnTreasure(spawnChest.transform, chestIndex));
+        spawnObj.GetComponent<VisibilityToggler>().TurnVisible(true);
+        //set the text mesh to display the object name
+        spawnChest.GetComponent<TreasureChest>().SetItemText(spawnObj.GetComponent<SpawnableObject>().GetName());
+        chestIndex++;
+        //set treasure found as true so we can exit out of the while loop
+        treasureFound = true;
         yield return null;
     }
 
@@ -779,6 +852,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         retrievalSequenceList.Clear();
         choiceSelectionList.Clear();
     }
+
+    public void ForceOpenChest()
+    {
+        if (!forcingOpen)
+        {
+            forcingOpen = true;
+            Debug.Log("forcing open button method");
+            StartCoroutine("OpenTreasureChest");
+        }
+    }
+
     //gets called in the pre-session mapping OR via worldMapManager's Load function
     public IEnumerator MakeSpawnableList()
     {
@@ -921,20 +1005,168 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         return true;
     }
 
+    // Return the polygon's area in "square units."
+    private float PolygonArea(Vector3[] vertices)
+    {
+        // Add the first point to the end.
+        int num_points = vertices.Length;
+        Vector2[] pts = new Vector2[num_points + 1];
+        for (int i = 0; i < num_points; i++)
+        {
+            pts[i] = new Vector2(vertices[i].x, vertices[i].z);
+        }
+        //wrap it around to the first point to form a closed polygon
+        pts[num_points] = new Vector2(vertices[0].x, vertices[0].z);
+
+        // Get the areas.
+        float area = 0;
+        for (int i = 0; i < num_points; i++)
+        {
+            area +=
+                (pts[i + 1].x - pts[i].x) *
+                (pts[i + 1].y + pts[i].y) / 2;
+        }
+
+        // Return the result.
+        return Mathf.Abs(area);
+    }
+
+    public Vector3 FindCentroid(Vector3[] vertices)
+    {
+        // Add the first point at the end of the array.
+        int num_points = vertices.Length;
+        Vector2[] pts = new Vector2[num_points + 1];
+        for (int i = 0; i < num_points;i++)
+        {
+            pts[i] = new Vector2(vertices[i].x,vertices[i].z);
+        }
+        //wrap it around to the first point to form a closed polygon
+        pts[num_points] = new Vector2(vertices[0].x,vertices[0].z);
+
+        // Find the centroid.
+        float X = 0;
+        float Y = 0;
+        float second_factor;
+        for (int i = 0; i < num_points; i++)
+        {
+            second_factor =
+                pts[i].x * pts[i + 1].y -
+                pts[i + 1].x * pts[i].y;
+            X += (pts[i].x + pts[i + 1].x) * second_factor;
+            Y += (pts[i].y + pts[i + 1].y) * second_factor;
+        }
+
+        // Divide by 6 times the polygon's area.
+        float polygon_area = PolygonArea(vertices);
+        Debug.Log("polygon area is " + polygon_area.ToString());
+        X /= (6 * polygon_area);
+        Y /= (6 * polygon_area);
+
+        // If the values are negative, the polygon is
+        // oriented counterclockwise so reverse the signs.
+        if (X < 0)
+        {
+            X = -X;
+            Y = -Y;
+        }
+
+        return new Vector3(X,0f, Y);
+    }
+
+
+    // Return the dot product AB · BC.
+    // Note that AB · BC = |AB| * |BC| * Cos(theta).
+    private static float DotProduct(float Ax, float Ay,
+        float Bx, float By, float Cx, float Cy)
+    {
+        // Get the vectors' coordinates.
+        float BAx = Ax - Bx;
+        float BAy = Ay - By;
+        float BCx = Cx - Bx;
+        float BCy = Cy - By;
+
+        // Calculate the dot product.
+        return (BAx * BCx + BAy * BCy);
+    }
+
+    // Return the cross product AB x BC.
+    // The cross product is a vector perpendicular to AB
+    // and BC having length |AB| * |BC| * Sin(theta) and
+    // with direction given by the right-hand rule.
+    // For two vectors in the X-Y plane, the result is a
+    // vector with X and Y components 0 so the Z component
+    // gives the vector's length and direction.
+    public static float CrossProductLength(float Ax, float Ay,
+        float Bx, float By, float Cx, float Cy)
+    {
+        // Get the vectors' coordinates.
+        float BAx = Ax - Bx;
+        float BAy = Ay - By;
+        float BCx = Cx - Bx;
+        float BCy = Cy - By;
+
+        // Calculate the Z coordinate of the cross product.
+        return (BAx * BCy - BAy * BCx);
+    }
+
+    // Return the angle ABC.
+    // Return a value between PI and -PI.
+    // Note that the value is the opposite of what you might
+    // expect because Y coordinates increase downward.
+    public static float GetAngle(float Ax, float Ay,
+        float Bx, float By, float Cx, float Cy)
+    {
+        // Get the dot product.
+        float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
+
+        // Get the cross product.
+        float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
+
+        // Calculate the angle.
+        return (float)Mathf.Atan2(cross_product, dot_product);
+    }
+
+    // Return True if the point is in the polygon.
+    public bool PointInPolygon(Vector2[] vertices,float X, float Y)
+    {
+        // Get the angle between the point and the
+        // first and last vertices.
+        int max_point = vertices.Length - 1;
+        float total_angle = GetAngle(
+            vertices[max_point].x, vertices[max_point].y,
+            X, Y,
+            vertices[0].x, vertices[0].y);
+
+        // Add the angles from the point
+        // to each other pair of vertices.
+        for (int i = 0; i < max_point; i++)
+        {
+            total_angle += GetAngle(
+                vertices[i].x, vertices[i].y,
+                X, Y,
+                vertices[i + 1].x, vertices[i + 1].y);
+        }
+
+        // The total angle should be 2 * PI or -2 * PI if
+        // the point is in the polygon and close to zero
+        // if the point is outside the polygon.
+        return (Mathf.Abs(total_angle) > 0.000001);
+    }
+
     public Vector3 GetRandomPosition(out int randPlaneIndex)
     {
-        //Debug.Log ("getting a random position");
-        //Session.GetTrackables<TrackedPlane>(m_AllPlanes);
         // Pick a location.  This is done by selecting a vertex at random and then
-        // a random point between it and the center of the plane.
+        // a random point between it and the center of the plane. This will be followed by checking to see if the point is INSIDE the AR polygon or not
         UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
         //Debug.Log ("got anchor manager");
         LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
         //Debug.Log ("got anchor obj linked list");
+        ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
 
         //set it to the default first value
         ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
         randPlaneIndex = Random.Range(0, arPlaneAnchors.Count);
+        debugText.text = "plane anchor count " + arPlaneAnchors.Count.ToString();
         int currentIndex = 0;
         foreach (var plane in arPlaneAnchors)
         {
@@ -944,15 +1176,29 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             }
             currentIndex++;
         }
-        //Debug.Log ("got first plane anchor with center " + planeAnchor.center.ToString());
+
+
+        bool isPointInside = false;
+
         Vector3[] vertices = planeAnchor.planeGeometry.boundaryVertices;
-        //Debug.Log ("vertex count: " + vertices.Length.ToString ());
-        Vector3 pt = vertices[Random.Range(0, vertices.Length)];
-        float dist = Random.Range(0.05f, 0.8f);
-        Vector3 position = Vector3.Lerp(pt, planeAnchor.center, dist); //add center pose of the plane here in the to
-                                                                       // Move the object above the plane.
-                                                                       //		position.y += .05f;
-                                                                       //Debug.Log("returning random position: " + position.ToString());
+
+        Vector2[] twoDimVertices = new Vector2[vertices.Length];
+        for (int i = 0; i < twoDimVertices.Length;i++)
+        {
+            twoDimVertices[i] = new Vector2(vertices[i].x, vertices[i].z);
+        }
+
+        Vector3 position = Vector3.zero;
+        while(!isPointInside)
+        {
+            Debug.Log("searching for point inside");
+            Vector3 pt = vertices[Random.Range(0, vertices.Length)];
+            float dist = Random.Range(0.05f, 1f);
+            position = Vector3.Lerp(pt, planeAnchorObj.planeAnchor.center, dist);
+            isPointInside = PointInPolygon(twoDimVertices, position.x, position.z);
+        }
+
+
         return position;
     }
 
@@ -1221,7 +1467,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 correctPositionIndicator.transform.parent = null;
                 //now determine if the response was within range; here we can directly use the correctpositionindicator as a comparison metric
                 float responseDistance = Vector2.Distance(new Vector2(correctPositionIndicator.transform.position.x, correctPositionIndicator.transform.position.z), new Vector2(choiceSelectionList[i].transform.position.x, choiceSelectionList[i].transform.position.z));
-                debugText.enabled = true;
+                //debugText.enabled = true;
                 //debugText.text += responseDistance.ToString() + " \n";
                 Debug.Log("response distance is " + responseDistance.ToString());
                 if (responseDistance < Configuration.minResponseDistance)
@@ -1328,6 +1574,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 plane.gameObject.GetComponent<VisibilityToggler>().TurnVisible(debugVisuals);
             }
         }
+
+        for (int i = 0; i < testSpawnList.Count;i++)
+        {
+            testSpawnList[i].gameObject.GetComponent<VisibilityToggler>().TurnVisible(debugVisuals);
+        }
+
         pointCloudManager.TogglePointCloud(debugVisuals);
         yield return null;
     }
