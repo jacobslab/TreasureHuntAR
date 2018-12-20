@@ -78,7 +78,7 @@ public class Configuration : MonoBehaviour
     {
         float extentFactor = (extentMax - 2f) / 18f;
         Debug.Log("the extent factor is " + extentFactor.ToString());
-
+        minResponseDistance = Mathf.Clamp(1.3f * extentFactor, 0.6f, 1.3f);
         minRabbitSpawnDistance = Mathf.Clamp(1.5f * extentFactor,0.5f,1.5f);
         minRabbitCatchDistance = Mathf.Clamp(1.3f * extentFactor,1.1f,1.3f);
         minDistanceBetweenObjects = Mathf.Clamp(1.5f * extentFactor,0.5f,1.5f);

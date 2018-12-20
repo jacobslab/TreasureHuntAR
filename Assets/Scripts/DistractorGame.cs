@@ -28,6 +28,7 @@ public class DistractorGame : MonoBehaviour {
         distractorPanel.alpha = 0f;
         distractorText.text = "";
         rabbitObj.SetActive(false);
+        foundCube.SetActive(false);
         Debug.Log("rabbit tag is " + rabbitObj.tag);
 	}
 	
@@ -42,6 +43,7 @@ public class DistractorGame : MonoBehaviour {
         //debugText.enabled = true;
         //make the rabbit visible
         rabbitObj.SetActive(true);
+        foundCube.SetActive(true);
 
         distractorPanel.alpha = 1f;
         distractorText.text = catchInstructions;
@@ -171,6 +173,7 @@ public class DistractorGame : MonoBehaviour {
 
         //reset rabbit looking var
         rabbitLooking = false;
+        foundCube.SetActive(false);
         distractorPanel.alpha = 0f;
 
     yield return null;
