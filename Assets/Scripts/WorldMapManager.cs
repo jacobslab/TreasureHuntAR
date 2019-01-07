@@ -98,6 +98,14 @@ public class WorldMapManager : MonoBehaviour
 
     }
 
+    public void LoadDropdownSelectedMap()
+    {
+        int selectedOption = TreasureHuntController_ARKit.Instance.mapDropdown.value;
+        string selectedMapName = TreasureHuntController_ARKit.Instance.mapList[selectedOption];
+        Vector3 extents = Vector3.zero;
+        LoadSpecificMap(selectedMapName, out extents);
+    }
+
     public void Load(string newPath,out Vector3 extents)
     {
         Debug.LogFormat("Loading ARWorldMap {0}", newPath);

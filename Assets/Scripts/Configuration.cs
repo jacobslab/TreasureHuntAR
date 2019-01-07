@@ -53,6 +53,8 @@ public class Configuration : MonoBehaviour
 
     public static float extent = 1f;
 
+    public static float maxTrialTime = 30f;
+
     private static Subject _currentSubject;
 
 	public static Subject currentSubject{ 
@@ -81,7 +83,7 @@ public class Configuration : MonoBehaviour
         minResponseDistance = Mathf.Clamp(1.3f * extentFactor, 0.6f, 1.3f);
         minRabbitSpawnDistance = Mathf.Clamp(1.5f * extentFactor,0.5f,1.5f);
         minRabbitCatchDistance = Mathf.Clamp(1.3f * extentFactor,1.1f,1.3f);
-        minDistanceBetweenObjects = Mathf.Clamp(1.5f * extentFactor,0.5f,1.5f);
+        minDistanceBetweenObjects = Mathf.Clamp(1.5f * extentFactor, 0.5f, 1.5f * extentFactor);
 
         //TreasureHuntController_ARKit.Instance.debugText.text = " Rabbit Spawn Dist : " + minRabbitSpawnDistance.ToString() + " \n Rabbit Catch Dist: " + minRabbitCatchDistance.ToString() + " \n  Distance bw objs " + minDistanceBetweenObjects.ToString();
 

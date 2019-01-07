@@ -60,9 +60,20 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public Toggle debugVisualsToggle;
     public Text preSessionInstructionText;
     public Button confirmMarkersButton;
+    public Dropdown mapDropdown;
 
+    //scoring
+    public Text scoreText;
+    public CanvasGroup scorePanel;
+
+    public List<string> mapList;
+
+
+    //timer
+    public Timer timer;
     //logging
     public TrialLogTrack trialLog;
+
 
 
     //debug visuals
@@ -167,6 +178,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         forceOpenChestButton.gameObject.SetActive(false);
         acceptUserResponseButton.gameObject.SetActive(false);
 
+        mapDropdown.ClearOptions(); //clear dropdown options
 
         debugVisuals = debugVisualsToggle.isOn;
         sceneObjList = new List<GameObject>();
@@ -184,6 +196,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         StartCoroutine("InitLogging");
         preSessionPanelUIGroup.alpha = 0f;
         waitForReadyUIGroup.alpha = 1f;
+
         //beginTrialPanelUIGroup.alpha = 1f;
         //StartCoroutine ("PreSessionMapping");
     }
@@ -248,22 +261,28 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     IEnumerator PrepareMapList()
     {
-        int testMapIndex = 1;
+        //int testMapIndex = 1;
         DirectoryInfo directoryPath = new DirectoryInfo(Application.persistentDataPath);
         FileInfo[] listfiles = directoryPath.GetFiles("*.worldmap");
+
+        mapList = new List<string>();
+
 
         foreach (FileInfo file in listfiles)
         {
             Debug.Log("file name " + file.Name);
-            GameObject buttonPrefab = Instantiate(arkitManager.arWorldMapManager.mapButton, Vector3.zero, Quaternion.identity) as GameObject;
-            buttonPrefab.transform.parent = arkitManager.arWorldMapManager.canvasParent;
+            //GameObject buttonPrefab = Instantiate(arkitManager.arWorldMapManager.mapButton, Vector3.zero, Quaternion.identity) as GameObject;
+            //buttonPrefab.transform.parent = arkitManager.arWorldMapManager.canvasParent;
 
-            buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * testMapIndex, 0f);
-            buttonPrefab.GetComponent<MapButton>().selfMapIndex = testMapIndex;
-            buttonPrefab.GetComponent<MapButton>().worldMapManager = arkitManager.arWorldMapManager;
-            buttonPrefab.GetComponent<MapButton>().buttonText.text = file.Name;
-            testMapIndex++;
+            //buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * testMapIndex, 0f);
+            //buttonPrefab.GetComponent<MapButton>().selfMapIndex = testMapIndex;
+            //buttonPrefab.GetComponent<MapButton>().worldMapManager = arkitManager.arWorldMapManager;
+            //buttonPrefab.GetComponent<MapButton>().buttonText.text = file.Name;
+            //testMapIndex++;
+            mapList.Add(file.Name);
         }
+
+        mapDropdown.AddOptions(mapList);
 
         yield return null;
     }
@@ -617,11 +636,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         ////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
         ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
+        if (arkitManager != null)
+        {
+            UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+            if (arAnchorManager != null)
+            {
+                LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+                ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+            }
+        }
 
-        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
-        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
-
-        ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+        scoreText.text = totalScore.ToString();
 
         if (canNavigate && spawnChest != null)
         {
@@ -686,6 +711,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         //turning it off by default
         ChangeDebugVisualsStatus(false);
+
+        //reset timer and start it
+        timer.Reset();
+        timer.ToggleTimer(true);
+        timer.StartTimer();
 
         //let's make sure we don't exceed the max spawnables 
         for (int i = 0; i < Configuration.maxObjects; i++)
@@ -798,6 +828,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             forcingOpen = false;
             Debug.Log("made forcing open possible again");
         }
+        //stop timer
+        timer.StopTimer();
+        timer.ToggleTimer(false);
 
         //have a distractor task here
 
@@ -1539,6 +1572,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             totalScore += itemScore;
         }
         scorePanelUIGroup.transform.GetChild(Configuration.maxObjects).gameObject.GetComponent<ObjectScoreLine>().SetTotalScore(totalScore);
+        scoreText.text = totalScore.ToString();
         yield return null;
     }
 
