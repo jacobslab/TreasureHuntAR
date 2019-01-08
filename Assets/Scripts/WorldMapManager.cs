@@ -19,6 +19,8 @@ public class WorldMapManager : MonoBehaviour
     public Text mapNameText;
     public CanvasGroup savePanel;
 
+    public RawImage mapScreenshot;
+
     private string path = "";
 
 
@@ -76,15 +78,64 @@ public class WorldMapManager : MonoBehaviour
     public void OpenSavePanel()
     {
         Debug.Log("opening save panel");
+        ScreenCapture.CaptureScreenshot("temp.png");
         savePanel.alpha = 1f;
+    }
+
+    public void BeginSaveSequence()
+    {
+        StartCoroutine("SaveMapScreenshot");
+    }
+
+    IEnumerator SaveMapScreenshot()
+    {
+
+
+
+
+        //save screenshot first
+        savePanel.alpha = 0f;
+        path = Path.Combine(Application.persistentDataPath, mapNameText.text);
+        string sourceName = Path.Combine(Application.persistentDataPath, "temp.png");
+        string destName = Path.Combine(Application.persistentDataPath, mapNameText.text + "_image.png");
+        Debug.Log("searching for source at " + sourceName);
+        if(File.Exists(sourceName))
+        {
+            Debug.Log("moving file to " + destName);
+            File.Move(sourceName, destName);
+        }
+
+        
+        //then load the image
+        Debug.Log("loading image");
+        if (File.Exists(destName))
+        {
+            Debug.Log("file exists at destination; about to load now");
+            string imagePath = Path.Combine(Application.persistentDataPath, mapNameText.text + "_image.png");
+            Debug.Log("image path is " + imagePath);
+            //var texture = Resources.Load(imagePath) as Texture2D;
+            string wwwPlayerFilePath = "file://" + imagePath;
+            WWW www = new WWW(wwwPlayerFilePath);
+            yield return www;
+            Texture texture = www.texture;
+            Debug.Log(texture);
+            if (texture != null)
+            {
+                Debug.Log("texture exists; setting it on rawimage now");
+                mapScreenshot.texture = texture;
+            }
+        }
+
+        SaveMap();
+        yield return null;
     }
 
     public void SaveMap()
     {
+
         Debug.Log("inside save map");
         mapIndex++;
-        savePanel.alpha = 0f;
-        path = Path.Combine(Application.persistentDataPath, mapNameText.text);
+      
         Debug.Log("new path is " + path);
         session.GetCurrentWorldMapAsync(OnWorldMap);
 
@@ -96,6 +147,14 @@ public class WorldMapManager : MonoBehaviour
         buttonPrefab.GetComponent<MapButton>().selfMapIndex = mapIndex;
         buttonPrefab.GetComponent<MapButton>().worldMapManager = this;
 
+    }
+
+    IEnumerator LoadImage(string destName)
+    {
+
+     
+
+        yield return null;
     }
 
     public void LoadDropdownSelectedMap()

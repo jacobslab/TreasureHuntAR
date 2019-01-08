@@ -18,6 +18,8 @@ bool worldMap_Save(const void* worldMapPtr, const char* path)
     if (worldMapPtr == nullptr || path == nullptr || !worldMap_GetSupported())
         return false;
     
+    //add snapshot image
+    
     ARWorldMap* worldMap = (__bridge ARWorldMap*)worldMapPtr;
     NSError* writeError = nil;
     NSURL* url = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8String:path] isDirectory:false];

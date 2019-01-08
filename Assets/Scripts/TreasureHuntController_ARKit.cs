@@ -74,6 +74,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     //logging
     public TrialLogTrack trialLog;
 
+    //tracking status
+    public CanvasGroup trackingPanel;
+    public Image trackingImage;
+    public Text trackingReasonText;
+
 
 
     //debug visuals
@@ -197,10 +202,32 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         StartCoroutine("InitLogging");
         preSessionPanelUIGroup.alpha = 0f;
         waitForReadyUIGroup.alpha = 1f;
+        UnityARSessionNativeInterface.ARSessionTrackingChangedEvent += UpdateTrackingStatus;
+
 
         //beginTrialPanelUIGroup.alpha = 1f;
         //StartCoroutine ("PreSessionMapping");
     }
+
+    void UpdateTrackingStatus(UnityARCamera cam)
+    {
+        if(cam.trackingState == ARTrackingState.ARTrackingStateNormal)
+        {
+            trackingImage.color = Color.green;
+        }
+        else if(cam.trackingState == ARTrackingState.ARTrackingStateLimited)
+        {
+            trackingImage.color = Color.yellow;
+        }
+        else if(cam.trackingState==ARTrackingState.ARTrackingStateNotAvailable)
+        {
+            trackingImage.color = Color.red;
+        }
+
+        trackingReasonText.text = cam.trackingReason.ToString();
+
+    }
+
 
     public void LoadSessionMap(int mapIndex)
     {
@@ -361,6 +388,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         SceneManager.MoveGameObjectToScene(this.gameObject, SceneManager.GetSceneAt(1));
         SceneManager.SetActiveScene(SceneManager.GetSceneAt(1));
         SceneManager.UnloadSceneAsync(currentScene);
+
 
         yield return StartCoroutine(Load());
         yield return null;
@@ -629,7 +657,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-
         Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
         Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
         Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
@@ -1636,6 +1663,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         userResponded = false;
         yield return null;
+    }
+
+    private void OnDestroy()
+    {
+
+        UnityARSessionNativeInterface.ARSessionTrackingChangedEvent -= UpdateTrackingStatus;
     }
 
 
