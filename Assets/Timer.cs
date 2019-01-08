@@ -83,6 +83,11 @@ public class Timer : MonoBehaviour {
             }
             yield return 0;
         }
+        //if it timed out, then wait until the timer is stopped before finishing the coroutine
+        while (!timerInterrupt)
+        {
+            yield return 0;
+        }
         timerHold = false;
         timerInterrupt = false;
         yield return null;

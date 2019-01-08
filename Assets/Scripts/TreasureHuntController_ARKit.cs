@@ -64,7 +64,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     //scoring
     public Text scoreText;
-    public CanvasGroup scorePanel;
+    public CanvasGroup scoreboardPanel;
 
     public List<string> mapList;
 
@@ -175,6 +175,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         endSessionPanelUIGroup.alpha = 0f;
         scorePanelUIGroup.alpha = 0f;
         beginTrialPanelUIGroup.alpha = 1f;
+        scoreboardPanel.alpha = 0f;
         forceOpenChestButton.gameObject.SetActive(false);
         acceptUserResponseButton.gameObject.SetActive(false);
 
@@ -711,7 +712,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         //turning it off by default
         ChangeDebugVisualsStatus(false);
-
+        scoreboardPanel.alpha = 1f;
         //reset timer and start it
         timer.Reset();
         timer.ToggleTimer(true);
@@ -1656,6 +1657,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             UnityEngine.Debug.Log("DESTROYED CHEST");
             Destroy(currentChest.transform.parent.gameObject);
         }
+    }
+
+    public void ExitToMainMenu()
+    {
+        SceneManager.UnloadSceneAsync(1);
+        SceneManager.LoadSceneAsync(0);
+    }
+
+    public void QuitApplication()
+    {
+        Application.Quit();
     }
 
  

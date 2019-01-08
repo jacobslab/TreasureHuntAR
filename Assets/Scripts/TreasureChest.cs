@@ -37,8 +37,10 @@ public class TreasureChest : MonoBehaviour {
 	public void UpdateDistanceBar(float distanceLeft)
 	{
 		float barValue = progressBar.MaxValue - (distanceLeft * 100f);
-		if(barValue<100f && barValue>0f)
-			progressBar.Value = barValue;
+        if (barValue < 100f && barValue > 0f)
+            progressBar.Value = barValue;
+        else
+            progressBar.Value = 0f;
 	}
 
 	//open. most likely a treasure chest. could also be something like a giftbox.
