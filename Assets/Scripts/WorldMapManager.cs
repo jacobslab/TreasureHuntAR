@@ -18,10 +18,15 @@ public class WorldMapManager : MonoBehaviour
 
     public Text mapNameText;
     public CanvasGroup savePanel;
+    public CanvasGroup saveScreenshotPanel;
+    public CanvasGroup mapButtonPanel;
 
     public RawImage mapScreenshot;
+    public bool isRelocalizing = false;
 
     private string path = "";
+
+    private bool waitForScreenshot = false;
 
 
     public static int mapIndex = 0;
@@ -35,7 +40,21 @@ public class WorldMapManager : MonoBehaviour
         {
             savePanel.alpha = 0f;
         }
-        if(canvasParent!=null)
+        if(saveScreenshotPanel!=null)
+        {
+            saveScreenshotPanel.gameObject.SetActive(false);
+            saveScreenshotPanel.alpha = 0f;
+        }
+        if (mapButtonPanel != null)
+        {
+            mapButtonPanel.alpha = 1f;
+
+        }
+        if(mapScreenshot!=null)
+        {
+            mapScreenshot.GetComponent<CanvasGroup>().alpha = 0f;
+        }
+        if (canvasParent!=null)
         {
             canvasParent.gameObject.SetActive(true);
         }
@@ -78,23 +97,59 @@ public class WorldMapManager : MonoBehaviour
     public void OpenSavePanel()
     {
         Debug.Log("opening save panel");
-        ScreenCapture.CaptureScreenshot("temp.png");
+        //pause plane detection
+        PausePlaneDetection();
         savePanel.alpha = 1f;
     }
 
     public void BeginSaveSequence()
     {
+        mapButtonPanel.alpha = 0f;
         StartCoroutine("SaveMapScreenshot");
+    }
+
+    public void SaveScreenshot()
+    {
+        waitForScreenshot = false; //turning it false will exit out of the while loop in SaveMapScreenshot coroutine
+    }
+
+    public void PausePlaneDetection()
+    {
+
+        //pause plane detection
+        Debug.Log("about to pause plane detection");
+        UnityARPlaneDetection planeDetection = UnityARPlaneDetection.None;
+        ARKitWorldTrackingSessionConfiguration config = new ARKitWorldTrackingSessionConfiguration();
+        config.planeDetection = planeDetection;
+        config.alignment = UnityARAlignment.UnityARAlignmentGravity;
+        config.getPointCloudData = false;
+        config.enableLightEstimation = false;
+        session.RunWithConfig(config);
     }
 
     IEnumerator SaveMapScreenshot()
     {
 
-
-
-
-        //save screenshot first
+        //turn off the save panel
         savePanel.alpha = 0f;
+
+        waitForScreenshot = true; //to wait in the while loop below
+
+        //turn on the save screenshot panel
+        saveScreenshotPanel.gameObject.SetActive(true);
+        saveScreenshotPanel.alpha = 1f;
+
+        //wait until the save screenshot button has been pressed
+        while(waitForScreenshot)
+        {
+            yield return 0;
+        }
+
+        saveScreenshotPanel.alpha = 0f;
+        //save screenshot first
+        ScreenCapture.CaptureScreenshot("temp.png");
+
+        yield return new WaitForSeconds(1f);
         path = Path.Combine(Application.persistentDataPath, mapNameText.text);
         string sourceName = Path.Combine(Application.persistentDataPath, "temp.png");
         string destName = Path.Combine(Application.persistentDataPath, mapNameText.text + "_image.png");
@@ -105,13 +160,49 @@ public class WorldMapManager : MonoBehaviour
             File.Move(sourceName, destName);
         }
 
-        
+
+        yield return StartCoroutine(LoadImage(destName));
+        SaveMap();
+
+        yield return new WaitForSeconds(3f);
+        mapScreenshot.gameObject.GetComponent<CanvasGroup>().alpha = 0f;
+        mapButtonPanel.alpha = 1f;
+        yield return null;
+    }
+
+    public void TurnOffMapPreview()
+    {
+        mapScreenshot.GetComponent<CanvasGroup>().alpha = 0f;
+    }
+
+    public void SaveMap()
+    {
+
+        Debug.Log("inside save map");
+        mapIndex++;
+      
+        Debug.Log("new path is " + path);
+        session.GetCurrentWorldMapAsync(OnWorldMap);
+
+        //Debug.Log("creating button prefab");
+        //create button prefab
+        //GameObject buttonPrefab = Instantiate(mapButton, Vector3.zero, Quaternion.identity) as GameObject;
+        //buttonPrefab.transform.parent = canvasParent;
+        //buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * mapIndex, 0f);
+        //buttonPrefab.GetComponent<MapButton>().selfMapIndex = mapIndex;
+        //buttonPrefab.GetComponent<MapButton>().worldMapManager = this;
+
+    }
+
+    IEnumerator LoadImage(string destName)
+    {
+        mapScreenshot.GetComponent<CanvasGroup>().alpha = 1f;
         //then load the image
-        Debug.Log("loading image");
+        Debug.Log("loading image with dest " + destName);
         if (File.Exists(destName))
         {
             Debug.Log("file exists at destination; about to load now");
-            string imagePath = Path.Combine(Application.persistentDataPath, mapNameText.text + "_image.png");
+            string imagePath = destName;
             Debug.Log("image path is " + imagePath);
             //var texture = Resources.Load(imagePath) as Texture2D;
             string wwwPlayerFilePath = "file://" + imagePath;
@@ -125,35 +216,6 @@ public class WorldMapManager : MonoBehaviour
                 mapScreenshot.texture = texture;
             }
         }
-
-        SaveMap();
-        yield return null;
-    }
-
-    public void SaveMap()
-    {
-
-        Debug.Log("inside save map");
-        mapIndex++;
-      
-        Debug.Log("new path is " + path);
-        session.GetCurrentWorldMapAsync(OnWorldMap);
-
-        Debug.Log("creating button prefab");
-        //create button prefab
-        GameObject buttonPrefab = Instantiate(mapButton, Vector3.zero, Quaternion.identity) as GameObject;
-        buttonPrefab.transform.parent = canvasParent;
-        buttonPrefab.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, -200f * mapIndex, 0f);
-        buttonPrefab.GetComponent<MapButton>().selfMapIndex = mapIndex;
-        buttonPrefab.GetComponent<MapButton>().worldMapManager = this;
-
-    }
-
-    IEnumerator LoadImage(string destName)
-    {
-
-     
-
         yield return null;
     }
 
@@ -162,6 +224,15 @@ public class WorldMapManager : MonoBehaviour
         int selectedOption = TreasureHuntController_ARKit.Instance.mapDropdown.value;
         string selectedMapName = TreasureHuntController_ARKit.Instance.mapList[selectedOption];
         Vector3 extents = Vector3.zero;
+
+        string baseName = selectedMapName.Split('(')[0];
+        Debug.Log("base name after removing parentheses " + baseName);
+        baseName = baseName.Split(' ')[0];
+        Debug.Log("base name after removing space " + baseName);
+        string destName = Path.Combine(Application.persistentDataPath, baseName + "_image.png");
+        StartCoroutine("LoadImage", destName);
+        isRelocalizing = true;
+
         LoadSpecificMap(selectedMapName, out extents);
     }
 

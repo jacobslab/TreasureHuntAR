@@ -214,6 +214,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         if(cam.trackingState == ARTrackingState.ARTrackingStateNormal)
         {
             trackingImage.color = Color.green;
+            if(arkitManager.arWorldMapManager.isRelocalizing)
+            {
+                arkitManager.arWorldMapManager.TurnOffMapPreview();
+                arkitManager.arWorldMapManager.isRelocalizing = false;
+
+            }
         }
         else if(cam.trackingState == ARTrackingState.ARTrackingStateLimited)
         {
@@ -223,9 +229,30 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         {
             trackingImage.color = Color.red;
         }
-
-        trackingReasonText.text = cam.trackingReason.ToString();
-
+        if(cam.trackingReason == ARTrackingStateReason.ARTrackingStateReasonInitializing)
+        {
+            trackingReasonText.transform.parent.GetComponent<CanvasGroup>().alpha = 1f;
+            trackingReasonText.text = "Initializing";
+        }
+        else if(cam.trackingReason == ARTrackingStateReason.ARTrackingStateReasonRelocalizing)
+        {
+            trackingReasonText.transform.parent.GetComponent<CanvasGroup>().alpha = 1f;
+            trackingReasonText.text = "Relocalizing";
+        }
+        else if(cam.trackingReason == ARTrackingStateReason.ARTrackingStateReasonExcessiveMotion)
+        {
+            trackingReasonText.transform.parent.GetComponent<CanvasGroup>().alpha = 1f;
+            trackingReasonText.text = "Excessive Motion";
+        }
+        else if(cam.trackingReason == ARTrackingStateReason.ARTrackingStateReasonInsufficientFeatures)
+        {
+            trackingReasonText.transform.parent.GetComponent<CanvasGroup>().alpha = 1f;
+            trackingReasonText.text = "Insufficient Features";
+        }
+        else if(cam.trackingReason==ARTrackingStateReason.ARTrackingStateReasonNone)
+        {
+            trackingReasonText.transform.parent.GetComponent<CanvasGroup>().alpha = 0f;
+        }
     }
 
 
@@ -657,20 +684,25 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
-        Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
-        Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+        Vector3 camPos = Vector3.zero;
         //Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
         ////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
         ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
         if (arkitManager != null)
         {
+            Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+            camPos = UnityARMatrixOps.GetPosition(camMatrix);
+            Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
             UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
             if (arAnchorManager != null)
             {
+
                 LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
-                ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+                if (arPlaneAnchors != null)
+                {
+                    ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+                }
             }
         }
 
@@ -678,6 +710,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         if (canNavigate && spawnChest != null)
         {
+            Debug.Log("spawnchest");
         //    //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
         //    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
         //    //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);

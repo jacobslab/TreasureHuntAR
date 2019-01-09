@@ -36,7 +36,11 @@ public class TreasureChest : MonoBehaviour {
 
 	public void UpdateDistanceBar(float distanceLeft)
 	{
+        //Debug.Log("distance left" + distanceLeft.ToString());
 		float barValue = progressBar.MaxValue - (distanceLeft * 100f);
+        TreasureHuntController_ARKit.Instance.debugText.text = "distance left " + distanceLeft.ToString() + "\n bar val " + barValue.ToString();
+
+        //Debug.Log("bar val" + barValue.ToString());
         if (barValue < 100f && barValue > 0f)
             progressBar.Value = barValue;
         else
