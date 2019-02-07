@@ -17,6 +17,8 @@ public class DistractorGame : MonoBehaviour {
 
     public static bool rabbitLooking = false;
 
+    private bool caughtRabbit =false; // flag that determines whether rabbit was caught or not
+
     private string catchInstructions = "Catch the rabbit by going near its location!";
     private string successInstructions = "Success! You caught the rabbit!";
     private string failureInstructions = "The rabbit escaped! Better luck next time!";
@@ -36,6 +38,16 @@ public class DistractorGame : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void MarkRabbitCaught()
+    {
+        caughtRabbit = true;
+    }
+
+    public void ResetRabbitFlag()
+    {
+        caughtRabbit = false;
+    }
 
     public IEnumerator Run()
     {
@@ -120,38 +132,44 @@ public class DistractorGame : MonoBehaviour {
         rabbitObj.GetComponent<Animator>().SetBool("CanMove?", false);
         rabbitObj.transform.parent = null;
 
-        //then wait for the player to come closer to the rabbit
-        float distance = 10f;
-        float durationTimer = 0f;
-        while (distance > Configuration.minRabbitCatchDistance && durationTimer < 8f)
+        //reset the rabbit caught flag
+        ResetRabbitFlag();
+
+        if (TreasureHuntController_ARKit.Instance.canNavigate)
         {
-            Debug.Log("waiting for the rabbit to be caught");
-            durationTimer += Time.deltaTime;
+            //then wait for the player to come closer to the rabbit
+            float distance = 10f;
+            float durationTimer = 0f;
+            while (distance > Configuration.minRabbitCatchDistance && durationTimer < 8f)
+            {
+                Debug.Log("waiting for the rabbit to be caught");
+                durationTimer += Time.deltaTime;
 
 
-            Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
-            Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
-            Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
-            //Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-            distance = Vector3.Distance(rabbitObj.transform.position, camPos);
-            //distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
-            //debugText.text = "distance left " + distanceLeft.ToString() +  " timer " + durationTimer.ToString();
-            //debugText.text = distance.ToString ();
-            //rabbitObj.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
-            yield return 0;
+                Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+                Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
+                Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+                distance = Vector3.Distance(rabbitObj.transform.position, camPos);
+                yield return 0;
+            }
+
+            if (distance <= Configuration.minRabbitCatchDistance)
+            {
+                MarkRabbitCaught();
+            }
+
+        }
+        //tapping on the rabbit will suffice
+        else
+        {
+            yield return StartCoroutine(TreasureHuntController_ARKit.Instance.WaitTillObjectHit(rabbitObj,8f));
+
         }
 
-        bool caughtRabbit = false;
-        if(distance<=Configuration.minRabbitCatchDistance)
-        {
-            caughtRabbit = true;
-        }
-
-        //show a caught animation;display success message 
-        Debug.Log("done with the distractor");
+        //set the rabbit inactive regardless of the result
         rabbitObj.SetActive(false);
-        //debugText.enabled = false;
 
+        //show success or failure message
         if (caughtRabbit)
         {
             distractorText.text = successInstructions;

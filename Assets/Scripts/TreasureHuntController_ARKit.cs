@@ -642,6 +642,49 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         markerObjList[markerIndex].GetComponent<MeshRenderer>().material.color = col;
     }
 
+    public IEnumerator WaitTillObjectHit(GameObject targetObj,float timeout)
+    {
+        bool objectHit = false;
+        float timerVal = 0f;
+
+        while (!objectHit && timerVal < timeout)
+        {
+            timerVal += Time.deltaTime;
+            if (Input.touchCount > 0)
+            {
+                var hitTouch = Input.GetTouch(0);
+                                          Debug.Log ("got a touch");
+                if (hitTouch.phase == TouchPhase.Began || hitTouch.phase == TouchPhase.Moved)
+                {
+                    var screenPosition = Camera.main.ScreenToViewportPoint(hitTouch.position);
+                    ARPoint point = new ARPoint
+                    {
+                        x = screenPosition.x,
+                        y = screenPosition.y
+                    };
+                    // prioritize results types
+                    ARHitTestResultType[] resultTypes = {
+                                ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent,
+                            };
+
+                    foreach (ARHitTestResultType resultType in resultTypes)
+                    {
+                        GameObject hitObj = new GameObject();
+
+                        if (HitTestWithResultType(point, resultType, out hitObj))
+                        {
+                            distractorGame.MarkRabbitCaught(); //this will mark rabbit caught inside DistractorGame script; if it doesn't reach here then DistractorGame will register it as a miss
+                             objectHit = true; //makes it exit out of the while loop and end the coroutine
+
+                        }
+                    }
+                }
+                yield return 0;
+            }
+            yield return null;
+        }
+    }
+
     public bool HitTestWithResultType(ARPoint point, ARHitTestResultType resultTypes, out ARHitTestResult chosenHitResult)
     {
         List<ARHitTestResult> hitResults = UnityARSessionNativeInterface.GetARSessionNativeInterface().HitTest(point, resultTypes);
@@ -833,6 +876,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                             GameObject hitObj = new GameObject();
                             if (HitTestWithResultType(point, resultType, out hitObj))
                             {
+                                Debug.Log("HIT OBJ " + hitObj.gameObject.name);
 
                                 //										Debug.Log ("GOT A HIT");
                                 //										Debug.Log ("opening a chest");

@@ -38,13 +38,11 @@ public class TreasureChest : MonoBehaviour {
 	{
         //Debug.Log("distance left" + distanceLeft.ToString());
 		float barValue = progressBar.MaxValue - (distanceLeft * 100f);
-        TreasureHuntController_ARKit.Instance.debugText.text = "distance left " + distanceLeft.ToString() + "\n bar val " + barValue.ToString();
+        //TreasureHuntController_ARKit.Instance.debugText.text = "distance left " + distanceLeft.ToString() + "\n bar val " + barValue.ToString();
 
         //Debug.Log("bar val" + barValue.ToString());
         if (barValue < 100f && barValue > 0f)
             progressBar.Value = barValue;
-        else
-            progressBar.Value = 0f;
 	}
 
 	//open. most likely a treasure chest. could also be something like a giftbox.

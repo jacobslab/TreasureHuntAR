@@ -15,7 +15,7 @@ public class Cubecast : MonoBehaviour {
 		
 	}
 
-    void OnTriggerEnter(Collider col)
+    void OnCollisionEnter(Collision col)
     {
         if(col.gameObject.tag=="Rabbit")
         {
@@ -23,7 +23,7 @@ public class Cubecast : MonoBehaviour {
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnCollisionExit(Collision other)
     {
         if(other.gameObject.tag=="Rabbit")
         {
