@@ -37,6 +37,8 @@
 	<string>LaunchScreen-iPad</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen-iPad</string>
 	<key>UILaunchStoryboardName~ipad</key>
 	<string>LaunchScreen-iPad</string>
 	<key>UILaunchStoryboardName~iphone</key>
