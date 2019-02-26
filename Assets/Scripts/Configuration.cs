@@ -53,7 +53,7 @@ public class Configuration : MonoBehaviour
 
     public static float extent = 1f;
 
-    public static float maxTrialTime = 30f;
+    public static float maxTrialTime = 40f;
 
     private static Subject _currentSubject;
 

@@ -103,8 +103,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     private bool userResponded = false;
 
 
+    //managers
     public ARKitManager arkitManager;
-
+    public AudioManager audioManager;
 
     public Transform m_HitTransform;
 
@@ -150,7 +151,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     public float maxRayDistance = 30.0f;
     public LayerMask collisionLayer = 1 << 10;  //ARKitPlane layer
-                                                //A SINGLETON
+    //A SINGLETON
     private static TreasureHuntController_ARKit _instance;
 
 
@@ -1378,6 +1379,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     IEnumerator BeginTrial()
     {
+        //play start trial sound
+        audioManager.PlayClipOnce(audioManager.beepHigh);
         //yield return StartCoroutine(FillMarkerPosList());
         Debug.Log("preparing spawnables");
         //wait until spawnable list is ready
@@ -1386,6 +1389,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             yield return 0;
         }
         yield return StartCoroutine(RunTrial());
+        //play end trial sound
+        audioManager.PlayClipOnce(audioManager.beepLow);
         yield return null;
     }
 
@@ -1477,6 +1482,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         if (currentChest != null)
         {
+            //play chest opening sound
+            audioManager.PlayClipOnce(audioManager.magicWand);
+
             spawnObj = Instantiate(spawnableTrialList[(currentTrialIndex * 3) + chestIndex], Vector3.zero, Quaternion.identity) as GameObject;
             spawnObj.transform.parent = currentChest.transform;
             spawnObj.transform.rotation = currentChest.transform.rotation;
