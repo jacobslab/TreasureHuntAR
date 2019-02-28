@@ -12,6 +12,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 {
 
     public Camera FirstPersonCamera;
+    public GameObject treasurePedestalPrefab;
     public GameObject treasureChestPrefab;
     public Text debugText;
     public Text camPosText;
@@ -1079,7 +1080,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 currentIndex++;
             }
             //we apply dual check to ensure there is enough distance between chests and the current player position so the chest doesn't spawn on their location
-            while (!CheckSufficientDistanceBetweenChests(chestSpawnLocation, chestSpawnLocationList,-1) && (Vector3.Distance(chestSpawnLocation,currentPlayerPos) < Configuration.minPlayerToChestDistance)) //NOTE: the third argument referring to the current index in the list is set to -1 as it doesn't matter in this case as we are not doing intra-list check
+            while (!CheckSufficientDistanceBetweenChests(chestSpawnLocation, chestSpawnLocationList,-1) || (Vector3.Distance(chestSpawnLocation,currentPlayerPos) < Configuration.minPlayerToChestDistance)) //NOTE: the third argument referring to the current index in the list is set to -1 as it doesn't matter in this case as we are not doing intra-list check
             {
                 chestSpawnLocation = GetRandomPosition(out randPlane);
                 spawnPlaneIndexList[chestSpawnLocationList.Count] = randPlane; //the current index will be the amount of objects already spawned in this trial
@@ -1503,15 +1504,34 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Vector3 planeRotation = planeAnchor.gameObject.transform.rotation.eulerAngles;
         Vector3 modChestRot = new Vector3(planeRotation.x, planeRotation.y, -planeRotation.z);
         //Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
-        spawnChest = Instantiate(treasureChestPrefab, position, Quaternion.Euler(modChestRot)) as GameObject;
-        spawnChest.transform.parent = planeAnchor.gameObject.transform;
-        spawnChest.transform.localPosition = position;
-        spawnChest.transform.parent = null;
 
-        //now set the spawnchest reference to the actual treasure chest which is the top-most child in its hierarchy
-        spawnChest = spawnChest.transform.GetChild(0).gameObject;
-        //Debug.Log ("about to set current chest ref");
-        currentChest = spawnChest;
+
+        //randomize chest heights and spawn pedestal-less chests in sitting condition 
+        if (!canNavigate)
+        {
+            position = new Vector3(position.x, Random.Range(position.y, Configuration.maxHeight), position.z);
+            spawnChest = Instantiate(treasureChestPrefab, position, Quaternion.Euler(modChestRot)) as GameObject;
+            spawnChest.transform.parent = planeAnchor.gameObject.transform;
+            spawnChest.transform.localPosition = position;
+            spawnChest.transform.parent = null;
+
+            currentChest = spawnChest;
+
+        }
+        else
+        {
+            spawnChest = Instantiate(treasurePedestalPrefab, position, Quaternion.Euler(modChestRot)) as GameObject;
+
+            spawnChest.transform.parent = planeAnchor.gameObject.transform;
+            spawnChest.transform.localPosition = position;
+            spawnChest.transform.parent = null;
+
+
+            //now set the spawnchest reference to the actual treasure chest which is the top-most child in its hierarchy
+            spawnChest = spawnChest.transform.GetChild(0).gameObject;
+            //Debug.Log ("about to set current chest ref");
+            currentChest = spawnChest;
+        }
 
         ARAnchor anchor = spawnChest.GetComponent<ARAnchor>();
         //			var spawnObject = Instantiate(spawnables[randSpawnable], position,Quaternion.identity,anchor.transform);
