@@ -41,6 +41,7 @@ public class Configuration : MonoBehaviour
     public Text responseDistText;
 
     public static float minDistanceBetweenObjects = 1.5f;
+    public static float minPlayerToChestDistance = 0.4f;
 
 
     public static float minRetrievalDistance = 0.1f;

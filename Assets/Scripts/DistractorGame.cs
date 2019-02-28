@@ -13,9 +13,9 @@ public class DistractorGame : MonoBehaviour {
     public GameObject correctParticlePrefab;
     public GameObject wrongParticlePrefab;
 
-    public GameObject foundCube;
+    public GameObject foundCube; //the invisible cube that will serve as a collision check for the rabbit
 
-    public static bool rabbitLooking = false;
+    public static bool rabbitLooking = false; //used to control if the device camera is looking at the rabbit or not; this is to make sure the rabbit is centrally viewed before it begins its movement
 
     private bool caughtRabbit =false; // flag that determines whether rabbit was caught or not
 
@@ -27,7 +27,7 @@ public class DistractorGame : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         //debugText.enabled = false;
-        distractorPanel.alpha = 0f;
+        distractorPanel.gameObject.SetActive(false);
         distractorText.text = "";
         rabbitObj.SetActive(false);
         foundCube.SetActive(false);
@@ -38,6 +38,12 @@ public class DistractorGame : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void AutoCatchRabbit()
+    {
+        rabbitLooking = true;
+        MarkRabbitCaught();
+    }
 
     public void MarkRabbitCaught()
     {
@@ -57,7 +63,7 @@ public class DistractorGame : MonoBehaviour {
         rabbitObj.SetActive(true);
         foundCube.SetActive(true);
 
-        distractorPanel.alpha = 1f;
+        distractorPanel.gameObject.SetActive(true);
         distractorText.text = catchInstructions;
 
         UnityEngine.Debug.Log("loaded map extents are "  + arkitManager.arWorldMapManager.m_LoadedMap.extent.ToString());
@@ -114,6 +120,7 @@ public class DistractorGame : MonoBehaviour {
 
         Debug.Log("waiting for rabbit to be looked at");
         yield return StartCoroutine(WaitTillRabbitLooked());
+
         Debug.Log("setting rabbit anim to move");
         rabbitObj.GetComponent<Animator>().SetBool("CanMove?", true);
         Debug.Log("moving the rabbit");
@@ -192,7 +199,7 @@ public class DistractorGame : MonoBehaviour {
         //reset rabbit looking var
         rabbitLooking = false;
         foundCube.SetActive(false);
-        distractorPanel.alpha = 0f;
+        distractorPanel.gameObject.SetActive(false);
 
     yield return null;
     }

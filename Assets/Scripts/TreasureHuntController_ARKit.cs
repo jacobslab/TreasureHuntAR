@@ -178,9 +178,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         testObjList = new List<GameObject>();
         spawnArr = Resources.LoadAll("Prefabs/Objects");
         retrievalPanelUIGroup.alpha = 0f;
-        endSessionPanelUIGroup.alpha = 0f;
+        DisablePanel(endSessionPanelUIGroup);
         scorePanelUIGroup.alpha = 0f;
-        beginTrialPanelUIGroup.alpha = 1f;
+        EnablePanel(beginTrialPanelUIGroup);
         scoreboardPanel.alpha = 0f;
         forceOpenChestButton.gameObject.SetActive(false);
         acceptUserResponseButton.gameObject.SetActive(false);
@@ -347,7 +347,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     {
         bool needsMapping = true;
         preSessionPanelUIGroup.alpha = 1f;
-        beginTrialPanelUIGroup.alpha = 0f;
+        DisablePanel(beginTrialPanelUIGroup);
 
 
 
@@ -368,7 +368,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             yield return 0;
         }
         preSessionPanelUIGroup.alpha = 0f;
-        beginTrialPanelUIGroup.alpha = 1f;
+        EnablePanel(beginTrialPanelUIGroup);
         yield return null;
     }
 
@@ -754,7 +754,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         if (canNavigate && spawnChest != null)
         {
-            Debug.Log("spawnchest");
+            //Debug.Log("spawnchest");
         //    //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
         //    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
         //    //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
@@ -780,7 +780,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //turn off debug visuals
 
 
-        yield return StartCoroutine(CreateChestLocationList());
+        //yield return StartCoroutine(CreateChestLocationList());
         //UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
         //LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
 
@@ -816,16 +816,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         //turning it off by default
         ChangeDebugVisualsStatus(false);
+        DisablePanel(beginTrialPanelUIGroup); //disable the begin trial UI panel
         scoreboardPanel.alpha = 1f;
         //reset timer and start it
         timer.Reset();
         timer.ToggleTimer(true);
         timer.StartTimer();
+        chestSpawnLocationList.Clear(); //clear the list
 
         //let's make sure we don't exceed the max spawnables 
         for (int i = 0; i < Configuration.maxObjects; i++)
         {
-
+            yield return StartCoroutine(CreateNewChestLocation());
             treasureFound = false;
             //spawn a treasure chest at a random location
             yield return StartCoroutine(SpawnTreasureChest(chestIndex));
@@ -957,7 +959,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         retrievalText.text = "End trial";
         yield return new WaitForSeconds(1f);
         retrievalPanelUIGroup.alpha = 0f;
-        beginTrialPanelUIGroup.alpha = 1f;
+        EnablePanel(beginTrialPanelUIGroup);
         //ChangeDebugVisualsStatus(true);
 
         ClearLists();
@@ -1045,6 +1047,65 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     {
 
     }
+
+    IEnumerator CreateNewChestLocation()
+    {
+        int randPlane = 0;
+        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        int planeCount = arAnchorManager.GetPlaneCount();
+
+        Debug.Log("got anchor manager and plane count");
+        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+        ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
+
+        Vector3 chestSpawnLocation = Vector3.zero;
+        Debug.Log("got the first plane anchor");
+        int currentIndex = 0;
+        //obtain the current player position
+        Vector3 currentPlayerPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+        spawnPlaneIndexList.Add(0);
+
+        notInPlayBounds = true;
+        while (notInPlayBounds)
+        {
+            chestSpawnLocation= GetRandomPosition(out randPlane);
+            currentIndex = 0;
+            foreach (var plane in arPlaneAnchors)
+            {
+                if (currentIndex == randPlane)
+                {
+                    planeAnchor = plane;
+                }
+                currentIndex++;
+            }
+            //we apply dual check to ensure there is enough distance between chests and the current player position so the chest doesn't spawn on their location
+            while (!CheckSufficientDistanceBetweenChests(chestSpawnLocation, chestSpawnLocationList,-1) && (Vector3.Distance(chestSpawnLocation,currentPlayerPos) < Configuration.minPlayerToChestDistance)) //NOTE: the third argument referring to the current index in the list is set to -1 as it doesn't matter in this case as we are not doing intra-list check
+            {
+                chestSpawnLocation = GetRandomPosition(out randPlane);
+                spawnPlaneIndexList[chestSpawnLocationList.Count] = randPlane; //the current index will be the amount of objects already spawned in this trial
+                currentIndex = 0;
+                foreach (var plane in arPlaneAnchors)
+                {
+                    if (currentIndex == randPlane)
+                    {
+                        planeAnchor = plane;
+                    }
+                    currentIndex++;
+                }
+
+                yield return 0;
+            }
+            notInPlayBounds = false;
+
+            yield return 0;
+        }
+        Debug.Log("distance between chest and player " + Vector3.Distance(chestSpawnLocation, currentPlayerPos).ToString());
+        chestSpawnLocationList.Add(chestSpawnLocation);
+
+        yield return null;
+    }
+
+
     IEnumerator CreateChestLocationList()
     {
         //Debug.Log ("creating chest locations");
@@ -1087,13 +1148,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                     }
                     currentIndex++;
                 }
-
-
-                //				testSpawn.transform.parent = planeAnchor.gameObject.transform;
-                //				testSpawn.transform.localPosition = pos;
-                //				testSpawn.transform.parent = null;
-                //				testList.Add (testSpawn);
-                //				Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
                 while (!CheckSufficientDistanceBetweenChests(chestSpawnLocationList[i], chestSpawnLocationList, i))
                 {
                     chestSpawnLocationList[i] = GetRandomPosition(out randPlane);
@@ -1111,11 +1165,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                     yield return 0;
                 }
                 notInPlayBounds = false;
-                //if (geoUtils.IsPointInPolygon(markerPosList,new Vector2(obj.transform.position.x,obj.transform.position.z))) {
-                //                Debug.Log("IS INSIDE");
-                //	spawnPlaneIndexList [i] = randPlane;
-                //	notInPlayBounds = false;
-                //}
 
                 yield return 0;
             }
@@ -1364,16 +1413,16 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Debug.Log("about to begin trial sequence");
         if (currentTrialIndex < maxTrials)
         {
-            beginTrialPanelUIGroup.alpha = 0f;
+            EnablePanel(beginTrialPanelUIGroup);
             sessionValid = true;
             StartCoroutine("BeginTrial");
         }
         else
         {
 
-            beginTrialPanelUIGroup.alpha = 0f;
+            DisablePanel(beginTrialPanelUIGroup);
             sessionValid = true;
-            endSessionPanelUIGroup.alpha = 1f;
+            EnablePanel(endSessionPanelUIGroup);
         }
     }
 
@@ -1734,6 +1783,19 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public void AcceptUserResponse()
     {
         userResponded = true;
+    }
+
+    void EnablePanel(CanvasGroup uiPanel)
+    {
+        uiPanel.gameObject.SetActive(true);
+        uiPanel.alpha = 1f;
+    }
+
+
+    void DisablePanel(CanvasGroup uiPanel)
+    {
+        uiPanel.alpha = 0f;
+        uiPanel.gameObject.SetActive(false);
     }
 
     public IEnumerator WaitForUserInput()
