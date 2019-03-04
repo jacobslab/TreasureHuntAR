@@ -860,6 +860,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
                 if (Input.touchCount > 0)
                 {
+                    Debug.Log("a touch");
+                    bool canOpen = false;
                     var touch = Input.GetTouch(0);
                     //							Debug.Log ("got a touch");
                     if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
@@ -870,48 +872,67 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                             x = screenPosition.x,
                             y = screenPosition.y
                         };
-                        // prioritize results types
-                        ARHitTestResultType[] resultTypes = {
-                                ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent,
-                            };
-
-                        foreach (ARHitTestResultType resultType in resultTypes)
+                        if(!canNavigate)
                         {
-                            GameObject hitObj = new GameObject();
-                            if (HitTestWithResultType(point, resultType, out hitObj))
-                            {
-                                Debug.Log("HIT OBJ " + hitObj.gameObject.name);
-
-                                //										Debug.Log ("GOT A HIT");
-                                //										Debug.Log ("opening a chest");
-                                bool canOpen = false;
-                                //Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose ();
-                                //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-                                ////Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-                                //float distance = Vector3.Distance(spawnChest.transform.position, camPos);
-                                ////								Debug.Log("hit distance is: " + distance.ToString ());
-                                if (!canNavigate)
-                                {
-                                    canOpen = true;
-                                }
-                                else
-                                {
-                                   if (distanceLeft < 0f)
-                                    {
-                                        canOpen = true;
-                                    }
-                                }
+                            Debug.Log("got a touch");
+                            canOpen = true;
+                            //Debug.Log("opening a chest");
+                            //RaycastHit hit;
+                            //Vector3 fwd= screenPosition.normalized * Vector3.forward;
+                            //if (Physics.Raycast(arkitManager.arCamManager.m_camera.transform.position,fwd,out hit, 10f))
+                            //{
+                                //Debug.Log("HIT OBJECT " +  hit.collider.gameObject.name);
                                 if (canOpen && !treasureFound && !forcingOpen)
                                 {
                                     Debug.Log("forcing open due to touch");
                                     forcingOpen = true;
                                     yield return StartCoroutine(OpenTreasureChest());
                                 }
-                                else
-                                    Debug.Log("cannot open yet");
+                        }
+                        else
+                        {
+                            // prioritize results types
+                            ARHitTestResultType[] resultTypes = {
+                                ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent,
+                            };
+
+                            foreach (ARHitTestResultType resultType in resultTypes)
+                            {
+                                GameObject hitObj = new GameObject();
+                                if (HitTestWithResultType(point, resultType, out hitObj))
+                                {
+                                    Debug.Log("HIT OBJ " + hitObj.gameObject.name);
+
+                                    //										Debug.Log ("GOT A HIT");
+                                    //					
+                                    //Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose ();
+                                    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+                                    ////Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+                                    //float distance = Vector3.Distance(spawnChest.transform.position, camPos);
+                                    ////								Debug.Log("hit distance is: " + distance.ToString ());
+                                    if (!canNavigate)
+                                    {
+                                        canOpen = true;
+                                    }
+                                    else
+                                    {
+                                        if (distanceLeft < 0f)
+                                        {
+                                            canOpen = true;
+                                        }
+                                    }
+                                    if (canOpen && !treasureFound && !forcingOpen)
+                                    {
+                                        Debug.Log("forcing open due to touch");
+                                        forcingOpen = true;
+                                        yield return StartCoroutine(OpenTreasureChest());
+                                    }
+                                    else
+                                        Debug.Log("cannot open yet");
+                                }
                             }
                         }
-                        //							}
+                        							//}
 
                     }
 
@@ -923,9 +944,16 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             //wait for the needed time
             yield return new WaitForSeconds(Configuration.presentationTime);
 
-            //destroy only the spawned chest's parent "ChestPedestal" 
-            Destroy(spawnChest.transform.parent.gameObject);
-
+            //destroy the chest
+            if (!canNavigate)
+            {
+                Destroy(spawnChest);
+            }
+            else
+            {
+                //destroy only the spawned chest's parent "ChestPedestal" 
+                Destroy(spawnChest.transform.parent.gameObject);
+            }
             //			debugText.text = debugText.text.Insert (0, "spawn: " + spawnObj.gameObject.name.ToString ());
             //toggle visibility of the item
             spawnObj.GetComponent<VisibilityToggler>().TurnVisible(false);
