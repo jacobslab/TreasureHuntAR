@@ -162,9 +162,23 @@ public class TrialLogTrack : LogTrack {
         //UnityEngine.Debug.Log("logging cam position");
         subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CAM_POS" + separator + camPos.x.ToString() + separator + camPos.y.ToString() + separator + camPos.z.ToString());
     }
-	//THE FOLLOWING ARE EVENTS
 
-	public void LogPauseEvent(bool isPaused){
+    public void LogTreasureChestSpawned(Vector3 spawnLocation)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CHEST_SPAWNED" + separator + spawnLocation.x.ToString() + separator + spawnLocation.y.ToString() + separator + spawnLocation.z.ToString());
+    }
+    public void LogTreasure(string itemName,Vector3 chestPosition)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TREASURE_ITEM" + separator + itemName.ToString() + separator + chestPosition.x.ToString() + separator + chestPosition.y.ToString() + separator + chestPosition.z.ToString());
+    }
+
+    public void LogDistractorResult(bool isRabbitCaught)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "DISTRACTOR_RESULT" + separator + isRabbitCaught.ToString());
+    }
+    //THE FOLLOWING ARE EVENTS
+
+    public void LogPauseEvent(bool isPaused){
 			if (Configuration.isLogging) {
 			subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "TASK_PAUSED" + separator + isPaused); //logged for replay
 			subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "TASK_PAUSED" + separator + isPaused); //logged for parsing events
@@ -201,45 +215,6 @@ public class TrialLogTrack : LogTrack {
 			else{
 				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "FREE_EXPLORATION_ENDED");
 				Debug.Log ("Logged exploration ended event.");
-			}
-		}
-	}
-
-	public void LogPlayerChestRotation(bool isStarting){
-		if (Configuration.isLogging) {
-			if(isStarting){
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "PLAYER_CHEST_ROTATION_STARTED");
-				Debug.Log ("Logged player chest rotation started event.");
-			}
-			else{
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "PLAYER_CHEST_ROTATION_ENDED");
-				Debug.Log ("Logged player chest rotation ended event.");
-			}
-		}
-	}
-
-	public void LogTransportationToHomeEvent(bool isStarting){
-		if (Configuration.isLogging) {
-			if(isStarting){
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "HOMEBASE_TRANSPORT_STARTED");
-				Debug.Log ("Logged home transport event.");
-			}
-			else{
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "HOMEBASE_TRANSPORT_ENDED");
-				Debug.Log ("Logged home transport ended event.");
-			}
-		}
-	}
-
-	public void LogTransportationToTowerEvent(bool isStarting){
-		if (Configuration.isLogging) {
-			if(isStarting){
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "TOWER_TRANSPORT_STARTED");
-				Debug.Log ("Logged tower transport event.");
-			}
-			else{
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "TOWER_TRANSPORT_ENDED");
-				Debug.Log ("Logged tower transport ended event.");
 			}
 		}
 	}

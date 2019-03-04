@@ -832,7 +832,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             treasureFound = false;
             //spawn a treasure chest at a random location
             yield return StartCoroutine(SpawnTreasureChest(chestIndex));
-
+            //log the location of the treasure chest that we just spawned
+            trialLog.LogTreasureChestSpawned(spawnChest.transform.position);
             //enable force open chest button
             forceOpenChestButton.gameObject.SetActive(true);
 
@@ -1587,6 +1588,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             spawnObj.transform.rotation = currentChest.transform.rotation;
             spawnObj.transform.localPosition = Vector3.zero;
             spawnObj.transform.parent = null;
+            trialLog.LogTreasure(spawnObj.name, spawnObj.transform.position);
 
             GameObject particlePrefab = Instantiate(coinShowerParticles, Vector3.zero, Quaternion.identity) as GameObject;
             particlePrefab.transform.parent = currentChest.transform;
@@ -1708,6 +1710,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 correctPositionIndicator.transform.parent = retrievalSequenceList[i].gameObject.transform;
                 correctPositionIndicator.transform.localPosition = Vector3.zero - new Vector3(0f, 0.519f, 0f); //adjust so that the indicator is at the foot of the pedestal
                 correctPositionIndicator.transform.parent = null;
+
+                //make this adjustment for non-navigation so that the indicators are on the same vertical level as the indicators
+                if(!canNavigate)
+                {
+                    correctPositionIndicator.transform.position = new Vector3(correctPositionIndicator.transform.position.x, choiceSelectionList[i].transform.position.y, correctPositionIndicator.transform.position.z);
+                }
+
                 //now determine if the response was within range; here we can directly use the correctpositionindicator as a comparison metric
                 float responseDistance = Vector2.Distance(new Vector2(correctPositionIndicator.transform.position.x, correctPositionIndicator.transform.position.z), new Vector2(choiceSelectionList[i].transform.position.x, choiceSelectionList[i].transform.position.z));
                 //debugText.enabled = true;

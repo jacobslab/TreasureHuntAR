@@ -176,6 +176,7 @@ public class DistractorGame : MonoBehaviour {
         //set the rabbit inactive regardless of the result
         rabbitObj.SetActive(false);
 
+        TreasureHuntController_ARKit.Instance.trialLog.LogDistractorResult(caughtRabbit);
         //show success or failure message
         if (caughtRabbit)
         {
