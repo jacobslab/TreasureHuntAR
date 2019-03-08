@@ -769,6 +769,77 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     }
 
+    public void BeginSpawnTest()
+    {
+        StartCoroutine(RunSpawnTest());
+    }
+
+    public IEnumerator RunSpawnTest()
+    {
+
+        int randPlaneIndex = 0;
+        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        int planeCount = arAnchorManager.GetPlaneCount();
+
+        List<GameObject> testList= new List<GameObject>();
+        List<GameObject> vertexMarkers = new List<GameObject>();
+
+        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+        ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
+        vertexMarkers = HighlightVertices();
+        for (int i = 0; i < 500; i++)
+        {
+
+            //yield return StartCoroutine(CreateNewChestLocation());
+            Vector3 pos = GetRandomPosition(out randPlaneIndex);
+            chestSpawnLocationList.Add(pos);
+            Debug.Log("length of chest location " + chestSpawnLocationList.Count.ToString());
+
+
+            //int planeIndex = GetPlaneIndex(chestIndex);
+            int planeIndex=0;
+            Debug.Log("got plane index");
+
+            int currentIndex = 0;
+            foreach (var plane in arPlaneAnchors)
+            {
+                if (currentIndex == planeIndex)
+                {
+                    planeAnchor = plane;
+                }
+                currentIndex++;
+            }
+            Debug.Log("stored pos");
+            Vector3 position = pos;
+            Vector3 planeRotation = planeAnchor.gameObject.transform.rotation.eulerAngles;
+            Vector3 modChestRot = new Vector3(planeRotation.x, planeRotation.y, -planeRotation.z);
+
+            Debug.Log("about to spawn chest");
+            GameObject testSpawnObj = Instantiate(testCube, position, Quaternion.Euler(modChestRot)) as GameObject;
+
+            testSpawnObj.transform.parent = planeAnchor.gameObject.transform;
+            testSpawnObj.transform.localPosition = position;
+            testSpawnObj.transform.parent = null;
+            testList.Add(testSpawnObj);
+
+        }
+        //wait for sometime
+        yield return new WaitForSeconds(3f);
+
+        //then destroy the spawned objects
+        for (int j = 0; j < testList.Count;j++)
+        {
+            Destroy(testList[j]);
+        }
+        testList.Clear();
+        for (int k = 0; k < vertexMarkers.Count;k++)
+        {
+            Destroy(vertexMarkers[k]);
+        }
+        vertexMarkers.Clear();
+        yield return null;
+    }
+
 
 
     public IEnumerator RunTrial()
@@ -780,40 +851,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Debug.Log("running trial");
         //turn off debug visuals
 
-
         //yield return StartCoroutine(CreateChestLocationList());
-        //UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
-        //LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
 
-        //ARPlaneAnchorGameObject planeAnchorObj= arPlaneAnchors.First.Value;
-
-        //for (int i = 0; i < 100;i++)
-        //{
-        //    //GameObject test = Instantiate(testCube, Vector3.zero, Quaternion.identity) as GameObject;
-
-        //    int planeIndex = GetPlaneIndex(chestIndex);
-        //      int currentIndex = 0;
-        //    foreach (var plane in arPlaneAnchors)
-        //    {
-        //        if (currentIndex == planeIndex)
-        //        {
-        //            planeAnchorObj = plane;
-        //        }
-        //        currentIndex++;
-        //    }
-        //    int randPlaneIndex = 0;
-        //    Vector3 position = GetRandomPosition(out randPlaneIndex);
-        //    Vector3 planeRotation = planeAnchorObj.gameObject.transform.rotation.eulerAngles;
-        //    Vector3 modChestRot = new Vector3(planeRotation.x, planeRotation.y, -planeRotation.z);
-        //    //Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
-        //    GameObject testSpawn = Instantiate(testCube, Vector3.zero, Quaternion.Euler(modChestRot)) as GameObject;
-        //    testSpawn.transform.parent = planeAnchorObj.gameObject.transform;
-        //    testSpawn.transform.localPosition = position;
-        //    testSpawn.transform.parent = null;
-
-        //    testSpawnList.Add(testSpawn);
-
-        //}
 
         //turning it off by default
         ChangeDebugVisualsStatus(false);
@@ -1371,6 +1410,48 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         return (Mathf.Abs(total_angle) > 0.000001);
     }
 
+    public List<GameObject> HighlightVertices()
+    {
+        int randPlaneIndex = 0;
+        List<GameObject> vertexMarkerList = new List<GameObject>();
+        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        //Debug.Log ("got anchor manager");
+        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+        //Debug.Log ("got anchor obj linked list");
+        ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+
+        //set it to the default first value
+        ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
+        randPlaneIndex = Random.Range(0, arPlaneAnchors.Count);
+        debugText.text = "plane anchor count " + arPlaneAnchors.Count.ToString();
+        int currentIndex = 0;
+        foreach (var plane in arPlaneAnchors)
+        {
+            if (currentIndex == randPlaneIndex)
+            {
+                planeAnchor = plane.planeAnchor;
+            }
+            currentIndex++;
+        }
+        Debug.Log("plane extent " + planeAnchor.extent.ToString());
+        Vector3[] vertices = planeAnchor.planeGeometry.boundaryVertices;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            Vector3 pt = vertices[i];
+            Debug.Log("vertex " + i.ToString() + " position " + pt.ToString());
+            //float dist = Random.Range(0.05f, 1f);
+            //Vector3 position = Vector3.Lerp(pt, planeAnchorObj.planeAnchor.center, dist);
+            GameObject vertexMarker = Instantiate(testCube, pt, Quaternion.identity) as GameObject;
+            vertexMarker.transform.parent = planeAnchorObj.gameObject.transform;
+            vertexMarker.transform.localPosition = pt;
+            vertexMarker.transform.parent = null;
+            vertexMarker.gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
+            vertexMarkerList.Add(vertexMarker);
+
+        }
+        return vertexMarkerList;
+    }
+
     public Vector3 GetRandomPosition(out int randPlaneIndex)
     {
         // Pick a location.  This is done by selecting a vertex at random and then
@@ -1394,12 +1475,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             }
             currentIndex++;
         }
-
-
         bool isPointInside = false;
-
         Vector3[] vertices = planeAnchor.planeGeometry.boundaryVertices;
-
+        Vector3[] extentVertices = GetAxisExtents(vertices); //the first vector in this array is the "minimum" extent and the second vector is the "maximum" extent.
         Vector2[] twoDimVertices = new Vector2[vertices.Length];
         for (int i = 0; i < twoDimVertices.Length;i++)
         {
@@ -1409,15 +1487,51 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Vector3 position = Vector3.zero;
         while(!isPointInside)
         {
-            Debug.Log("searching for point inside");
-            Vector3 pt = vertices[Random.Range(0, vertices.Length)];
-            float dist = Random.Range(0.05f, 1f);
-            position = Vector3.Lerp(pt, planeAnchorObj.planeAnchor.center, dist);
+            //Debug.Log("searching for point inside");
+            Debug.Log("");
+            //Vector3 pt = vertices[Random.Range(0, vertices.Length)];
+            //float dist = Random.Range(0.05f, 1f);
+            position = new Vector3(Random.Range(extentVertices[0].x, extentVertices[1].x), 0f, Random.Range(extentVertices[0].z, extentVertices[1].z));
+            //position = Vector3.Lerp(pt, planeAnchorObj.planeAnchor.center, dist);
             isPointInside = PointInPolygon(twoDimVertices, position.x, position.z);
         }
 
 
         return position;
+    }
+
+    //this is under the assumption that we are only interested in horizontal planes
+    Vector3[] GetAxisExtents(Vector3[] verts)
+    {
+        Vector3[] vertExtents = new Vector3[2];
+        float minX = 100f;
+        float minZ = 100f;
+        float maxX = -100f;
+        float maxZ = -100f;
+        for (int i = 0; i < verts.Length;i++)
+        {
+            if(verts[i].x < minX)
+            {
+                minX = verts[i].x;
+            }
+            else if(verts[i].x > maxX)
+            {
+                maxX = verts[i].x;
+            }
+
+            if(verts[i].z < minZ)
+            {
+                minZ = verts[i].z;
+            }
+            else if(verts[i].z > maxZ)
+            {
+                maxZ = verts[i].z;
+            }
+
+        }
+        vertExtents[0] = new Vector3(minX, 0f, minZ);
+        vertExtents[1] = new Vector3(maxX,0f, maxZ);
+        return vertExtents;
     }
 
 
@@ -1534,33 +1648,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Vector3 modChestRot = new Vector3(planeRotation.x, planeRotation.y, -planeRotation.z);
         //Anchor anchor = m_AllPlanes [randInt].CreateAnchor (new Pose (position, Quaternion.identity));
 
-
-        //randomize chest heights and spawn pedestal-less chests in sitting condition 
-        if (!canNavigate)
-        {
-            position = new Vector3(position.x, Random.Range(position.y, Configuration.maxHeight), position.z);
-            spawnChest = Instantiate(treasureChestPrefab, position, Quaternion.Euler(modChestRot)) as GameObject;
-            spawnChest.transform.parent = planeAnchor.gameObject.transform;
-            spawnChest.transform.localPosition = position;
-            spawnChest.transform.parent = null;
-
-            currentChest = spawnChest;
-
-        }
-        else
-        {
-            spawnChest = Instantiate(treasurePedestalPrefab, position, Quaternion.Euler(modChestRot)) as GameObject;
-
-            spawnChest.transform.parent = planeAnchor.gameObject.transform;
-            spawnChest.transform.localPosition = position;
-            spawnChest.transform.parent = null;
-
-
-            //now set the spawnchest reference to the actual treasure chest which is the top-most child in its hierarchy
-            spawnChest = spawnChest.transform.GetChild(0).gameObject;
-            //Debug.Log ("about to set current chest ref");
-            currentChest = spawnChest;
-        }
+        spawnChest = Instantiate(treasurePedestalPrefab, position, Quaternion.Euler(modChestRot)) as GameObject;
+        spawnChest.transform.parent = planeAnchor.gameObject.transform;
+        spawnChest.transform.localPosition = position;
+        spawnChest.transform.parent = null;
+        //now set the spawnchest reference to the actual treasure chest which is the top-most child in its hierarchy
+        spawnChest = spawnChest.transform.GetChild(0).gameObject;
+        currentChest = spawnChest;
 
         ARAnchor anchor = spawnChest.GetComponent<ARAnchor>();
         //			var spawnObject = Instantiate(spawnables[randSpawnable], position,Quaternion.identity,anchor.transform);
