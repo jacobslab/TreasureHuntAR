@@ -10,6 +10,7 @@ public class Configuration : MonoBehaviour
 
     public static float presentationTime = 3f;
     public static int maxObjects = 3;
+    public static int numChestsPerTrial = 4;
 
     //LANGUAGE SELECTION
     public enum LanguageSetting

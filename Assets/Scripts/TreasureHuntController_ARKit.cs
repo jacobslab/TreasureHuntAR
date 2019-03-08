@@ -33,6 +33,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     private List<GameObject> testSpawnList = new List<GameObject>();
     private Object[] spawnArr;
 
+
+
+    public List<int> spawnableItemCountList = new List<int>();
+    private int spawnablesLeft = 0;
+    private int spawnableCount = 0;
+
     private bool treasureFound = false;
     private bool forcingOpen = false;
 
@@ -144,6 +150,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public string sessionDirectory = "";
     public int sessionID = 0;
     public string sessionStartedFileName = "";
+    
 
 
     //save-load
@@ -840,7 +847,16 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return null;
     }
 
-
+    IEnumerator GetItemTrialDistribution()
+    {
+        spawnableItemCountList.Clear(); //clear the list if it has any contents
+        for (int i = 0; i < maxTrials/2;i++) //50-50 split between 2-item and 3-item trials
+        {
+            spawnableItemCountList.Add(2);
+            spawnableItemCountList.Add(3);
+        }
+        yield return null;
+    }
 
     public IEnumerator RunTrial()
     {
@@ -851,6 +867,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Debug.Log("running trial");
         //turn off debug visuals
 
+        //create a distribution of number of spawnable items spawned each trial for our session
+        yield return StartCoroutine(GetItemTrialDistribution());
         //yield return StartCoroutine(CreateChestLocationList());
 
 
@@ -864,9 +882,30 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         timer.StartTimer();
         chestSpawnLocationList.Clear(); //clear the list
 
+        int spawnableIndex = spawnableItemCountList[Random.Range(0, spawnableItemCountList.Count - 1)];
+        spawnableCount = spawnableItemCountList[spawnableIndex];
+        spawnableItemCountList.RemoveAt(spawnableIndex);
+        spawnablesLeft = spawnableCount;
         //let's make sure we don't exceed the max spawnables 
-        for (int i = 0; i < Configuration.maxObjects; i++)
+        for (int i = 0; i < Configuration.numChestsPerTrial; i++)
         {
+            int chestsLeft = Configuration.numChestsPerTrial - i;
+            bool shouldSpawnItem = false;
+
+            Debug.Log("chestsleft-spawnablesleft " + (chestsLeft - spawnablesLeft).ToString());
+            if (chestsLeft - spawnablesLeft > 0 && spawnablesLeft>0)
+            {
+                shouldSpawnItem = (Random.value > 0.5f) ? true : false;
+            }
+            else
+            {
+                shouldSpawnItem = true;
+            }
+
+            if (shouldSpawnItem)
+                spawnablesLeft--;
+
+            Debug.Log("SHOULD SPAWN ITEM " + shouldSpawnItem.ToString());
             yield return StartCoroutine(CreateNewChestLocation());
             treasureFound = false;
             //spawn a treasure chest at a random location
@@ -926,7 +965,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                                 {
                                     Debug.Log("forcing open due to touch");
                                     forcingOpen = true;
-                                    yield return StartCoroutine(OpenTreasureChest());
+                                yield return StartCoroutine(OpenTreasureChest(shouldSpawnItem));
                                 }
                         }
                         else
@@ -965,7 +1004,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                                     {
                                         Debug.Log("forcing open due to touch");
                                         forcingOpen = true;
-                                        yield return StartCoroutine(OpenTreasureChest());
+
+                                        yield return StartCoroutine(OpenTreasureChest(shouldSpawnItem));
                                     }
                                     else
                                         Debug.Log("cannot open yet");
@@ -984,19 +1024,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             //wait for the needed time
             yield return new WaitForSeconds(Configuration.presentationTime);
 
-            //destroy the chest
-            if (!canNavigate)
-            {
-                Destroy(spawnChest);
-            }
-            else
-            {
-                //destroy only the spawned chest's parent "ChestPedestal" 
-                Destroy(spawnChest.transform.parent.gameObject);
-            }
+            ////destroy the chest
+            //if (!canNavigate)
+            //{
+            //    Destroy(spawnChest);
+            //}
+            //else
+            //{
+            //destroy only the spawned chest's parent "ChestPedestal" 
+            Debug.Log("spawn chest " + spawnChest.gameObject.name);
+            Destroy(spawnChest.transform.parent.gameObject);
+            //}
             //			debugText.text = debugText.text.Insert (0, "spawn: " + spawnObj.gameObject.name.ToString ());
             //toggle visibility of the item
-            spawnObj.GetComponent<VisibilityToggler>().TurnVisible(false);
+            if (spawnObj != null)
+            {
+                spawnObj.GetComponent<VisibilityToggler>().TurnVisible(false);
+            }
             //				sessionValid = false;
 
             forceOpenChestButton.gameObject.SetActive(false);
@@ -1004,6 +1048,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             //make forcing chest open possible again
             forcingOpen = false;
             Debug.Log("made forcing open possible again");
+            chestsLeft--;
+
         }
         //stop timer
         timer.StopTimer();
@@ -1039,15 +1085,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator OpenTreasureChest()
+    IEnumerator OpenTreasureChest(bool hasItem)
     {
 
         Debug.Log("forcing open coroutine");
         yield return StartCoroutine(spawnChest.GetComponent<TreasureChest>().Open(FirstPersonCamera.gameObject));
-        yield return StartCoroutine(SpawnTreasure(spawnChest.transform, chestIndex));
-        spawnObj.GetComponent<VisibilityToggler>().TurnVisible(true);
+        if (hasItem)
+        {
+            yield return StartCoroutine(SpawnTreasure(spawnChest.transform, chestIndex));
+            
+            spawnObj.GetComponent<VisibilityToggler>().TurnVisible(true);
+            spawnChest.GetComponent<TreasureChest>().SetItemText(spawnObj.GetComponent<SpawnableObject>().GetName());
+        }
+        else
+        {
+            //nothing; maybe play the empty chest sound
+        }
         //set the text mesh to display the object name
-        spawnChest.GetComponent<TreasureChest>().SetItemText(spawnObj.GetComponent<SpawnableObject>().GetName());
         chestIndex++;
         //set treasure found as true so we can exit out of the while loop
         treasureFound = true;
@@ -1676,8 +1730,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         {
             //play chest opening sound
             audioManager.PlayClipOnce(audioManager.magicWand);
+            int randSpawnIndex = Random.Range(0, spawnableTrialList.Count - 1);
+            GameObject spawnPrefab = spawnableTrialList[randSpawnIndex];
+            spawnableTrialList.RemoveAt(randSpawnIndex);
 
-            spawnObj = Instantiate(spawnableTrialList[(currentTrialIndex * 3) + chestIndex], Vector3.zero, Quaternion.identity) as GameObject;
+            spawnObj = Instantiate(spawnPrefab, Vector3.zero, Quaternion.identity) as GameObject;
             spawnObj.transform.parent = currentChest.transform;
             spawnObj.transform.rotation = currentChest.transform.rotation;
             spawnObj.transform.localPosition = Vector3.zero;
@@ -1708,7 +1765,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         bool noTouch = false;
         bool retrievalChoiceMade = false;
         retrievalPanelUIGroup.alpha = 1f;
-        for (int i = 0; i < Configuration.maxObjects; i++)
+        for (int i = 0; i < spawnableCount; i++)
         {
             int randInt = Random.Range(0, spawnedObjList.Count);
             //Debug.Log ("adding to the retrieval sequence list");
