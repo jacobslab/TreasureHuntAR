@@ -163,6 +163,15 @@ public class TrialLogTrack : LogTrack {
         subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CAM_POS" + separator + camPos.x.ToString() + separator + camPos.y.ToString() + separator + camPos.z.ToString());
     }
 
+    public void LogWorldMapLoaded(string worldMapName)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "WORLD_MAP_LOADING" + separator + worldMapName);
+    }
+
+    public void LogWorldMapLoadSuccessful()
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "WORLD_MAP_LOAD_SUCCESSFUL");
+    }
     public void LogTreasureChestSpawned(Vector3 spawnLocation)
     {
         subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CHEST_SPAWNED" + separator + spawnLocation.x.ToString() + separator + spawnLocation.y.ToString() + separator + spawnLocation.z.ToString());

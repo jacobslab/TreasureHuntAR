@@ -232,6 +232,7 @@ public class WorldMapManager : MonoBehaviour
         string destName = Path.Combine(Application.persistentDataPath, baseName + "_image.png");
         StartCoroutine("LoadImage", destName);
         isRelocalizing = true;
+        TreasureHuntController_ARKit.Instance.trialLog.LogWorldMapLoaded(baseName);
 
         LoadSpecificMap(selectedMapName, out extents);
     }
@@ -262,6 +263,7 @@ public class WorldMapManager : MonoBehaviour
 
             UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
 
+            TreasureHuntController_ARKit.Instance.trialLog.LogWorldMapLoadSuccessful();
 			Debug.Log("Restarting session with worldMap");
 			session.RunWithConfigAndOptions(config, runOption);
             if (TreasureHuntController_ARKit.Instance!=null)
