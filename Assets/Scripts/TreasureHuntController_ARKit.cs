@@ -43,6 +43,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     private bool treasureFound = false;
     private bool forcingOpen = false;
 
+    private bool distractorSuccess = false;
+
     public Button forceOpenChestButton;
 
     public GameObject testCube;
@@ -852,9 +854,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     IEnumerator GetItemTrialDistribution()
     {
         spawnableItemCountList.Clear(); //clear the list if it has any contents
-        for (int i = 0; i < maxTrials/2;i++) //50-50 split between 2-item and 3-item trials
+        for (int i = 0; i < maxTrials;i++) //changed to 100% 3-item trials
         {
-            spawnableItemCountList.Add(2);
             spawnableItemCountList.Add(3);
         }
         yield return null;
@@ -1073,7 +1074,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         }
         //stop timer
-        timer.StopTimer();
+        timer.PauseTimer();
         timer.ToggleTimer(false);
 
         //have a distractor task here
@@ -1860,6 +1861,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return null;
     }
 
+    public void MarkDistractorResult(bool isSuccessful)
+    {
+        distractorSuccess = isSuccessful;
+    }
+
     IEnumerator ShowFeedback()
     {
         Color lineColor = Color.red; //wrong by default
@@ -1953,16 +1959,37 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return null;
     }
 
+
+
     IEnumerator PrepareScoreboard()
     {
         int itemScore = 0;
         scorePanelUIGroup.alpha = 1f;
-        for (int i = 0; i < Configuration.maxObjects; i++)
+        for (int i = 0; i < 3; i++)
         {
             scorePanelUIGroup.transform.GetChild(i).gameObject.GetComponent<ObjectScoreLine>().SetScore(retrievalSequenceList[i].gameObject.GetComponent<SpawnableObject>().GetName(), correctResponseList[i], out itemScore);
             totalScore += itemScore;
         }
-        scorePanelUIGroup.transform.GetChild(Configuration.maxObjects).gameObject.GetComponent<ObjectScoreLine>().SetTotalScore(totalScore);
+        //time bonus
+        int timeBonus = 0;
+        if(timer.timerBar.Value >50f)
+        {
+            timeBonus = 50;
+        }
+        else
+        {
+            timeBonus = 0;
+        }
+
+        totalScore += timeBonus;
+        scorePanelUIGroup.transform.GetChild(3).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = timeBonus.ToString();
+        //distractor bonus
+        int distractorBonus = (distractorSuccess) ? 50 : 0;
+        totalScore += distractorBonus;
+        scorePanelUIGroup.transform.GetChild(4).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = (distractorBonus>0) ? "+" + distractorBonus.ToString(): distractorBonus.ToString(); 
+
+        //total score
+        scorePanelUIGroup.transform.GetChild(5).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = totalScore.ToString();
         scoreText.text = totalScore.ToString();
         yield return null;
     }

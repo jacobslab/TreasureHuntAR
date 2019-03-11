@@ -185,6 +185,7 @@ public class DistractorGame : MonoBehaviour {
             correctParticleObj.transform.parent = planeAnchor.gameObject.transform;
             correctParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
             yield return new WaitForSeconds(2.5f);
+            TreasureHuntController_ARKit.Instance.MarkDistractorResult(true);
             Destroy(correctParticleObj);
         }
         else
@@ -194,6 +195,7 @@ public class DistractorGame : MonoBehaviour {
             wrongParticleObj.transform.parent = planeAnchor.gameObject.transform;
             wrongParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
             yield return new WaitForSeconds(2.5f);
+            TreasureHuntController_ARKit.Instance.MarkDistractorResult(false);
             Destroy(wrongParticleObj);
         }
 
