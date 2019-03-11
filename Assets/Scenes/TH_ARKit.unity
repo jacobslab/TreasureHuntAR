@@ -2129,6 +2129,7 @@ MonoBehaviour:
   camPosText: {fileID: 1119929374}
   objManager: {fileID: 1240507264}
   spawnPlaneIndexList: 
+  spawnableItemCountList: 
   forceOpenChestButton: {fileID: 1794221368}
   testCube: {fileID: 1717689397784848, guid: 82d06bc8bb5c84d78936a9c2cd2564ff, type: 2}
   centerSphere: {fileID: 1590220180911404, guid: 262c5bcddfaa8496d9e67581f88520e8,
@@ -4874,8 +4875,7 @@ MonoBehaviour:
   distractorText: {fileID: 1166029076}
   correctParticlePrefab: {fileID: 1015576372813440, guid: fbdb0b280789440678aa36806de97767,
     type: 2}
-  wrongParticlePrefab: {fileID: 1325963772890730, guid: bad4a586d8c2b4fc1adb20c80b9b13a1,
-    type: 2}
+  wrongParticlePrefab: {fileID: 197632, guid: bdba85e81a39dc848a061fa31bdbeeb0, type: 2}
   foundCube: {fileID: 983501116}
 --- !u!4 &948318432
 Transform:
@@ -6030,6 +6030,10 @@ Prefab:
     - target: {fileID: 146068, guid: 8ec7f7db508f35d4398e786534b07cca, type: 2}
       propertyPath: m_Name
       value: Rabbit
+      objectReference: {fileID: 0}
+    - target: {fileID: 146068, guid: 8ec7f7db508f35d4398e786534b07cca, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ec7f7db508f35d4398e786534b07cca, type: 2}

@@ -38,6 +38,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public List<int> spawnableItemCountList = new List<int>();
     private int spawnablesLeft = 0;
     private int spawnableCount = 0;
+    private bool shouldSpawnItem = false;
 
     private bool treasureFound = false;
     private bool forcingOpen = false;
@@ -85,6 +86,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public CanvasGroup trackingPanel;
     public Image trackingImage;
     public Text trackingReasonText;
+
 
 
 
@@ -886,24 +888,35 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         spawnableCount = spawnableItemCountList[spawnableIndex];
         spawnableItemCountList.RemoveAt(spawnableIndex);
         spawnablesLeft = spawnableCount;
+        Debug.Log("spawnables in upcoming trial " + spawnablesLeft.ToString());
         //let's make sure we don't exceed the max spawnables 
         for (int i = 0; i < Configuration.numChestsPerTrial; i++)
         {
             int chestsLeft = Configuration.numChestsPerTrial - i;
-            bool shouldSpawnItem = false;
+            shouldSpawnItem = false;
 
             Debug.Log("chestsleft-spawnablesleft " + (chestsLeft - spawnablesLeft).ToString());
             if (chestsLeft - spawnablesLeft > 0 && spawnablesLeft>0)
             {
                 shouldSpawnItem = (Random.value > 0.5f) ? true : false;
             }
-            else
+            //check to see if we have any more spawnables left
+            else if(spawnablesLeft>0)
             {
                 shouldSpawnItem = true;
             }
+            //we ran out of spawnables, and thus last chest is empty
+            else
+            {
+                shouldSpawnItem = false;
+            }
 
             if (shouldSpawnItem)
+            {
+                Debug.Log("reducing spawnablesLeft");
                 spawnablesLeft--;
+                Debug.Log("spawnables left " + spawnablesLeft.ToString());
+            }
 
             Debug.Log("SHOULD SPAWN ITEM " + shouldSpawnItem.ToString());
             yield return StartCoroutine(CreateNewChestLocation());
@@ -970,6 +983,14 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                         }
                         else
                         {
+                            if (canOpen && !treasureFound && !forcingOpen)
+                            {
+                                Debug.Log("forcing open due to touch");
+                                forcingOpen = true;
+
+                                yield return StartCoroutine(OpenTreasureChest(shouldSpawnItem));
+                            }
+                            
                             // prioritize results types
                             ARHitTestResultType[] resultTypes = {
                                 ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent,
@@ -1067,10 +1088,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //have feedback
         yield return StartCoroutine(ShowFeedback());
 
-        for (int i = 0; i < testObjList.Count; i++)
-        {
-            Destroy(testObjList[i]);
-        }
         retrievalText.text = "End trial";
         yield return new WaitForSeconds(1f);
         retrievalPanelUIGroup.alpha = 0f;
@@ -1123,7 +1140,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         {
             forcingOpen = true;
             Debug.Log("forcing open button method");
-            StartCoroutine("OpenTreasureChest");
+            StartCoroutine(OpenTreasureChest(shouldSpawnItem));
         }
     }
 
@@ -1765,13 +1782,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         bool noTouch = false;
         bool retrievalChoiceMade = false;
         retrievalPanelUIGroup.alpha = 1f;
-        for (int i = 0; i < spawnableCount; i++)
+        int spawnCount = spawnedObjList.Count;
+        Debug.Log("spawn count " + spawnCount.ToString());
+        for (int i = 0; i<spawnCount ; i++)
         {
             int randInt = Random.Range(0, spawnedObjList.Count);
             //Debug.Log ("adding to the retrieval sequence list");
             retrievalSequenceList.Add(spawnedObjList[randInt]);
             spawnedObjList.RemoveAt(randInt);
         }
+
+        Debug.Log("retrievalSequenceList length " + retrievalSequenceList.Count.ToString());
 
         for (int j = 0; j < retrievalSequenceList.Count; j++)
         {
