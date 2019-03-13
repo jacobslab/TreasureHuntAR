@@ -44,6 +44,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     private bool forcingOpen = false;
 
     private bool distractorSuccess = false;
+    private bool finishedFeedback = false;
 
     public Button forceOpenChestButton;
 
@@ -56,6 +57,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     //distractor
     public DistractorGame distractorGame;
+
+
 
     //ui
     public Button beginTrialButton;
@@ -71,6 +74,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public Text preSessionInstructionText;
     public Button confirmMarkersButton;
     public Dropdown mapDropdown;
+    public Text trialCountText;
+    public Text maxTrialsText;
 
     //scoring
     public Text scoreText;
@@ -1626,24 +1631,27 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public void BeginTrialSequence()
     {
         arkitManager.arWorldMapManager.canvasParent.gameObject.GetComponent<CanvasGroup>().alpha = 0f;
+        Debug.Log("initiating next trial");
         Debug.Log("about to begin trial sequence");
         if (currentTrialIndex < maxTrials)
         {
-            EnablePanel(beginTrialPanelUIGroup);
+            //EnablePanel(beginTrialPanelUIGroup);
             sessionValid = true;
             StartCoroutine("BeginTrial");
         }
         else
         {
-
             DisablePanel(beginTrialPanelUIGroup);
             sessionValid = true;
             EnablePanel(endSessionPanelUIGroup);
         }
+
     }
 
     IEnumerator BeginTrial()
     {
+        //reset user response
+        ResetUserResponse();
         //play start trial sound
         audioManager.PlayClipOnce(audioManager.beepHigh);
         //yield return StartCoroutine(FillMarkerPosList());
@@ -1920,16 +1928,20 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             else
                 Debug.Log(choiceSelectionList[j].gameObject.name + " has viztoggle null ");
         }
-        Debug.Log("now waiting for user input");
 
         //wait for few seconds before showing the scoreboard
         yield return new WaitForSeconds(2f);
+
+        //update trials and max trials text
+        trialCountText.text = (currentTrialIndex + 1).ToString();
+        maxTrialsText.text = maxTrials.ToString();
         //prepare scoreboard
         yield return StartCoroutine(PrepareScoreboard());
 
         retrievalPanelUIGroup.alpha = 0f;
         acceptUserResponseButton.gameObject.SetActive(true);
         //wait for user input
+        Debug.Log("now waiting for user input");
         yield return StartCoroutine(WaitForUserInput());
 
         acceptUserResponseButton.gameObject.SetActive(false);
@@ -1956,6 +1968,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //disable scoreboard and clear response list
         scorePanelUIGroup.alpha = 0f;
         correctResponseList.Clear();
+        Debug.Log("finishing feedback");
+        finishedFeedback = true;
         yield return null;
     }
 
@@ -1986,7 +2000,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //distractor bonus
         int distractorBonus = (distractorSuccess) ? 50 : 0;
         totalScore += distractorBonus;
-        scorePanelUIGroup.transform.GetChild(4).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = (distractorBonus>0) ? "+" + distractorBonus.ToString(): distractorBonus.ToString(); 
+        scorePanelUIGroup.transform.GetChild(4).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = distractorBonus.ToString(); 
 
         //total score
         scorePanelUIGroup.transform.GetChild(5).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = totalScore.ToString();
@@ -2036,9 +2050,47 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return null;
     }
 
+    public void EndCurrentTrial()
+    {
+        AcceptUserResponse(); //mark that the user responded
+        StartCoroutine("InitiateNextTrial");
+    }
+
+    public IEnumerator InitiateNextTrial()
+    {
+        Debug.Log("initiating next trial");
+        while(!finishedFeedback)
+        {
+            yield return 0;
+        }
+         Debug.Log("about to begin trial sequence");
+        if (currentTrialIndex < maxTrials)
+        {
+            finishedFeedback = false;
+            //EnablePanel(beginTrialPanelUIGroup);
+            sessionValid = true;
+            StartCoroutine("BeginTrial");
+        }
+        else
+        {
+            DisablePanel(beginTrialPanelUIGroup);
+            sessionValid = true;
+            EnablePanel(endSessionPanelUIGroup);
+        }
+        yield return null;
+    }
+
+
     public void AcceptUserResponse()
     {
+        Debug.Log("accepted user response");
         userResponded = true;
+    }
+
+    void ResetUserResponse()
+    {
+        Debug.Log("reset user response");
+        userResponded = false;
     }
 
     void EnablePanel(CanvasGroup uiPanel)

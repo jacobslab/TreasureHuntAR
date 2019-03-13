@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114437408299018072}
   - component: {fileID: 114125433676158502}
   m_Layer: 0
-  m_Name: magnifyingGlass
+  m_Name: magnifying glass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -20,9 +20,9 @@ public class ObjectScoreLine : MonoBehaviour {
 	{
 		itemScore = 0;
 		if (isCorrect)
-			itemScore = 250;
+			itemScore = 350;
 		else
-			itemScore = -100;
+			itemScore = -50;
 		nameText.text = itemName;
 		scoreText.text = itemScore.ToString();
 	}

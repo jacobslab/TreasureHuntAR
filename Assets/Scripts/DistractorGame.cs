@@ -19,8 +19,8 @@ public class DistractorGame : MonoBehaviour {
 
     private bool caughtRabbit =false; // flag that determines whether rabbit was caught or not
 
-    private string catchInstructions = "Catch the rabbit by going near its location!";
-    private string successInstructions = "Success! You caught the rabbit!";
+    private string catchInstructions = "Chase the rabbit by going near its location!";
+    private string successInstructions = "Success! You chased the rabbit!";
     private string failureInstructions = "The rabbit escaped! Better luck next time!";
     TreasureHuntController_ARKit taskController { get { return TreasureHuntController_ARKit.Instance; }}
 
