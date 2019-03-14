@@ -46,6 +46,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     private bool distractorSuccess = false;
     private bool finishedFeedback = false;
 
+    private bool firstTrial = true;
+
     public Button forceOpenChestButton;
 
     public GameObject testCube;
@@ -75,7 +77,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public Button confirmMarkersButton;
     public Dropdown mapDropdown;
     public Text trialCountText;
-    public Text maxTrialsText;
+
+
+    //feedback
+    public GameObject feedbackConnectingLinePrefab;
 
     //scoring
     public Text scoreText;
@@ -117,6 +122,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     private Touch touch;
     private bool userResponded = false;
+
 
 
     //managers
@@ -750,22 +756,22 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         ////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
         ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
-        if (arkitManager != null)
-        {
-            Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
-            camPos = UnityARMatrixOps.GetPosition(camMatrix);
-            Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
-            UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
-            if (arAnchorManager != null)
-            {
+        //if (arkitManager != null)
+        //{
+        //    Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+        //    camPos = UnityARMatrixOps.GetPosition(camMatrix);
+        //    Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+        //    UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        //    if (arAnchorManager != null)
+        //    {
 
-                LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
-                if (arPlaneAnchors != null)
-                {
-                    ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
-                }
-            }
-        }
+        //        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+        //        if (arPlaneAnchors != null)
+        //        {
+        //            ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+        //        }
+        //    }
+        //}
 
         scoreText.text = totalScore.ToString();
 
@@ -869,6 +875,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public IEnumerator RunTrial()
     {
         treasureFound = false;
+        //reset timer and start it
+        timer.Reset();
+        timer.ToggleTimer(true);
+        timer.StartTimer();
+        //trialLog.LogTrialStarted(true);
+        trialLog.LogTrialNavigation(true);
         bool noTouch = false;
         //turn off the retrieval panel, if it hasn't been already
         retrievalPanelUIGroup.alpha = 0f;
@@ -879,22 +891,25 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return StartCoroutine(GetItemTrialDistribution());
         //yield return StartCoroutine(CreateChestLocationList());
 
+        //reset chest index
+        chestIndex = 0;
 
         //turning it off by default
         ChangeDebugVisualsStatus(false);
         DisablePanel(beginTrialPanelUIGroup); //disable the begin trial UI panel
         scoreboardPanel.alpha = 1f;
-        //reset timer and start it
-        timer.Reset();
-        timer.ToggleTimer(true);
-        timer.StartTimer();
         chestSpawnLocationList.Clear(); //clear the list
-
-        int spawnableIndex = spawnableItemCountList[Random.Range(0, spawnableItemCountList.Count - 1)];
+        Debug.Log("spawnableItemCountList length " + spawnableItemCountList.Count.ToString());
+        int spawnableIndex =Random.Range(0, spawnableItemCountList.Count - 1);
+        Debug.Log("spawnableIndex " + spawnableIndex.ToString());
         spawnableCount = spawnableItemCountList[spawnableIndex];
         spawnableItemCountList.RemoveAt(spawnableIndex);
         spawnablesLeft = spawnableCount;
         Debug.Log("spawnables in upcoming trial " + spawnablesLeft.ToString());
+
+        //log the trial specifics before properly beginning it
+        trialLog.Log(currentTrialIndex + 1, Configuration.numChestsPerTrial, spawnableCount);
+
         //let's make sure we don't exceed the max spawnables 
         for (int i = 0; i < Configuration.numChestsPerTrial; i++)
         {
@@ -1084,27 +1099,40 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         //have a distractor task here
 
+        trialLog.LogDistractorGame(true);
         yield return StartCoroutine(RunDistractor());
-
+        trialLog.LogDistractorGame(false);
 
         //have the retrieval here
         //turn on the retrieval panel
+        trialLog.LogRecallPhaseStarted(true);
+        trialLog.LogRecallChoiceStarted(true);
         yield return StartCoroutine(PerformRetrieval());
+        trialLog.LogRecallChoiceStarted(false);
+        trialLog.LogRecallPhaseStarted(false);
 
         //have feedback
+        trialLog.LogFeedback(true);
         yield return StartCoroutine(ShowFeedback());
+        trialLog.LogFeedback(false);
 
         retrievalText.text = "End trial";
         yield return new WaitForSeconds(1f);
         retrievalPanelUIGroup.alpha = 0f;
-        EnablePanel(beginTrialPanelUIGroup);
+        //EnablePanel(beginTrialPanelUIGroup);
         //ChangeDebugVisualsStatus(true);
+
+
+        //stop the timer
+        timer.StopTimer();
 
         ClearLists();
         //reset chest index
         chestIndex = 0;
         currentTrialIndex++; //increment the trial count
 
+        //trialLog.LogTrialStarted(false);
+        trialLog.LogTrialNavigation(false);
         yield return null;
     }
 
@@ -1159,7 +1187,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         spawnables.Clear();
         ClearLists();
         spawnPlaneIndexList.Clear();
-        maxTrials = spawnArr.Length / Configuration.maxObjects;
+        //maxTrials = spawnArr.Length / Configuration.maxObjects;
+        maxTrials = 3;
         Debug.Log("number of trials are: " + maxTrials.ToString());
         //		Configuration.maxObjects = spawnArr.Length; // 0 inclusive
         for (int i = 0; i < spawnArr.Length; i++)
@@ -1628,25 +1657,78 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         return chestSpawnLocationList[chestInt];
     }
 
-    public void BeginTrialSequence()
+
+    public void EndCurrentTrial()
     {
+        AcceptUserResponse(); //mark that the user responded
+        StartCoroutine("InitiateNextTrial");
+    }
+
+    public void BeginNewSession()
+    {
+        Debug.Log("beginning new session");
+        firstTrial = true; //set the first trial flag 
         arkitManager.arWorldMapManager.canvasParent.gameObject.GetComponent<CanvasGroup>().alpha = 0f;
-        Debug.Log("initiating next trial");
-        Debug.Log("about to begin trial sequence");
-        if (currentTrialIndex < maxTrials)
+        trialLog.LogSessionStarted(true);
+        if(canNavigate)
         {
-            //EnablePanel(beginTrialPanelUIGroup);
+            Configuration.maxTrialTime = Configuration.maxTrialTime_navigate;
+        }
+        else
+        {
+            Configuration.maxTrialTime = Configuration.maxTrialTime_sitting;
+        }
+        StartCoroutine("InitiateNextTrial");
+        
+    }
+
+    public IEnumerator InitiateNextTrial()
+    {
+        Debug.Log("initiating next trial");
+        while (!finishedFeedback && !firstTrial)
+        {
+            yield return 0;
+        }
+        firstTrial = false;
+        Debug.Log("about to begin trial sequence");
+        
+        if ((currentTrialIndex + 1) < maxTrials)
+        {
+            finishedFeedback = false;
             sessionValid = true;
             StartCoroutine("BeginTrial");
+            DisablePanel(beginTrialPanelUIGroup);
         }
         else
         {
             DisablePanel(beginTrialPanelUIGroup);
             sessionValid = true;
             EnablePanel(endSessionPanelUIGroup);
+            trialLog.LogSessionStarted(false);
         }
-
+        yield return null;
     }
+
+
+    //public void BeginTrialSequence()
+    //{
+    //    arkitManager.arWorldMapManager.canvasParent.gameObject.GetComponent<CanvasGroup>().alpha = 0f;
+    //    Debug.Log("initiating next trial");
+    //    Debug.Log("about to begin trial sequence");
+    //    if (currentTrialIndex < maxTrials)
+    //    {
+    //        //EnablePanel(beginTrialPanelUIGroup);
+    //        sessionValid = true;
+    //        StartCoroutine("BeginTrial");
+    //    }
+    //    else
+    //    {
+    //        DisablePanel(beginTrialPanelUIGroup);
+    //        sessionValid = true;
+    //        EnablePanel(endSessionPanelUIGroup);
+    //    }
+
+    //}
 
     IEnumerator BeginTrial()
     {
@@ -1661,6 +1743,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         {
             yield return 0;
         }
+        Debug.Log("spawnables are ready");
         yield return StartCoroutine(RunTrial());
         //play end trial sound
         audioManager.PlayClipOnce(audioManager.beepLow);
@@ -1701,6 +1784,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public IEnumerator SpawnTreasureChest(int chestIndex)
     {
 
+        Debug.Log("chest index is " + chestIndex.ToString());
         //reset current chest reference
         currentChest = null;
 
@@ -1709,7 +1793,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //		Vector3 position = GetRandomPosition (randInt);
 
 
-        int planeIndex = GetPlaneIndex(chestIndex);
+        //int planeIndex = GetPlaneIndex(chestIndex);
+        int planeIndex = 0;
         UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
         LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
 
@@ -1723,6 +1808,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             }
             currentIndex++;
         }
+        Debug.Log("about to get chest pos");
         Vector3 position = GetChestPosition(chestIndex);
         Vector3 planeRotation = planeAnchor.gameObject.transform.rotation.eulerAngles;
         Vector3 modChestRot = new Vector3(planeRotation.x, planeRotation.y, -planeRotation.z);
@@ -1878,6 +1964,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     {
         Color lineColor = Color.red; //wrong by default
         List<GameObject> correctPositionIndicatorList = new List<GameObject>();
+        List<GameObject> connectingLinesList = new List<GameObject>();
         retrievalText.text = "Showing feedback...";
         //debugText.text = "";
         //make all the spawned objects and choice selection visible
@@ -1886,13 +1973,14 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
             //reset the line color first
             lineColor = Color.red;
-            if (retrievalSequenceList[i].GetComponent<VisibilityToggler>() != null)
+             GameObject correctPositionIndicator  = null;
+               if (retrievalSequenceList[i].GetComponent<VisibilityToggler>() != null)
             {
                 Debug.Log(retrievalSequenceList[i].gameObject.name + " pos: " + retrievalSequenceList[i].transform.position.ToString());
 
                 retrievalSequenceList[i].GetComponent<VisibilityToggler>().TurnVisible(true);
                 //instantiate a correct position indicator
-                GameObject correctPositionIndicator = Instantiate(correctPositionIndicatorPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+                correctPositionIndicator = Instantiate(correctPositionIndicatorPrefab, Vector3.zero, Quaternion.identity) as GameObject;
                 correctPositionIndicator.transform.parent = retrievalSequenceList[i].gameObject.transform;
                 correctPositionIndicator.transform.localPosition = Vector3.zero - new Vector3(0f, 0.519f, 0f); //adjust so that the indicator is at the foot of the pedestal
                 correctPositionIndicator.transform.parent = null;
@@ -1920,21 +2008,35 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             }
             else
                 Debug.Log(retrievalSequenceList[i].gameObject.name + " has viztoggle null");
-        }
-        for (int j = 0; j < choiceSelectionList.Count; j++)
-        {
+
+            //for (int j = 0; j < choiceSelectionList.Count; j++)
+            int j = i;
+        //{
             if (choiceSelectionList[j].GetComponent<VisibilityToggler>() != null)
                 choiceSelectionList[j].GetComponent<VisibilityToggler>().TurnVisible(true);
             else
                 Debug.Log(choiceSelectionList[j].gameObject.name + " has viztoggle null ");
+
+            //spawn connecting line
+            GameObject feedbackConnectingLineObj = Instantiate(feedbackConnectingLinePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+            Vector3[] positions = new Vector3[2];
+            positions[0] = choiceSelectionList[j].transform.position; //start position
+            if (correctPositionIndicator != null)
+                positions[1] = correctPositionIndicator.transform.position; // end position
+            else
+                positions[1] = Vector3.zero;
+            feedbackConnectingLineObj.GetComponent<LineRenderer>().SetPositions(positions);
+            feedbackConnectingLineObj.GetComponent<LineRenderer>().endColor = lineColor;
+            connectingLinesList.Add(feedbackConnectingLineObj);
+            audioManager.PlayClipOnce(audioManager.feedbackSplash);
+            yield return new WaitForSeconds(1f);
         }
 
         //wait for few seconds before showing the scoreboard
         yield return new WaitForSeconds(2f);
 
         //update trials and max trials text
-        trialCountText.text = (currentTrialIndex + 1).ToString();
-        maxTrialsText.text = maxTrials.ToString();
+        trialCountText.text = "Trial " + (currentTrialIndex + 1).ToString() + "/" + maxTrials.ToString() + " completed";
         //prepare scoreboard
         yield return StartCoroutine(PrepareScoreboard());
 
@@ -1963,6 +2065,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         for (int k = 0; k < correctPositionIndicatorList.Count; k++)
         {
             Destroy(correctPositionIndicatorList[k].gameObject);
+        }
+        for (int m = 0; m < connectingLinesList.Count; m++)
+        {
+            Destroy(connectingLinesList[m]);
         }
 
         //disable scoreboard and clear response list
@@ -2050,37 +2156,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return null;
     }
 
-    public void EndCurrentTrial()
-    {
-        AcceptUserResponse(); //mark that the user responded
-        StartCoroutine("InitiateNextTrial");
-    }
-
-    public IEnumerator InitiateNextTrial()
-    {
-        Debug.Log("initiating next trial");
-        while(!finishedFeedback)
-        {
-            yield return 0;
-        }
-         Debug.Log("about to begin trial sequence");
-        if (currentTrialIndex < maxTrials)
-        {
-            finishedFeedback = false;
-            //EnablePanel(beginTrialPanelUIGroup);
-            sessionValid = true;
-            StartCoroutine("BeginTrial");
-        }
-        else
-        {
-            DisablePanel(beginTrialPanelUIGroup);
-            sessionValid = true;
-            EnablePanel(endSessionPanelUIGroup);
-        }
-        yield return null;
-    }
-
-
     public void AcceptUserResponse()
     {
         Debug.Log("accepted user response");
@@ -2095,6 +2170,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     void EnablePanel(CanvasGroup uiPanel)
     {
+        Debug.Log("enabling panel " + uiPanel.gameObject.name);
         uiPanel.gameObject.SetActive(true);
         uiPanel.alpha = 1f;
     }
@@ -2102,6 +2178,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     void DisablePanel(CanvasGroup uiPanel)
     {
+        Debug.Log("disabling panel " + uiPanel.gameObject.name);
         uiPanel.alpha = 0f;
         uiPanel.gameObject.SetActive(false);
     }

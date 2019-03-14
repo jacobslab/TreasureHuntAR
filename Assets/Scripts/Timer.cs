@@ -31,12 +31,15 @@ public class Timer : MonoBehaviour {
 
     public void Reset()
     {
+        
         timer = 0f;
         timerBar.Value = 100f;
     }
 
     public void StartTimer()
     {
+
+        maxTimer = Configuration.maxTrialTime;
         StartCoroutine("TimerCoroutine");
     }
 

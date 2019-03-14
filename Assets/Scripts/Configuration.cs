@@ -30,7 +30,7 @@ public class Configuration : MonoBehaviour
     }
     public static Version BuildVersion = Version.THAR;
 
-    public static string VersionNumber = "0.4";
+    public static string VersionNumber = "0.8";
 
     public static bool isSyncbox = false;
 
@@ -56,6 +56,8 @@ public class Configuration : MonoBehaviour
 
     public static float extent = 1f;
 
+    public static float maxTrialTime_navigate = 40f;
+    public static float maxTrialTime_sitting = 20f;
     public static float maxTrialTime = 40f;
 
     private static Subject _currentSubject;

@@ -7,6 +7,9 @@ public class AudioManager : MonoBehaviour {
     public AudioClip beepHigh;
     public AudioClip beepLow;
     public AudioClip magicWand;
+    public AudioClip correctResult;
+    public AudioClip incorrectResult;
+    public AudioClip feedbackSplash;
     private AudioSource audioSource;
     // Use this for initialization
 

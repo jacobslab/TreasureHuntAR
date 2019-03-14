@@ -16,13 +16,22 @@ public class TrialLogTrack : LogTrack {
 	}
 
 	//gets called from trial controller instead of in update!
-	public void Log(int trialNumber, int numTreasureChests, int numSpecialObjects, bool isSequential, bool isStim){
+	public void Log(int trialNumber, int numTreasureChests, int numSpecialObjects){
 		if (Configuration.isLogging) {
-			LogTrial (trialNumber, numTreasureChests, numSpecialObjects, isSequential, isStim);
+			LogTrial (trialNumber, numTreasureChests, numSpecialObjects);
 		}
 	}
+    public void LogTrialStarted(bool isStart)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TRIAL_" + ((isStart) ? "STARTED" : "ENDED"));
+    }
 
-	void LogVersion(){
+    public void LogSessionStarted(bool isStart)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "SESSION_" + ((isStart) ? "STARTED" : "ENDED"));
+    }
+
+    void LogVersion(){
 		Debug.Log ("LOGGED VERSION");
 		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Experiment Info" + separator + "VERSION" + separator + Configuration.BuildVersion.ToString() + separator + Configuration.VersionNumber);
 	}
@@ -33,34 +42,10 @@ public class TrialLogTrack : LogTrack {
 	}
 
 	//LOGGED ON THE START OF THE TRIAL.
-	void LogTrial(int trialNumber, int numTreasureChests, int numSpecialObjects, bool isSequential, bool isStim){
+	void LogTrial(int trialNumber, int numTreasureChests, int numSpecialObjects){
 		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Trial Info" + separator + "NUM_TRIALS" + separator + trialNumber + separator
-		                + "NUM_TREASURE" + separator + numTreasureChests + separator + "NUM_SPECIAL_OBJECTS" + separator + numSpecialObjects + separator 
-							+ "IS_SEQUENTIAL" + separator + isSequential + separator + "IS_STIM" + separator + isStim);
+		                + "NUM_TREASURE" + separator + numTreasureChests + separator + "NUM_SPECIAL_OBJECTS" + separator + numSpecialObjects);
 	}
-
-
-	//TODO: move to an experiment or an environment logger... just want to log this once at the beginning of the trials so there is a reference for all positions in the world.
-//	void LogEnvironmentDimensions(){
-//		//log center
-//		Vector3 envCenter = exp.environmentController.center;
-//		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_CENTER" + separator + envCenter.x + separator + envCenter.y + separator + envCenter.z);
-//	
-//		//log walls
-//		Vector3 wallPos = exp.environmentController.WallsXPos.position;
-//		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_WALL_XPOS" + separator + wallPos.x + separator + wallPos.y + separator + wallPos.z);
-//
-//		wallPos = exp.environmentController.WallsXNeg.position;
-//		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_WALL_XNEG" + separator + wallPos.x + separator + wallPos.y + separator + wallPos.z);
-//
-//		wallPos = exp.environmentController.WallsZPos.position;
-//		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_WALL_ZPOS" + separator + wallPos.x + separator + wallPos.y + separator + wallPos.z);
-//
-//		wallPos = exp.environmentController.WallsZNeg.position;
-//		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_WALL_ZNEG" + separator + wallPos.x + separator + wallPos.y + separator + wallPos.z);
-//		Debug.Log ("LOGGED ENV");
-//	}
-
 
 	//TODO: move to an experiment logger
 	public void LogWaitForJitterStarted(float jitter){
@@ -73,88 +58,6 @@ public class TrialLogTrack : LogTrack {
 		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "RANDOM_JITTER_ENDED" + separator + jitter);
 		Debug.Log ("JITTER ENDED LOGGED: " + jitter);
 	}
-
-
-
-
-	public void LogAreYouSureResponse(bool response){
-		//TODO: CHANGE THE "DOUBLE DOWN" TO ARE YOU SURE OR SOMETHING.
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "DOUBLE_DOWN_RESPONSE" + separator + response);
-		Debug.Log ("DOUBLE DOWN LOGGED: " + response);
-	}
-
-
-	#if MRIVERSION
-
-	public void LogMRITimeout(){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_TIMEOUT");
-		Debug.Log ("MRI timeout");
-	}
-
-	public void LogPlayerNavigationTimeout(){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_NAVIGATION_TIMEOUT");
-		Debug.Log ("chest navigation timeout");
-	}
-
-	public void LogPlayerAutodrive(bool isStarted){
-		if(isStarted){
-			subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_AUTODRIVE_STARTED");
-			Debug.Log ("chest autodrive starting");
-		}
-		else{
-			subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_AUTODRIVE_ENDED");
-			Debug.Log ("chest autodrive ending");
-		}
-	}
-
-	/*public void LogRememberResponseTimeout(){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_REMEMBER_RESPONSE_TIMEOUT");
-		Debug.Log ("remember response timeout");
-	}
-
-	public void LogScoreScreenTimeout(){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_SCORESCREEN_TIMEOUT");
-		Debug.Log ("scorescreen timeout");
-	}
-
-	public void LogFeedbackTimeout(){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_FEEDBACK_TIMEOUT");
-		Debug.Log ("feedback timeout");
-	}
-
-	public void LogDistractorResponseTimeout(){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_DISTRACTOR_RESPONSE_TIMEOUT");
-		Debug.Log ("distractor response timeout");
-	}
-
-	public void LogDistractorFeedbackTimeout(){
-		subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "MRI_DISTRACTOR_FEEDBACK_TIMEOUT");
-		Debug.Log ("distractor feedback timeout");
-	}*/
-	#endif
-
-	//if the UI answer selector has moved TODO: move to an answer selector logger?
-//	public void LogAnswerPositionMoved(Config_CoinTask.MemoryState memoryState, bool isRememberResponse){ //either remember response or double down response
-//		if (ExperimentSettings_CoinTask.isLogging) {
-//			string answerPosition = "NO";
-//
-//			switch (memoryState) {
-//			case Config_CoinTask.MemoryState.yes:
-//				answerPosition = "YES";
-//				break;
-//			case Config_CoinTask.MemoryState.maybe:
-//				answerPosition = "MAYBE";
-//				break;
-//			case Config_CoinTask.MemoryState.no:
-//				answerPosition = "NO";
-//				break;
-//			}
-//	
-//			subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), gameObject.name + separator + "REMEMBER_ANSWER_MOVEMENT" + separator + answerPosition);
-//			Debug.Log ("REMEMBER MOVEMENT LOGGED: " + answerPosition);
-//		}
-//	}
-
 
 
     public void LogCamPosition(Vector3 camPos)
