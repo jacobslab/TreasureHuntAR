@@ -1133,6 +1133,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         //trialLog.LogTrialStarted(false);
         trialLog.LogTrialNavigation(false);
+        finishedFeedback = true; //wait till here to "finish feedback" and clear flags so that next trial, if any, can run
         yield return null;
     }
 
@@ -1143,6 +1144,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return StartCoroutine(spawnChest.GetComponent<TreasureChest>().Open(FirstPersonCamera.gameObject));
         if (hasItem)
         {
+            Debug.Log("spawning item");
             yield return StartCoroutine(SpawnTreasure(spawnChest.transform, chestIndex));
             
             spawnObj.GetComponent<VisibilityToggler>().TurnVisible(true);
@@ -1150,6 +1152,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         }
         else
         {
+            Debug.Log("no item to spawn");
             //nothing; maybe play the empty chest sound
         }
         //set the text mesh to display the object name
@@ -1162,7 +1165,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     void ClearLists()
     {
-
+        Debug.Log("clearing lists");
         spawnedObjList.Clear();
         retrievalSequenceList.Clear();
         choiceSelectionList.Clear();
@@ -1187,8 +1190,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         spawnables.Clear();
         ClearLists();
         spawnPlaneIndexList.Clear();
-        //maxTrials = spawnArr.Length / Configuration.maxObjects;
-        maxTrials = 3;
+        maxTrials = spawnArr.Length / Configuration.maxObjects;
+        //maxTrials = 3;
         Debug.Log("number of trials are: " + maxTrials.ToString());
         //		Configuration.maxObjects = spawnArr.Length; // 0 inclusive
         for (int i = 0; i < spawnArr.Length; i++)
@@ -1696,8 +1699,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         {
             finishedFeedback = false;
             sessionValid = true;
-            StartCoroutine("BeginTrial");
             DisablePanel(beginTrialPanelUIGroup);
+            yield return StartCoroutine(BeginTrial());
         }
         else
         {
@@ -1808,7 +1811,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             }
             currentIndex++;
         }
-        Debug.Log("about to get chest pos");
+        //Debug.Log("about to get chest pos");
         Vector3 position = GetChestPosition(chestIndex);
         Vector3 planeRotation = planeAnchor.gameObject.transform.rotation.eulerAngles;
         Vector3 modChestRot = new Vector3(planeRotation.x, planeRotation.y, -planeRotation.z);
@@ -1862,6 +1865,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             //		debugText.text=debugText.text.Insert(0,"spawned " + spawnObj.gameObject.name + "\n" );
 
             //add to the spawn obj list
+            Debug.Log("adding to spawnedObjList " + spawnObj.name);
             spawnedObjList.Add(spawnObj);
         }
         else
@@ -1878,12 +1882,13 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         bool retrievalChoiceMade = false;
         retrievalPanelUIGroup.alpha = 1f;
         int spawnCount = spawnedObjList.Count;
-        Debug.Log("spawn count " + spawnCount.ToString());
+        //Debug.Log("spawn count " + spawnCount.ToString());
         for (int i = 0; i<spawnCount ; i++)
         {
             int randInt = Random.Range(0, spawnedObjList.Count);
             //Debug.Log ("adding to the retrieval sequence list");
             retrievalSequenceList.Add(spawnedObjList[randInt]);
+            //Debug.Log("removing from spawn obj list " + spawnedObjList[randInt].gameObject.name);
             spawnedObjList.RemoveAt(randInt);
         }
 
@@ -1894,6 +1899,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             retrievalChoiceMade = false;
 
             string displayName = retrievalSequenceList[j].GetComponent<SpawnableObject>().GetName();
+            //Debug.Log("asking about " + displayName);
             retrievalText.text = "Where did you find the " + displayName + "?";
 
             //			debugText.text = debugText.text.Insert (0, displayName + " pos: " + retrievalSequenceList [j].transform.position.ToString ());
@@ -1985,6 +1991,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 correctPositionIndicator.transform.localPosition = Vector3.zero - new Vector3(0f, 0.519f, 0f); //adjust so that the indicator is at the foot of the pedestal
                 correctPositionIndicator.transform.parent = null;
 
+                Debug.Log("correct position indicator " + correctPositionIndicator.transform.position.ToString());
+
                 //make this adjustment for non-navigation so that the indicators are on the same vertical level as the indicators
                 if(!canNavigate)
                 {
@@ -2021,11 +2029,14 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             GameObject feedbackConnectingLineObj = Instantiate(feedbackConnectingLinePrefab, Vector3.zero, Quaternion.identity) as GameObject;
             Vector3[] positions = new Vector3[2];
             positions[0] = choiceSelectionList[j].transform.position; //start position
+            Debug.Log("choice selection list " + choiceSelectionList[j].transform.position.ToString());
             if (correctPositionIndicator != null)
                 positions[1] = correctPositionIndicator.transform.position; // end position
             else
                 positions[1] = Vector3.zero;
+            Debug.Log("setting connecting line positions");
             feedbackConnectingLineObj.GetComponent<LineRenderer>().SetPositions(positions);
+            feedbackConnectingLineObj.GetComponent<LineRenderer>().startColor = lineColor;
             feedbackConnectingLineObj.GetComponent<LineRenderer>().endColor = lineColor;
             connectingLinesList.Add(feedbackConnectingLineObj);
             audioManager.PlayClipOnce(audioManager.feedbackSplash);
@@ -2075,7 +2086,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         scorePanelUIGroup.alpha = 0f;
         correctResponseList.Clear();
         Debug.Log("finishing feedback");
-        finishedFeedback = true;
         yield return null;
     }
 
@@ -2087,6 +2097,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         scorePanelUIGroup.alpha = 1f;
         for (int i = 0; i < 3; i++)
         {
+
+            Debug.Log("preparing scoreboard for " + retrievalSequenceList[i].gameObject.name);
             scorePanelUIGroup.transform.GetChild(i).gameObject.GetComponent<ObjectScoreLine>().SetScore(retrievalSequenceList[i].gameObject.GetComponent<SpawnableObject>().GetName(), correctResponseList[i], out itemScore);
             totalScore += itemScore;
         }

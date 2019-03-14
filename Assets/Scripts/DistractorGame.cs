@@ -149,7 +149,7 @@ public class DistractorGame : MonoBehaviour {
             float durationTimer = 0f;
             while (distance > Configuration.minRabbitCatchDistance && durationTimer < 8f && !caughtRabbit)
             {
-                Debug.Log("waiting for the rabbit to be caught");
+                //Debug.Log("waiting for the rabbit to be caught");
                 durationTimer += Time.deltaTime;
 
 

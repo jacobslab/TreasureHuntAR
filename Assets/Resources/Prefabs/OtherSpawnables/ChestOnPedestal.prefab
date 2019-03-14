@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4632943013536438}
   - component: {fileID: 23826419390459234}
   - component: {fileID: 102624487355322322}
-  - component: {fileID: 114222739458553518}
+  - component: {fileID: 114576660235275314}
   m_Layer: 0
   m_Name: Special Item Label
   m_TagString: Untagged
@@ -456,7 +456,7 @@ GameObject:
   - component: {fileID: 224089607383757796}
   - component: {fileID: 222141086747060016}
   - component: {fileID: 114132937048702724}
-  - component: {fileID: 114419939433820134}
+  - component: {fileID: 114502382759756184}
   m_Layer: 0
   m_Name: ProgressQuad 1
   m_TagString: Untagged
@@ -2056,20 +2056,6 @@ MonoBehaviour:
   worldCanvas: {fileID: 223617686373024174}
   progressBar: {fileID: 114078604961835338}
   specialTextMesh: {fileID: 102624487355322322}
---- !u!114 &114222739458553518
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1026383357142092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93c9c7d06fe1741c4b7c0843e54ee115, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TargetPositionTransform: {fileID: 0}
-  ShouldFacePlayer: 1
-  ShouldFlip180: 1
 --- !u!114 &114273197715134510
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2082,20 +2068,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
---- !u!114 &114419939433820134
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1857632197782246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93c9c7d06fe1741c4b7c0843e54ee115, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TargetPositionTransform: {fileID: 0}
-  ShouldFacePlayer: 1
-  ShouldFlip180: 0
 --- !u!114 &114444702609726486
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2117,6 +2089,20 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+--- !u!114 &114502382759756184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1857632197782246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eeefabe33eea4012a3f4921af3efa90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TargetPositionTransform: {fileID: 0}
+  ShouldFacePlayer: 1
+  ShouldFlip180: 0
 --- !u!114 &114523085624876338
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2171,6 +2157,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114576660235275314
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1026383357142092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eeefabe33eea4012a3f4921af3efa90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TargetPositionTransform: {fileID: 0}
+  ShouldFacePlayer: 1
+  ShouldFlip180: 1
 --- !u!114 &114587251753227930
 MonoBehaviour:
   m_ObjectHideFlags: 1
