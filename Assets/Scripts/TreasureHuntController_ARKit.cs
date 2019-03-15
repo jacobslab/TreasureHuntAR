@@ -756,22 +756,22 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         ////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
         ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
-        //if (arkitManager != null)
-        //{
-        //    Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
-        //    camPos = UnityARMatrixOps.GetPosition(camMatrix);
-        //    Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
-        //    UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
-        //    if (arAnchorManager != null)
-        //    {
+        if (arkitManager != null)
+        {
+            Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+            camPos = UnityARMatrixOps.GetPosition(camMatrix);
+            Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+            UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+            if (arAnchorManager != null)
+            {
 
-        //        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
-        //        if (arPlaneAnchors != null)
-        //        {
-        //            ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
-        //        }
-        //    }
-        //}
+                LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+                if (arPlaneAnchors != null)
+                {
+                    ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+                }
+            }
+        }
 
         scoreText.text = totalScore.ToString();
 
