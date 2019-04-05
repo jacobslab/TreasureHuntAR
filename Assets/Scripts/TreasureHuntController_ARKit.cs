@@ -1695,7 +1695,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         firstTrial = false;
         Debug.Log("about to begin trial sequence");
         
-        if ((currentTrialIndex + 1) < maxTrials)
+        if ((currentTrialIndex ) < maxTrials)
         {
             finishedFeedback = false;
             sessionValid = true;
@@ -2238,6 +2238,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     public void ExitToMainMenu()
     {
+        RemoveSpawnedObjects();
         SceneManager.UnloadSceneAsync(1);
         SceneManager.LoadSceneAsync(0);
     }
