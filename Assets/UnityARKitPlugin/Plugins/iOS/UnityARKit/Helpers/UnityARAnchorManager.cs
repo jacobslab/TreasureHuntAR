@@ -27,7 +27,6 @@ namespace UnityEngine.XR.iOS
 			GameObject go = UnityARUtility.CreatePlaneInScene (arPlaneAnchor);
 			go.AddComponent<DontDestroyOnLoad> ();  //this is so these GOs persist across scene loads
 			ARPlaneAnchorGameObject arpag = new ARPlaneAnchorGameObject ();
-			TreasureHuntController_ARKit.Instance.sceneObjList.Add (go);
 			arpag.planeAnchor = arPlaneAnchor;
 			arpag.gameObject = go;
 			planeAnchorMap.Add (arPlaneAnchor.identifier, arpag);
@@ -59,10 +58,14 @@ namespace UnityEngine.XR.iOS
             UnityARSessionNativeInterface.ARAnchorRemovedEvent -= RemoveAnchor;
         }
 
+        public int GetPlaneCount()
+        {
+            return planeAnchorMap.Count;
+        }
+
         public void Destroy()
         {
-			foreach (ARPlaneAnchorGameObject arpag in GetCurrentPlaneAnchors()) {
-				TreasureHuntController_ARKit.Instance.sceneObjList.Remove (arpag.gameObject);
+            foreach (ARPlaneAnchorGameObject arpag in GetCurrentPlaneAnchors()) {
                 GameObject.Destroy (arpag.gameObject);
             }
 
@@ -70,17 +73,9 @@ namespace UnityEngine.XR.iOS
             UnsubscribeEvents();
         }
 
-		public int GetPlaneCount()
-		{
-			return planeAnchorMap.Count;
-		}
-
 		public LinkedList<ARPlaneAnchorGameObject> GetCurrentPlaneAnchors()
 		{
-			if(planeAnchorMap!=null)
-				return planeAnchorMap.Values;
-			else
-				return null;
+			return planeAnchorMap.Values;
 		}
 	}
 }

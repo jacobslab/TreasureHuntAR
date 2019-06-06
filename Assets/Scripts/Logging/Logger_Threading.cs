@@ -164,7 +164,7 @@ public class Logger_Threading : MonoBehaviour
             {
                 string msg = myLoggerQueue.GetFromLogQueue();
 
-                UnityEngine.Debug.Log ("writing: " + msg);
+                //UnityEngine.Debug.Log ("writing: " + msg);
                 logfile.WriteLine(msg);
                 
                 //				yield return 0;
