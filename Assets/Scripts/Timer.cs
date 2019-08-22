@@ -33,6 +33,7 @@ public class Timer : MonoBehaviour {
     public void Reset()
     {
         //Debug.Log("reset timer");
+        TreasureHuntController_ARKit.Instance.trialLog.LogResetTimer();
         timer = 0f;
         timerBar.Value = 100f;
         timerInterrupt = false;
@@ -43,6 +44,7 @@ public class Timer : MonoBehaviour {
     {
 
         //Debug.Log("starting timer");
+        TreasureHuntController_ARKit.Instance.trialLog.LogStartTimer();
         maxTimer = Configuration.maxTrialTime;
         StartCoroutine("TimerCoroutine");
     }
@@ -50,17 +52,20 @@ public class Timer : MonoBehaviour {
     public void PauseTimer()
     {
         //Debug.Log("pausing timer");
+        TreasureHuntController_ARKit.Instance.trialLog.LogPauseTimer();
         timerHold = true;
     }
 
     public void UnpauseTimer()
     {
         //Debug.Log("unpausing timer");
+        TreasureHuntController_ARKit.Instance.trialLog.LogPauseTimer();
         timerHold = false;
     }
 
     public void StopTimer()
     {
+        TreasureHuntController_ARKit.Instance.trialLog.LogStopTimer();
         timerHold = false; // we need to "unpause" the timer before stopping it
         timerInterrupt = true;
         StopCoroutine("TimerCoroutine");
@@ -82,7 +87,8 @@ public class Timer : MonoBehaviour {
             timer += Time.deltaTime;
             float timeLeftFactor =  ((maxTimer - timer) * 100f) / maxTimer; //needs to be on 0-100 scale for the progress bar
             timerBar.Value = timeLeftFactor;
-            if(timeLeftFactor > 66f)
+            TreasureHuntController_ARKit.Instance.trialLog.LogTimerValue(timerBar.Value);
+            if (timeLeftFactor > 66f)
             {
                 timerBar.m_Image.color = highColor;
             }

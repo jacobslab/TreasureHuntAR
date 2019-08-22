@@ -126,6 +126,8 @@ public class DistractorGame : MonoBehaviour {
         Debug.Log("moving the rabbit");
         while (moveTimer < smoothTime)
         {
+            //TreasureHuntController_ARKit.Instance.trialLog.LogCamTransform(TreasureHuntController_ARKit.Instance.arkitManager.arCamManager.m_camera.transform);
+
             moveTimer += Time.deltaTime;
             //float lerpFactor = moveTimer / maxWaitFactor;
             //debugText.text = rabbitObj.transform.localPosition.ToString() + " with move timer " + moveTimer.ToString();
@@ -153,6 +155,7 @@ public class DistractorGame : MonoBehaviour {
                 durationTimer += Time.deltaTime;
 
 
+                //TreasureHuntController_ARKit.Instance.trialLog.LogCamTransform(TreasureHuntController_ARKit.Instance.arkitManager.arCamManager.m_camera.transform);
                 Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
                 Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
                 Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
