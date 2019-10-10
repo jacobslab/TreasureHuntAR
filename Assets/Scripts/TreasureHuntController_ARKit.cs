@@ -1759,6 +1759,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         firstTrial = true; //set the first trial flag 
         arkitManager.arWorldMapManager.canvasParent.gameObject.GetComponent<CanvasGroup>().alpha = 0f;
         trialLog.LogSessionStarted(true);
+
+        audioManager.InitiateSync(); //start the audio syncing routine
+
         if(canNavigate)
         {
             Configuration.maxTrialTime = Configuration.maxTrialTime_navigate;
@@ -1794,6 +1797,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             sessionValid = true;
             EnablePanel(endSessionPanelUIGroup);
             trialLog.LogSessionStarted(false);
+            audioManager.StopSync(); //stop syncing
         }
         yield return null;
     }
@@ -1824,7 +1828,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //reset user response
         ResetUserResponse();
         //play start trial sound
+#if !AUDIO_SYNC
         audioManager.PlayClipOnce(audioManager.beepHigh);
+#endif
         //yield return StartCoroutine(FillMarkerPosList());
         Debug.Log("preparing spawnables");
         //wait until spawnable list is ready
@@ -1835,7 +1841,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Debug.Log("spawnables are ready");
         yield return StartCoroutine(RunTrial());
         //play end trial sound
+#if !AUDIO_SYNC
         audioManager.PlayClipOnce(audioManager.beepLow);
+#endif
         yield return null;
     }
 
@@ -1954,7 +1962,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         if (currentChest != null)
         {
             //play chest opening sound
+#if !AUDIO_SYNC
             audioManager.PlayClipOnce(audioManager.magicWand);
+#endif
             int randSpawnIndex = Random.Range(0, spawnableTrialList.Count - 1);
             GameObject spawnPrefab = spawnableTrialList[randSpawnIndex];
             spawnableTrialList.RemoveAt(randSpawnIndex);
@@ -2151,7 +2161,9 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             feedbackConnectingLineObj.GetComponent<LineRenderer>().startColor = lineColor;
             feedbackConnectingLineObj.GetComponent<LineRenderer>().endColor = lineColor;
             connectingLinesList.Add(feedbackConnectingLineObj);
+#if !AUDIO_SYNC
             audioManager.PlayClipOnce(audioManager.feedbackSplash);
+#endif
             yield return new WaitForSeconds(1f);
         }
 

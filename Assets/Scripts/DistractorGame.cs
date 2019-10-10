@@ -184,7 +184,9 @@ public class DistractorGame : MonoBehaviour {
         if (caughtRabbit)
         {
             distractorText.text = successInstructions;
+#if !AUDIO_SYNC
             TreasureHuntController_ARKit.Instance.audioManager.PlayClipOnce(TreasureHuntController_ARKit.Instance.audioManager.correctResult);
+#endif
             GameObject correctParticleObj = Instantiate(correctParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
             correctParticleObj.transform.parent = planeAnchor.gameObject.transform;
             correctParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
@@ -195,7 +197,9 @@ public class DistractorGame : MonoBehaviour {
         else
         {
             distractorText.text = failureInstructions;
+#if !AUDIO_SYNC
             TreasureHuntController_ARKit.Instance.audioManager.PlayClipOnce(TreasureHuntController_ARKit.Instance.audioManager.incorrectResult);
+#endif
             GameObject wrongParticleObj = Instantiate(wrongParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
             wrongParticleObj.transform.parent = planeAnchor.gameObject.transform;
             wrongParticleObj.transform.localPosition = rabbitObj.transform.localPosition;

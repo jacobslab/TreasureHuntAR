@@ -34,6 +34,8 @@ public class Configuration : MonoBehaviour
 
     public static bool isSyncbox = false;
 
+    public static bool shouldSync = false;
+
     public static string defaultLoggingPath;
 
     public static string subjectName = "test";
