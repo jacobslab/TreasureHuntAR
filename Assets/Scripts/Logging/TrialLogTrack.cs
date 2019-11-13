@@ -229,4 +229,12 @@ public class TrialLogTrack : LogTrack {
 		}
 	}
 
+    public void LogPulse()
+    {
+        if (Configuration.isLogging)
+        {
+            subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "PULSE_EVENT");
+        }
+    }
+
 }

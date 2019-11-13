@@ -5,11 +5,17 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class MenuController : MonoBehaviour {
 
+
+    //UI references
     public InputField subjectInputField;
     public CanvasGroup menuGroup;
+    public Text subjectEmptyWarningText;
+    public Toggle syncToggle;
+
+    //network manager
+    public NetworkManager networkManager;
 
     SceneManager sceneManager;
-    public Text subjectEmptyWarningText;
 
 	// Use this for initialization
 	void Start () {
@@ -30,14 +36,25 @@ public class MenuController : MonoBehaviour {
     //called by the BeginExperiment button in MenuCanvas
     public void BeginExperiment()
     {
+        StartCoroutine("PrepExperiment");
+    }
+
+    IEnumerator PrepExperiment()
+    { 
         if (subjectInputField.text == "")
         {
             subjectEmptyWarningText.enabled = true;
         }
         else
         {
+            //should synchronize first
+            if(syncToggle.isOn)
+            {
+                yield return StartCoroutine(networkManager.BeginDiscovery());
+            }
             SceneManager.LoadScene(1); //load the main game scene;
         }
+        yield return null;
     }
 
     public void LoadMapMaker()
