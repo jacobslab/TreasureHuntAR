@@ -17,6 +17,9 @@
 #include "zhelpers.hpp"
 #include <thread>
 
+#include <cstring>
+#include <errno.h>
+#include <unistd.h>     ///< close
 
 #include <atomic>
 #include <string>
@@ -60,10 +63,62 @@ using namespace std::chrono;
 
 std::atomic<bool> g_threadInterupted(false);
 std::string targetIPAddress = "0.0.0.0";
+std::string machineIPAddress = "0.0.0.0";
+bool pulseSent=false;
 
 /**
 * Create a socket and use ZeroMQ to poll.
 */
+
+std::string get_ip_addr()
+{
+
+    const char* google_dns_server = "8.8.8.8";
+    int dns_port = 53;
+
+    struct sockaddr_in serv;
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    //Socket could not be created
+    if(sock < 0)
+    {
+        std::cout << "Socket error" << std::endl;
+    }
+
+    memset(&serv, 0, sizeof(serv));
+    serv.sin_family = AF_INET;
+    serv.sin_addr.s_addr = inet_addr(google_dns_server);
+    serv.sin_port = htons(dns_port);
+
+    int err = connect(sock, (const struct sockaddr*)&serv, sizeof(serv));
+    if (err < 0)
+    {
+        std::cout << "Error number: " << errno
+            << ". Error message: " << strerror(errno) << std::endl;
+    }
+
+    struct sockaddr_in name;
+    socklen_t namelen = sizeof(name);
+    err = getsockname(sock, (struct sockaddr*)&name, &namelen);
+
+    char buffer[80];
+    const char* p = inet_ntop(AF_INET, &name.sin_addr, buffer, 80);
+    if(p != NULL)
+    {
+        std::cout << "Local IP address is: " << buffer << std::endl;
+    }
+    else
+    {
+        std::cout << "Error number: " << errno
+            << ". Error message: " << strerror(errno) << std::endl;
+    }
+
+    close(sock);
+    std::string ipAddr = buffer;
+    return ipAddr;
+}
+
+
 void listener()
 {
     #ifdef _WIN32
@@ -124,9 +179,12 @@ void listener()
             {
                 std::string ip(inet_ntoa(saListen.sin_addr));
                 INFO_OUT("received: " + std::string(recvBuf) + " from " + ip);
+                if(ip !=machineIPAddress)
+                {
                 targetIPAddress = ip;
                 std::cout<<"new target ip addr is "<<targetIPAddress<<std::endl;
                 g_threadInterupted=true;
+                }
             }
         }
     }
@@ -145,6 +203,8 @@ extern "C"
 int InitiateDiscovery()
 {
     g_threadInterupted = false;
+    
+    machineIPAddress = get_ip_addr();
 
     // Start listener in a seperate thread
     std::thread listenerThread(listener);
@@ -270,6 +330,22 @@ extern "C"
 
 extern "C"
 {
+    int CheckIfPulseSent()
+    {
+        if(pulseSent)
+            return 1;
+        else
+            return 0;
+    }
+}
+
+void ChangePulseFlag()
+{
+    pulseSent=true;
+}
+
+extern "C"
+{
 
 void Publisher()
 {
@@ -284,6 +360,7 @@ void Publisher()
             //  Write two messages, each with an envelope and content
             s_sendmore (publisher, "A");
             s_send(publisher, get_current_unix_time());
+            ChangePulseFlag();
             
             rand_jitter = get_randomized_jitter();
             // s_send (publisher, "We don't want to see this");

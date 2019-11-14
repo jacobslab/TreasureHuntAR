@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,12 +20,12 @@ public class NetworkServer : ThreadedJob
         // Do your threaded task. DON'T use the Unity API here
         while (isRunning)
         {
-            int discoveryResult = NetworkDiscovery.BeginDiscovery();
+            int discoveryResult = NetworkManager.DoNetworkDiscovery();
             if(discoveryResult == 1)
             {
                 isConnected = true;
             }
-            NetworkDiscovery.EstablishConnection(); //establish connection as a PUBLISHER
+            NetworkManager.EstablishConnection(); //establish connection as a PUBLISHER
 
         }
     }
@@ -50,9 +51,26 @@ public class NetworkServer : ThreadedJob
 
 public class NetworkManager : MonoBehaviour
 {
+
+
+    [DllImport("__Internal")]
+    private static extern int InitiateDiscovery();
+
+    [DllImport("__Internal")]
+    private static extern void Subscriber();
+
+    [DllImport("__Internal")]
+    private static extern void Publisher();
+
+
+    [DllImport("__Internal")]
+    private static extern int CheckIfPulseSent();
+
+
     NetworkServer _networkServer;
 
-    //ui referneces
+
+    //ui references
     public CanvasGroup connectionGroup;
     public Text connectionText;
     public Image connectionStatusImage;
@@ -71,7 +89,7 @@ public class NetworkManager : MonoBehaviour
 
     public IEnumerator BeginDiscovery()
     {
-        StartCoroutine("SetConnectionUIStatus", false);
+        yield return StartCoroutine(SetConnectionUIStatus(false));
         _networkServer.Start();
         while(!_networkServer.isConnected)
         {
@@ -101,4 +119,53 @@ public class NetworkManager : MonoBehaviour
 
         yield return null;
     }
+
+
+
+    public static int DoNetworkDiscovery()
+    {
+        if (Application.platform != RuntimePlatform.OSXEditor)
+            return InitiateDiscovery();
+        else
+            return 0;
+    }
+
+
+
+    public static void EstablishConnection()
+    {
+        if (Application.platform != RuntimePlatform.OSXEditor)
+        {
+            //the ipad client will be a Publisher
+            Publisher();
+        }
+    }
+
+    public IEnumerator CheckForPulses()
+    {
+        if (Application.platform != RuntimePlatform.OSXEditor)
+        {
+            while (true)
+            {
+                int result = CheckIfPulseSent();
+                if (result == 1)
+                {
+                    NotifyPulse(true);
+                }
+                else
+                {
+                    NotifyPulse(false);
+                }
+                yield return 0;
+            }
+        }
+
+        yield return null;
+    }
+
+    public int NotifyPulse(bool pulseSent)
+    {
+        return (pulseSent) ? 1 : 0;
+    }
+
 }

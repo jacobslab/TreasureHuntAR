@@ -33,8 +33,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     private List<GameObject> testSpawnList = new List<GameObject>();
     private Object[] spawnArr;
 
-
-
     public List<int> spawnableItemCountList = new List<int>();
     private int spawnablesLeft = 0;
     private int spawnableCount = 0;
@@ -60,12 +58,12 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     //distractor
     public DistractorGame distractorGame;
 
-
-
     //ui
     public Button beginTrialButton;
+
     public CanvasGroup preSessionPanelUIGroup;
     public CanvasGroup beginTrialPanelUIGroup;
+    public CanvasGroup mapButtonPanelUIGroup;
     public CanvasGroup retrievalPanelUIGroup;
     public CanvasGroup scorePanelUIGroup;
     public CanvasGroup endSessionPanelUIGroup;
@@ -77,7 +75,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public Button confirmMarkersButton;
     public Dropdown mapDropdown;
     public Text trialCountText;
-
 
     //feedback
     public GameObject feedbackConnectingLinePrefab;
@@ -98,9 +95,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public CanvasGroup trackingPanel;
     public Image trackingImage;
     public Text trackingReasonText;
-
-
-
 
     //debug visuals
     public PointCloudParticleExample pointCloudManager;
@@ -224,13 +218,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         UpdateNavigationStatus();
         //arkitManager.arWorldMapManager.Load();
         StartCoroutine("InitLogging");
-        preSessionPanelUIGroup.alpha = 0f;
         waitForReadyUIGroup.alpha = 1f;
         UnityARSessionNativeInterface.ARSessionTrackingChangedEvent += UpdateTrackingStatus;
 
 
         //beginTrialPanelUIGroup.alpha = 1f;
-        //StartCoroutine ("PreSessionMapping");
     }
 
     void UpdateTrackingStatus(UnityARCamera cam)
@@ -363,35 +355,50 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         mapDropdown.AddOptions(mapList);
 
+        yield return StartCoroutine(PreSessionMapping());
+
         yield return null;
     }
 
     IEnumerator PreSessionMapping()
     {
-        bool needsMapping = true;
-        preSessionPanelUIGroup.alpha = 1f;
+        UnityEngine.Debug.Log("INSIDE presession mapping");
+        //bool needsMapping = true;
+        EnablePanel(preSessionPanelUIGroup);
         DisablePanel(beginTrialPanelUIGroup);
+        DisablePanel(mapButtonPanelUIGroup);
 
 
-
-        while (arkitManager.arGenPlane.GetAnchorManager() == null)
+        //wait until arkitmanager has been created and assigned reference to
+        while(arkitManager==null)
         {
-            //			Debug.Log ("waiting for anchor manager to instantiate");
-            yield return null;
-        }
-        //		Debug.Log ("found anchor manager");tr
-        UnityARAnchorManager anchorManager = arkitManager.arGenPlane.GetAnchorManager();
-        while (needsMapping)
-        {
-            if (anchorManager.GetPlaneCount() > 0)
-            {
-                yield return StartCoroutine("DefineCornerMarkers");
-                needsMapping = false;
-            }
             yield return 0;
         }
-        preSessionPanelUIGroup.alpha = 0f;
+        UnityEngine.Debug.Log("found arkitmanager");
+        yield return new WaitForSeconds(1.5f);
+        UnityEngine.Debug.Log("finished waiting for a short period of time");
+
+        while (arkitManager.arGenPlane.GetAnchorManager().GetPlaneCount() == 0)
+        {
+            UnityEngine.Debug.Log("waiting to have atleast one plane");
+            yield return 0;
+        }
+        //UnityEngine.Debug.Log("found anchor manager");
+        //UnityARAnchorManager anchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        //while (needsMapping)
+        //{
+        //    if (anchorManager.GetPlaneCount() > 0)
+        //    {
+        //        yield return StartCoroutine("DefineCornerMarkers");
+        //        needsMapping = false;
+        //    }
+        //    yield return 0;
+        //}
+
+        UnityEngine.Debug.Log("finished with presession mapping");
+        DisablePanel(preSessionPanelUIGroup);
         EnablePanel(beginTrialPanelUIGroup);
+        EnablePanel(mapButtonPanelUIGroup);
         yield return null;
     }
 
@@ -751,43 +758,53 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Vector3 camPos = Vector3.zero;
-        //Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-        ////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
-        ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
+        //Vector3 camPos = Vector3.zero;
+        ////Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+        //////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
+        //////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
-        if (arkitManager != null)
-        {
-            Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
-            camPos = UnityARMatrixOps.GetPosition(camMatrix);
-            Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
-            UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
-            if (arAnchorManager != null)
-            {
+        //if (arkitManager != null)
+        //{
+        //    if (arkitManager.arCamManager != null)
+        //    {
+        //        Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
 
-                LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
-                if (arPlaneAnchors != null)
-                {
-                    ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
-                }
-            }
-        }
+        //        camPos = UnityARMatrixOps.GetPosition(camMatrix);
+        //        Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+        //        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+             
+        //        if (arAnchorManager != null)
+        //        {
 
-        scoreText.text = totalScore.ToString();
+        //            LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
 
-        if (canNavigate && spawnChest != null)
-        {
-            //Debug.Log("spawnchest");
-        //    //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
-        //    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-        //    //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-            distance = Vector3.Distance(spawnChest.transform.position, camPos);
-        //    //debugText.enabled = true;
-        //    //debugText.text = distance.ToString() + " \n parent " + spawnChest.transform.parent.gameObject.name;
-            distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
-        //    //debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
-            spawnChest.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
-        }
+        //            if (arPlaneAnchors != null)
+        //            {
+        //                if (arPlaneAnchors.Count > 0)
+        //                {
+        //                    ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        
+
+        //scoreText.text = totalScore.ToString();
+
+        //if (canNavigate && spawnChest != null)
+        //{
+        //    //Debug.Log("spawnchest");
+        ////    //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
+        ////    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
+        ////    //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
+        //    distance = Vector3.Distance(spawnChest.transform.position, camPos);
+        ////    //debugText.enabled = true;
+        ////    //debugText.text = distance.ToString() + " \n parent " + spawnChest.transform.parent.gameObject.name;
+        //    distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
+        ////    //debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
+        //    spawnChest.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
+        //}
 
     }
 
