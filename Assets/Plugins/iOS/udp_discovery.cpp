@@ -66,6 +66,8 @@ std::string targetIPAddress = "0.0.0.0";
 std::string machineIPAddress = "0.0.0.0";
 bool pulseSent=false;
 
+bool isConnected=false;
+
 /**
 * Create a socket and use ZeroMQ to poll.
 */
@@ -330,6 +332,14 @@ extern "C"
 
 extern "C"
 {
+    void TerminateConnection()
+    {
+        isConnected=false;
+    }
+}
+
+extern "C"
+{
     int CheckIfPulseSent()
     {
         if(pulseSent)
@@ -350,18 +360,19 @@ extern "C"
 void Publisher()
 {
     std::cout<<"starting up publisher thread"<<std::endl;
+    isConnected=true;
     float rand_jitter= MIN_JITTER_DURATION;
         //  Prepare our context and publisher
         zmq::context_t context(1);
         zmq::socket_t publisher(context, ZMQ_PUB);
         publisher.bind("tcp://*:5563");
 
-        while (1) {
+        while (isConnected) {
             //  Write two messages, each with an envelope and content
             s_sendmore (publisher, "A");
             s_send(publisher, get_current_unix_time());
             ChangePulseFlag();
-            
+
             rand_jitter = get_randomized_jitter();
             // s_send (publisher, "We don't want to see this");
             // s_sendmore (publisher, "B");

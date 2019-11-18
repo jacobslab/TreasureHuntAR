@@ -43,6 +43,8 @@ public class NetworkServer : ThreadedJob
 
     public virtual void close()
     {
+        isConnected = false;
+        isRunning = false;
         Debug.Log("closing");
     }
 
@@ -66,6 +68,8 @@ public class NetworkManager : MonoBehaviour
     [DllImport("__Internal")]
     private static extern int CheckIfPulseSent();
 
+    [DllImport("__Internal")]
+    private static extern void TerminateConnection();
 
     NetworkServer _networkServer;
 
@@ -166,6 +170,15 @@ public class NetworkManager : MonoBehaviour
     public int NotifyPulse(bool pulseSent)
     {
         return (pulseSent) ? 1 : 0;
+    }
+
+    private void OnApplicationQuit()
+    {
+        if (Application.platform != RuntimePlatform.OSXEditor)
+        {
+            _networkServer.close();
+            TerminateConnection();
+        }
     }
 
 }
