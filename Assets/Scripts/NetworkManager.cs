@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Runtime.InteropServices;
+using System.Net;
+using System.Text;
+using System.Net.Sockets;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +37,7 @@ public class NetworkServer : ThreadedJob
         // This is executed by the Unity main thread when the job is finished
 
     }
+
 
 
     public void End()
@@ -71,7 +75,8 @@ public class NetworkManager : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void TerminateConnection();
 
-    NetworkServer _networkServer;
+    //NetworkServer _networkServer;
+    private SocketControl _socketControl;
 
 
     //ui references
@@ -79,10 +84,36 @@ public class NetworkManager : MonoBehaviour
     public Text connectionText;
     public Image connectionStatusImage;
 
+
+    private static NetworkManager _instance;
+
+
+    public static NetworkManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
+
+    private void Awake()
+    {
+
+        if (_instance != null)
+        {
+            Debug.Log("Instance already exists!");
+            return;
+        }
+        _instance = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        _networkServer = new NetworkServer();
+        //_networkServer = new NetworkServer();
+
+        _socketControl = gameObject.GetComponent<SocketControl>();
     }
 
     // Update is called once per frame
@@ -90,17 +121,23 @@ public class NetworkManager : MonoBehaviour
     {
         
     }
+    public void SendMessageToEPAD(string message)
+    {
+        _socketControl._client.AddMessageToBuffer(message);
+    }
 
     public IEnumerator BeginDiscovery()
     {
         yield return StartCoroutine(SetConnectionUIStatus(false));
-        _networkServer.Start();
-        while(!_networkServer.isConnected)
+
+        StartCoroutine(_socketControl.RunClient());
+        while (!_socketControl._client.isConnected)
         {
             yield return 0;
         }
 
         yield return StartCoroutine(SetConnectionUIStatus(true));
+        Configuration.isSyncing = true;
         yield return null;
     }
 
@@ -176,7 +213,7 @@ public class NetworkManager : MonoBehaviour
     {
         if (Application.platform != RuntimePlatform.OSXEditor)
         {
-            _networkServer.close();
+            _socketControl._client.close();
             TerminateConnection();
         }
     }

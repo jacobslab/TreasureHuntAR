@@ -117,7 +117,7 @@ public class WorldMapManager : MonoBehaviour
     {
 
         //pause plane detection
-        Debug.Log("about to pause plane detection");
+        UnityEngine.Debug.Log("about to pause plane detection");
         UnityARPlaneDetection planeDetection = UnityARPlaneDetection.None;
         ARKitWorldTrackingSessionConfiguration config = new ARKitWorldTrackingSessionConfiguration();
         config.planeDetection = planeDetection;

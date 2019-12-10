@@ -237,4 +237,13 @@ public class TrialLogTrack : LogTrack {
         }
     }
 
+
+    public void LogTimeSyncEvent(long ntpTime, long localTime, long difference)
+    {
+        if (Configuration.isLogging)
+        {
+            subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIME_SYNC_EVENT" + separator + ntpTime.ToString() + separator + localTime.ToString() + separator + difference.ToString());
+        }
+    }
+
 }

@@ -1,11 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.iOS;
 public class DistractorGame : MonoBehaviour {
 
-    public GameObject rabbitObj;
+    private GameObject rabbitObj;
+    public GameObject rabbitPrefab;
     public ARKitManager arkitManager;
     public Text debugText;
     public CanvasGroup distractorPanel;
@@ -29,15 +31,20 @@ public class DistractorGame : MonoBehaviour {
         //debugText.enabled = false;
         distractorPanel.gameObject.SetActive(false);
         distractorText.text = "";
-        rabbitObj.SetActive(false);
+        //rabbitObj.SetActive(false);
         foundCube.SetActive(false);
-        Debug.Log("rabbit tag is " + rabbitObj.tag);
+        //Debug.Log("rabbit tag is " + rabbitObj.tag);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    private void SpawnRabbit()
+    {
+        rabbitObj = Instantiate(rabbitPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+    }
 
     public void AutoCatchRabbit()
     {
@@ -60,151 +67,186 @@ public class DistractorGame : MonoBehaviour {
 
         //debugText.enabled = true;
         //make the rabbit visible
-        rabbitObj.SetActive(true);
-        foundCube.SetActive(true);
+        //rabbitObj.SetActive(true);
 
-        distractorPanel.gameObject.SetActive(true);
-        distractorText.text = catchInstructions;
+        SpawnRabbit();
+        Debug.Log("rabbit obj status  " + rabbitObj.ToString());
+        //foundCube.SetActive(true);
 
-        UnityEngine.Debug.Log("loaded map extents are "  + arkitManager.arWorldMapManager.m_LoadedMap.extent.ToString());
-
-        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
-        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
-
-        ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
-
-        int randPlaneIndex = -1;
-        //find random spawn position for rabbit
-        Vector3 spawnPos = taskController.GetRandomPosition(out randPlaneIndex);
-        rabbitObj.transform.parent = planeAnchor.gameObject.transform;
-        rabbitObj.transform.localPosition =spawnPos;
-        Debug.Log("put rabbit on a random spawn pos");
-
-        //find a random position that is reasonable distance away from the rabbit
-        Vector3 targetPos = Vector3.zero;
-
-        Debug.Log("finding targetpos for the rabbit");
-        while(Vector3.Distance(targetPos,rabbitObj.transform.localPosition) < Configuration.minRabbitSpawnDistance)
+        if (rabbitObj != null)
         {
-            targetPos = taskController.GetRandomPosition(out randPlaneIndex);
-            yield return 0;
-        }
-        //wait for the rabbit to move
 
+            distractorPanel.gameObject.SetActive(true);
+            distractorText.text = catchInstructions;
 
+            UnityEngine.Debug.Log("loaded map extents are " + arkitManager.arWorldMapManager.m_LoadedMap.extent.ToString());
 
+            UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+            LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
 
-        //lerp rabbit to the targetpos
-        int currentIndex = 0;
-        foreach (var plane in arPlaneAnchors)
-        {
-            if (currentIndex == randPlaneIndex)
+            ARPlaneAnchorGameObject planeAnchor = arPlaneAnchors.First.Value;
+
+            int randPlaneIndex = -1;
+            //find random spawn position for rabbit
+            Vector3 spawnPos = taskController.GetRandomPosition(out randPlaneIndex);
+            rabbitObj.transform.parent = planeAnchor.gameObject.transform;
+            rabbitObj.transform.localPosition = spawnPos;
+            Debug.Log("put rabbit on a random spawn pos");
+
+            //find a random position that is reasonable distance away from the rabbit
+            Vector3 targetPos = Vector3.zero;
+
+            Debug.Log("finding targetpos for the rabbit");
+            while (Vector3.Distance(targetPos, rabbitObj.transform.localPosition) < Configuration.minRabbitSpawnDistance)
             {
-                planeAnchor = plane;
-            }
-            currentIndex++;
-        }
-        //rabbitObj.transform.parent = planeAnchor.gameObject.transform;
-        //rabbitObj.transform.localPosition = Vector3.zero;
-
-
-        float moveTimer = 0f;
-        //float maxWaitFactor = 4f;
-        float smoothTime = 4f;
-        float xVelocity = 0.0f;
-        float zVelocity = 0.0f;
-
-        //first make sure the rabbit is looking at the targetpos
-        rabbitObj.transform.LookAt(targetPos);
-        rabbitObj.transform.localEulerAngles = new Vector3(0f, rabbitObj.transform.localEulerAngles.y, 0f); //reset x and z axes angles
-
-        Debug.Log("waiting for rabbit to be looked at");
-        yield return StartCoroutine(WaitTillRabbitLooked());
-
-        Debug.Log("setting rabbit anim to move");
-        rabbitObj.GetComponent<Animator>().SetBool("CanMove?", true);
-        Debug.Log("moving the rabbit");
-        while (moveTimer < smoothTime)
-        {
-            moveTimer += Time.deltaTime;
-            //float lerpFactor = moveTimer / maxWaitFactor;
-            //debugText.text = rabbitObj.transform.localPosition.ToString() + " with move timer " + moveTimer.ToString();
-            float newPositionX = Mathf.SmoothDamp(rabbitObj.transform.localPosition.x, targetPos.x, ref xVelocity, smoothTime);
-            float newPositionZ = Mathf.SmoothDamp(rabbitObj.transform.localPosition.z, targetPos.z, ref zVelocity, smoothTime);
-            rabbitObj.transform.localPosition = new Vector3(newPositionX, rabbitObj.transform.localPosition.y, newPositionZ);
-
-            //rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
-            yield return 0;
-        }
-        rabbitObj.GetComponent<Animator>().SetBool("CanMove?", false);
-        rabbitObj.transform.parent = null;
-
-        //reset the rabbit caught flag
-        ResetRabbitFlag();
-
-        if (TreasureHuntController_ARKit.Instance.canNavigate)
-        {
-            //then wait for the player to come closer to the rabbit
-            float distance = 10f;
-            float durationTimer = 0f;
-            while (distance > Configuration.minRabbitCatchDistance && durationTimer < 8f && !caughtRabbit)
-            {
-                //Debug.Log("waiting for the rabbit to be caught");
-                durationTimer += Time.deltaTime;
-
-
-                Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
-                Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
-                Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
-                distance = Vector3.Distance(rabbitObj.transform.position, camPos);
+                targetPos = taskController.GetRandomPosition(out randPlaneIndex);
                 yield return 0;
             }
-
-            if (distance <= Configuration.minRabbitCatchDistance)
+            //wait for the rabbit to move
+            //lerp rabbit to the targetpos
+            int currentIndex = 0;
+            foreach (var plane in arPlaneAnchors)
             {
-                MarkRabbitCaught();
+                if (currentIndex == randPlaneIndex)
+                {
+                    planeAnchor = plane;
+                }
+                currentIndex++;
+            }
+            //rabbitObj.transform.parent = planeAnchor.gameObject.transform;
+            //rabbitObj.transform.localPosition = Vector3.zero;
+
+
+            float moveTimer = 0f;
+            float maxWaitFactor = 4f;
+            float smoothTime = 4f;
+            float xVelocity = 0.0f;
+            float zVelocity = 0.0f;
+
+            //first make sure the rabbit is looking at the targetpos
+            rabbitObj.transform.LookAt(targetPos);
+            rabbitObj.transform.localEulerAngles = new Vector3(0f, rabbitObj.transform.localEulerAngles.y, 0f); //reset x and z axes angles
+
+            //Debug.Log("waiting for rabbit to be looked at");
+            //yield return StartCoroutine(WaitTillRabbitLooked());
+            Debug.Log("setting rabbit anim to move");
+            try
+            {
+                rabbitObj.GetComponent<Animator>().SetBool("CanMove?", true);
+            }
+            catch (NullReferenceException e)
+            {
+                UnityEngine.Debug.Log("caught an exception" + e.ToString());
+            }
+            Debug.Log("moving the rabbit");
+            while (moveTimer < smoothTime)
+            {
+                try
+                {
+                    moveTimer += Time.deltaTime;
+                    UnityEngine.Debug.Log("move timer " + moveTimer.ToString());
+                    if (rabbitObj != null)
+                    {
+                        float lerpFactor = moveTimer / maxWaitFactor;
+                        //debugText.text = rabbitObj.transform.localPosition.ToString() + " with move timer " + moveTimer.ToString();
+                        //float newPositionX = Mathf.SmoothDamp(rabbitObj.transform.localPosition.x, targetPos.x, ref xVelocity, smoothTime);
+                        //float newPositionZ = Mathf.SmoothDamp(rabbitObj.transform.localPosition.z, targetPos.z, ref zVelocity, smoothTime);
+                        //rabbitObj.transform.localPosition = new Vector3(newPositionX, rabbitObj.transform.localPosition.y, newPositionZ);
+                        rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log("no rabbit object");
+                        TreasureHuntController_ARKit.Instance.debugText.text = "NO RABBITOBJ";
+                    }
+                }
+                catch (NullReferenceException e)
+                {
+                    UnityEngine.Debug.Log("caught an exception" + e.ToString());
+                }
+
+                //rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
+                yield return 0;
+            }
+            try
+            {
+                rabbitObj.GetComponent<Animator>().SetBool("CanMove?", false);
+                rabbitObj.transform.parent = null;
+
+                //reset the rabbit caught flag
+                ResetRabbitFlag();
+            }
+            catch (NullReferenceException e)
+            {
+                UnityEngine.Debug.Log("caught an exception" + e.ToString());
+            }
+            if (TreasureHuntController_ARKit.Instance.canNavigate)
+            {
+                //then wait for the player to come closer to the rabbit
+                float distance = 10f;
+                float durationTimer = 0f;
+                while (distance > Configuration.minRabbitCatchDistance && durationTimer < 8f && !caughtRabbit)
+                {
+                    //Debug.Log("waiting for the rabbit to be caught");
+                    durationTimer += Time.deltaTime;
+
+
+                    Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+                    Vector3 camPos = UnityARMatrixOps.GetPosition(camMatrix);
+                    Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
+                    distance = Vector3.Distance(rabbitObj.transform.position, camPos);
+                    yield return 0;
+                }
+
+                if (distance <= Configuration.minRabbitCatchDistance)
+                {
+                    MarkRabbitCaught();
+                }
+
+            }
+            //tapping on the rabbit will suffice
+            else
+            {
+                yield return StartCoroutine(TreasureHuntController_ARKit.Instance.WaitTillObjectHit(rabbitObj, 8f));
+
             }
 
-        }
-        //tapping on the rabbit will suffice
-        else
-        {
-            yield return StartCoroutine(TreasureHuntController_ARKit.Instance.WaitTillObjectHit(rabbitObj,8f));
+            //set the rabbit inactive regardless of the result
+            rabbitObj.SetActive(false);
 
-        }
+            TreasureHuntController_ARKit.Instance.trialLog.LogDistractorResult(caughtRabbit);
+            //show success or failure message
+            if (caughtRabbit)
+            {
+                distractorText.text = successInstructions;
+                TreasureHuntController_ARKit.Instance.audioManager.PlayClipOnce(TreasureHuntController_ARKit.Instance.audioManager.correctResult);
+                GameObject correctParticleObj = Instantiate(correctParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+                correctParticleObj.transform.parent = planeAnchor.gameObject.transform;
+                correctParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
+                yield return new WaitForSeconds(2.5f);
+                TreasureHuntController_ARKit.Instance.MarkDistractorResult(true);
+                Destroy(correctParticleObj);
+            }
+            else
+            {
+                distractorText.text = failureInstructions;
+                TreasureHuntController_ARKit.Instance.audioManager.PlayClipOnce(TreasureHuntController_ARKit.Instance.audioManager.incorrectResult);
+                GameObject wrongParticleObj = Instantiate(wrongParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+                wrongParticleObj.transform.parent = planeAnchor.gameObject.transform;
+                wrongParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
+                yield return new WaitForSeconds(2.5f);
+                TreasureHuntController_ARKit.Instance.MarkDistractorResult(false);
+                Destroy(wrongParticleObj);
+            }
 
-        //set the rabbit inactive regardless of the result
-        rabbitObj.SetActive(false);
+            //reset rabbit looking var
+            rabbitLooking = false;
+            foundCube.SetActive(false);
+            distractorPanel.gameObject.SetActive(false);
 
-        TreasureHuntController_ARKit.Instance.trialLog.LogDistractorResult(caughtRabbit);
-        //show success or failure message
-        if (caughtRabbit)
-        {
-            distractorText.text = successInstructions;
-            TreasureHuntController_ARKit.Instance.audioManager.PlayClipOnce(TreasureHuntController_ARKit.Instance.audioManager.correctResult);
-            GameObject correctParticleObj = Instantiate(correctParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
-            correctParticleObj.transform.parent = planeAnchor.gameObject.transform;
-            correctParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
-            yield return new WaitForSeconds(2.5f);
-            TreasureHuntController_ARKit.Instance.MarkDistractorResult(true);
-            Destroy(correctParticleObj);
+            //destroy rabbit
+            Destroy(rabbitObj);
         }
-        else
-        {
-            distractorText.text = failureInstructions;
-            TreasureHuntController_ARKit.Instance.audioManager.PlayClipOnce(TreasureHuntController_ARKit.Instance.audioManager.incorrectResult);
-            GameObject wrongParticleObj = Instantiate(wrongParticlePrefab, Vector3.zero, Quaternion.identity) as GameObject;
-            wrongParticleObj.transform.parent = planeAnchor.gameObject.transform;
-            wrongParticleObj.transform.localPosition = rabbitObj.transform.localPosition;
-            yield return new WaitForSeconds(2.5f);
-            TreasureHuntController_ARKit.Instance.MarkDistractorResult(false);
-            Destroy(wrongParticleObj);
-        }
-
-        //reset rabbit looking var
-        rabbitLooking = false;
-        foundCube.SetActive(false);
-        distractorPanel.gameObject.SetActive(false);
 
     yield return null;
     }
@@ -216,9 +258,10 @@ public class DistractorGame : MonoBehaviour {
         {
             foreach (var hitResult in hitResults)
             {
+                UnityEngine.Debug.Log("inside distractor hit test");
                 foundCube.transform.position = UnityARMatrixOps.GetPosition(hitResult.worldTransform);
                 foundCube.transform.rotation = UnityARMatrixOps.GetRotation(hitResult.worldTransform);
-                Debug.Log(string.Format("x:{0:0.######} y:{1:0.######} z:{2:0.######}", foundCube.transform.position.x, foundCube.transform.position.y, foundCube.transform.position.z));
+                UnityEngine.Debug.Log(string.Format("x:{0:0.######} y:{1:0.######} z:{2:0.######}", foundCube.transform.position.x, foundCube.transform.position.y, foundCube.transform.position.z));
                 return true;
             }
         }
@@ -245,7 +288,7 @@ public class DistractorGame : MonoBehaviour {
 
             foreach (ARHitTestResultType resultType in resultTypes)
             {
-                GameObject hitObj = new GameObject();
+                //GameObject hitObj = new GameObject();
                 if (HitTestWithResultType(point, resultType))
                 {
                     continue;

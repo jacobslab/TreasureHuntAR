@@ -2,9 +2,111 @@
 using System.Collections;
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using UnityEngine.Networking;
 using System.Text;
+
+
+
+public class NTPSynchronizer : ThreadedJob
+{
+    public bool isRunning = false;
+    public bool shouldSyncNTP = false;
+    public DateTime lastSyncedNTPTime = DateTime.Now;
+    public NTPSynchronizer()
+    {
+        isRunning = true;
+    }
+
+    protected override void ThreadFunction()
+    {
+        while(isRunning)
+        {
+            while(shouldSyncNTP)
+            {
+                lastSyncedNTPTime= GetNetworkTime();
+                shouldSyncNTP = false;
+            }
+        }
+    }
+
+    protected override void OnFinished()
+    {
+
+    }
+
+    public void QueryNTPTime()
+    {
+        shouldSyncNTP = true;
+    }
+
+
+    public static DateTime GetNetworkTime()
+    {
+        //default Windows time server
+        const string ntpServer = "time.windows.com";
+
+        // NTP message size - 16 bytes of the digest (RFC 2030)
+        var ntpData = new byte[48];
+
+        //Setting the Leap Indicator, Version Number and Mode values
+        ntpData[0] = 0x1B; //LI = 0 (no warning), VN = 3 (IPv4 only), Mode = 3 (Client Mode)
+
+        var addresses = Dns.GetHostEntry(ntpServer).AddressList;
+
+        //The UDP port number assigned to NTP is 123
+        var ipEndPoint = new IPEndPoint(addresses[0], 123);
+        //NTP uses UDP
+
+        using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+        {
+            socket.Connect(ipEndPoint);
+
+            //Stops code hang if NTP is blocked
+            socket.ReceiveTimeout = 1000;
+
+            socket.Send(ntpData);
+            socket.Receive(ntpData);
+            socket.Close();
+        }
+
+        //Offset to get to the "Transmit Timestamp" field (time at which the reply 
+        //departed the server for the client, in 64-bit timestamp format."
+        const byte serverReplyTime = 40;
+
+        //Get the seconds part
+        ulong intPart = BitConverter.ToUInt32(ntpData, serverReplyTime);
+
+        //Get the seconds fraction
+        ulong fractPart = BitConverter.ToUInt32(ntpData, serverReplyTime + 4);
+
+        //Convert From big-endian to little-endian
+        intPart = SwapEndianness(intPart);
+        fractPart = SwapEndianness(fractPart);
+
+        var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
+
+        //**UTC** time
+        var networkDateTime = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)milliseconds);
+
+        return networkDateTime.ToLocalTime();
+    }
+
+    // stackoverflow.com/a/3294698/162671
+    static uint SwapEndianness(ulong x)
+    {
+        return (uint)(((x & 0x000000ff) << 24) +
+                       ((x & 0x0000ff00) << 8) +
+                       ((x & 0x00ff0000) >> 8) +
+                       ((x & 0xff000000) >> 24));
+    }
+
+public virtual void close()
+    {
+        isRunning = false;
+    }
+}
 
 public class GameClock : MonoBehaviour {
 
@@ -15,6 +117,9 @@ public class GameClock : MonoBehaviour {
 	public static string SystemTime_MillisecondsString { get { return FormatTime (SystemTime_Milliseconds); } }
 	public static string SystemTime_MicrosecondsString { get { return FormatTime (SystemTime_Microseconds); } }
 
+
+    public NTPSynchronizer _ntpSync;
+
 	protected long microseconds = 1;
 	long initialSystemClockMilliseconds;
 
@@ -24,7 +129,8 @@ public class GameClock : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        _ntpSync = new NTPSynchronizer();
+        _ntpSync.Start();
 	}
 
 
@@ -130,6 +236,22 @@ public class GameClock : MonoBehaviour {
 		//		return dateTime;
 	}
 
+    public static long GetClockMilliseconds(DateTime queryTime)
+    {
+        long milliseconds;
+        
+        DateTime s = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        TimeSpan t = (queryTime - s);
+        milliseconds = (long)t.TotalMilliseconds;
+        return milliseconds;
+    }
+
+    public static long GetClockMicroseconds(DateTime queryTime)
+    {
+        long milliseconds = GetClockMilliseconds(queryTime);
+        return milliseconds * 1000;
+    }
+
 
 	static long GetSystemClockMilliseconds(){
 		//long ticks = DateTime.Now.Ticks;
@@ -174,6 +296,11 @@ public class GameClock : MonoBehaviour {
 	public static string FormatTime(long time){
 		return time.ToString().PadLeft(20, '0');
 	}
+
+    private void OnApplicationQuit()
+    {
+
+    }
 
 
 }

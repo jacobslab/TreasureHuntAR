@@ -60,6 +60,10 @@ public class Configuration : MonoBehaviour
     public static float maxTrialTime_sitting = 20f;
     public static float maxTrialTime = 40f;
 
+    //time sync settings
+    public static bool isSyncing = false;
+    public static float syncNTPInterval = 2f;
+
     private static Subject _currentSubject;
 
 	public static Subject currentSubject{ 
