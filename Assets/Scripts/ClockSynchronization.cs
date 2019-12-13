@@ -13,8 +13,6 @@ public class ClockSynchronization : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Configuration.isSyncing = true;
-        StartCoroutine(RunSyncInterval());
     }
 
     // Update is called once per frame
@@ -31,14 +29,23 @@ public class ClockSynchronization : MonoBehaviour
             yield return new WaitForSeconds(Configuration.syncNTPInterval);
             Debug.Log("finished waiting for seconds");
             gameClock._ntpSync.QueryNTPTime();
+            while (!gameClock._ntpSync.didUpdateNTP)
+            {
+                yield return 0;
+            }
             DateTime currentNTPTime = gameClock._ntpSync.lastSyncedNTPTime;
+            gameClock._ntpSync.didUpdateNTP = false; //set the updated flag to false now that we have retrieved the most recent NTP time
+            Debug.Log("current ntp time " + currentNTPTime.ToString());
+
+
             long ntpTime = GameClock.GetClockMilliseconds(currentNTPTime);
-            long localTime = GameClock.GetClockMilliseconds(currentNTPTime);
+            TreasureHuntController_ARKit.Instance.debugText.text = ntpTime.ToString();
+            long localTime = GameClock.GetClockMilliseconds(DateTime.Now);
             long difference = ntpTime - localTime;
 
-            Debug.Log("difference is " + difference.ToString());
+            //Debug.Log("difference is " + difference.ToString());
             string message = ntpTime.ToString() + "\t" + localTime.ToString();
-            Debug.Log("sending message to EPAD");
+            //Debug.Log("sending message to EPAD");
             NetworkManager.Instance.SendMessageToEPAD(message);
             //TreasureHuntController_ARKit.Instance.trialLog.LogTimeSyncEvent(ntpTime, localTime, difference);
             yield return 0;

@@ -152,7 +152,8 @@ public class DistractorGame : MonoBehaviour {
                         //float newPositionX = Mathf.SmoothDamp(rabbitObj.transform.localPosition.x, targetPos.x, ref xVelocity, smoothTime);
                         //float newPositionZ = Mathf.SmoothDamp(rabbitObj.transform.localPosition.z, targetPos.z, ref zVelocity, smoothTime);
                         //rabbitObj.transform.localPosition = new Vector3(newPositionX, rabbitObj.transform.localPosition.y, newPositionZ);
-                        rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
+                        rabbitObj.transform.localPosition = new Vector3(Mathf.SmoothStep(rabbitObj.transform.localPosition.x, targetPos.x, lerpFactor) , rabbitObj.transform.localPosition.y,Mathf.SmoothStep(rabbitObj.transform.localPosition.z,targetPos.z,lerpFactor));
+                        //rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
                     }
                     else
                     {

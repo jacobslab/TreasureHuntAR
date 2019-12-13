@@ -12,6 +12,10 @@ public class Configuration : MonoBehaviour
     public static int maxObjects = 3;
     public static int numChestsPerTrial = 4;
 
+
+    //neural device connection
+    public static bool neuralDeviceConnected = false;
+
     //LANGUAGE SELECTION
     public enum LanguageSetting
     {

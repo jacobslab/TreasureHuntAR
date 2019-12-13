@@ -1552,7 +1552,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //set it to the default first value
         ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
         randPlaneIndex = Random.Range(0, arPlaneAnchors.Count);
-        debugText.text = "plane anchor count " + arPlaneAnchors.Count.ToString();
+        //debugText.text = "plane anchor count " + arPlaneAnchors.Count.ToString();
         int currentIndex = 0;
         foreach (var plane in arPlaneAnchors)
         {
@@ -1594,8 +1594,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //set it to the default first value
         ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
         randPlaneIndex = Random.Range(0, arPlaneAnchors.Count);
-        debugText.text = "plane anchor count " + arPlaneAnchors.Count.ToString();
-        UnityEngine.Debug.Log("plane anchor count " + arPlaneAnchors.Count.ToString());
+        //debugText.text = "plane anchor count " + arPlaneAnchors.Count.ToString();
+        //UnityEngine.Debug.Log("plane anchor count " + arPlaneAnchors.Count.ToString());
         int currentIndex = 0;
         foreach (var plane in arPlaneAnchors)
         {

@@ -81,8 +81,11 @@ public class NetworkManager : MonoBehaviour
 
     //ui references
     public CanvasGroup connectionGroup;
-    public Text connectionText;
-    public Image connectionStatusImage;
+    public Text epadConnectionText;
+    public Image epadConnectionStatusImage;
+
+    public Text neuralConnectionText;
+    public Image neuralConnectionStatusImage;
 
 
     private static NetworkManager _instance;
@@ -128,7 +131,9 @@ public class NetworkManager : MonoBehaviour
 
     public IEnumerator BeginDiscovery()
     {
-        yield return StartCoroutine(SetConnectionUIStatus(false));
+        connectionGroup.alpha = 1f;
+        yield return StartCoroutine(SetEPADConnectionUIStatus(false));
+        yield return StartCoroutine(SetNeuralConnectionUIStatus(false));
 
         StartCoroutine(_socketControl.RunClient());
         while (!_socketControl._client.isConnected)
@@ -136,26 +141,54 @@ public class NetworkManager : MonoBehaviour
             yield return 0;
         }
 
-        yield return StartCoroutine(SetConnectionUIStatus(true));
+        yield return StartCoroutine(SetEPADConnectionUIStatus(true));
+
+        while(!Configuration.neuralDeviceConnected)
+        {
+            yield return 0;
+        }
+        yield return StartCoroutine(SetNeuralConnectionUIStatus(true));
+        connectionGroup.alpha = 0f;
         Configuration.isSyncing = true;
         yield return null;
     }
 
-    IEnumerator SetConnectionUIStatus(bool isConnected)
+    IEnumerator SetEPADConnectionUIStatus(bool isConnected)
     {
         if(!isConnected)
         {
-            connectionText.text = "Connecting...";
-            connectionStatusImage.color = Color.red;
+            //connectionText.text = "Connecting...";
+            epadConnectionStatusImage.color = Color.red;
             connectionGroup.alpha = 1f;
             yield return new WaitForSeconds(0.5f);
         }
         else
         {
-            connectionText.text = "Connected!";
-            connectionStatusImage.color = Color.green;
+            //connectionText.text = "Connected!";
+            epadConnectionStatusImage.color = Color.green;
             yield return new WaitForSeconds(1.5f);
-            connectionGroup.alpha = 0f;
+            //connectionGroup.alpha = 0f;
+        }
+
+        yield return null;
+    }
+
+
+    IEnumerator SetNeuralConnectionUIStatus(bool isConnected)
+    {
+        if (!isConnected)
+        {
+            //connectionText.text = "Connecting...";
+            neuralConnectionStatusImage.color = Color.red;
+            connectionGroup.alpha = 1f;
+            yield return new WaitForSeconds(0.5f);
+        }
+        else
+        {
+            //connectionText.text = "Connected!";
+            neuralConnectionStatusImage.color = Color.green;
+            yield return new WaitForSeconds(1.5f);
+            //connectionGroup.alpha = 0f;
         }
 
         yield return null;

@@ -7,33 +7,35 @@ using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class ServerThread : ThreadedJob
+public class DeviceStatusListener : ThreadedJob
 {
-    private bool isConnected = false;
-    public ServerThread()
+    public bool isConnected = false;
+    
+    public DeviceStatusListener()
     {
+
     }
 
     protected override void ThreadFunction()
     {
-        //StartListening();
-        ServerSocket();
-        //ListeningServer();
         TCPListener();
     }
+
+
 
     void TCPListener()
     {
         TcpListener server = null;
         try
         {
-            // Set the TcpListener on port 13000.
-            Int32 port = 9999;
-            IPAddress localAddr = IPAddress.Parse("192.168.0.102");
+            // Set the TcpListener on specified port.
+            Int32 port = 9997;
+            IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
+            Debug.Log("iphost ipv4 " + ipHostInfo.AddressList[0].ToString());
+            //IPAddress localAddr = IPAddress.Parse("192.168.0.102");
 
             // TcpListener server = new TcpListener(port);
-            server = new TcpListener(localAddr, port);
+            server = new TcpListener(ipHostInfo.AddressList[0], port);
 
             // Start listening for client requests.
             server.Start();
@@ -66,14 +68,12 @@ public class ServerThread : ThreadedJob
                     data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                     Debug.Log("Received: " + data);
 
-                    // Process the data sent by the client.
-                    //data = data.ToUpper();
+                    bool parseResult = bool.TryParse(data, out bool res);
 
-                    //byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                    //// Send back a response.
-                    //stream.Write(msg, 0, msg.Length);
-                    //Debug.Log("Sent: " + data);
+                    if (parseResult)
+                    {
+                        Configuration.neuralDeviceConnected = res;
+                    }
                 }
 
                 // Shutdown and end connection
@@ -82,7 +82,7 @@ public class ServerThread : ThreadedJob
         }
         catch (SocketException e)
         {
-           Debug.Log("SocketException: " + e);
+            Debug.Log("SocketException: " + e);
         }
         finally
         {
@@ -93,138 +93,13 @@ public class ServerThread : ThreadedJob
 
     protected override void OnFinished()
     {
+        base.OnFinished();
     }
-
-        // Incoming data from the client.  
-        public static string data = null;
-
-        public static void StartListening()
-        {
-            // Data buffer for incoming data.  
-            byte[] bytes = new byte[1024];
-
-            // Establish the local endpoint for the socket.  
-            // Dns.GetHostName returns the name of the   
-            // host running the application.  
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[1];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress,9999);
-
-            // Create a TCP/IP socket.  
-            Socket listener = new Socket(ipAddress.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
-
-            // Bind the socket to the local endpoint and   
-            // listen for incoming connections.  
-            try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(10);
-
-                // Start listening for connections.  
-                while (true)
-                {
-                    Debug.Log("Waiting for a connection...");
-                    // Program is suspended while waiting for an incoming connection.  
-                    Socket handler = listener.Accept();
-                    data = null;
-
-                    // An incoming connection needs to be processed.  
-                    while (true)
-                    {
-                        int bytesRec = handler.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                   
-                    }
-
-                    // Show the data on the console.  
-                    Debug.Log("Text received : " + data);
-
-                    // Echo the data back to the client.  
-                    byte[] msg = Encoding.ASCII.GetBytes(data);
-
-                    handler.Send(msg);
-                    handler.Shutdown(SocketShutdown.Both);
-                    handler.Close();
-                }
-
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.ToString());
-            }
-
-
-        }
-
-        void ListeningServer()
-    {
-        Debug.Log("starting listening server");
-        Socket listenSocket = new Socket(AddressFamily.InterNetwork,
-                                       SocketType.Stream,
-                                       ProtocolType.Tcp);
-
-        // bind the listening socket to the port
-        int port = 9999;
-        int backlog = 10;
-        IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, port);
-        listenSocket.Bind(ep);
-        Debug.Log("binded");
-
-        // start listening
-        Debug.Log("listening");
-        listenSocket.Listen(backlog);
-
-        Debug.Log("about to accept");
-        Socket s  = listenSocket.Accept();
-        Debug.Log("accepted");
-        SocketAsyncEventArgs e = new SocketAsyncEventArgs();
-
-        byte[] bytes = new byte[256];
-        Debug.Log("about to receive");
-        int byteCount  = s.Receive(bytes,0,s.Available, SocketFlags.None);
-
-        Debug.Log("byte count " + byteCount.ToString());
-        if (byteCount > 0)
-        {
-            Debug.Log(Encoding.UTF8.GetString(bytes));
-        }
-
-    }
-
-    void ServerSocket()
-    {
-        var Server = new UdpClient(9999);
-        var ResponseData = Encoding.ASCII.GetBytes("Connected");
-
-        while (!isConnected)
-        {
-            Debug.Log("waiting for client to be found");
-            var ClientEp = new IPEndPoint(IPAddress.Any, 0);
-            var ClientRequestData = Server.Receive(ref ClientEp);
-            var ClientRequest = Encoding.ASCII.GetString(ClientRequestData);
-
-            UnityEngine.Debug.Log("Received " + ClientRequest + " from " + ClientEp.Address.ToString() + " sending response");
-            Server.Send(ResponseData, ResponseData.Length, ClientEp);
-            if (ClientRequest == "!")
-            {
-                isConnected = true;
-                Debug.Log("established connection");
-            }
-        }
-        Debug.Log("closing server");
-        Server.Close();
-
-    }
-
-    
 
     public virtual void close()
     {
-        isConnected = false;
+
     }
-
-
 }
 
 public class ClientThread : ThreadedJob
@@ -232,6 +107,8 @@ public class ClientThread : ThreadedJob
 
     public bool isConnected = false;
     List<string> messageBuffer;
+    DeviceStatusListener deviceStatusListener;
+    public IPAddress serverAddress;
     public ClientThread()
     {
         messageBuffer = new List<string>();
@@ -242,18 +119,23 @@ public class ClientThread : ThreadedJob
         //StartClient();
 
        
-        IPAddress serverAddress = ClientSocket();
+        serverAddress = ClientSocket();
 
         if (serverAddress != IPAddress.Parse("0.0.0.0"))
         {
             //ConnectToServer(serverAddress);
+            deviceStatusListener = new DeviceStatusListener();
+            deviceStatusListener.Start();
             TCPClient(serverAddress);
         }
 
     }
 
+
+
     public void AddMessageToBuffer(string newMessage)
     {
+        Debug.Log("added message to buffer");
         messageBuffer.Add(newMessage);
     }
 
@@ -268,38 +150,65 @@ public class ClientThread : ThreadedJob
             // connected to the same address as specified by the server, port
             // combination.
             Debug.Log("server address " + servAddr.ToString());
-            TcpClient client = new TcpClient(servAddr.ToString(), 9999);
+            try
+            {
+                TcpClient client = new TcpClient(servAddr.ToString(), 9998);
+          
             Debug.Log("created client");
             isConnected = true;
+                Byte[] data = new byte[256];
+                NetworkStream stream;
             while (isConnected)
-            {
-                // Translate the first passed message in the message buffer and convert into ASCII and store it as a Byte array.
-                if (messageBuffer.Count > 0)
                 {
-                    //convert the last message
-                    Byte[] data = System.Text.Encoding.ASCII.GetBytes(messageBuffer[messageBuffer.Count-1]);
+                    // Buffer for reading data
+                    //Byte[] bytes = new Byte[256];
+                    //string readBuffer;
+                    // Translate the first passed message in the message buffer and convert into ASCII and store it as a Byte array.
+                    if (messageBuffer.Count > 0)
+                    {
+                        Debug.Log("got message in the buffer");
+                        //convert the last message
+                        data = System.Text.Encoding.ASCII.GetBytes(messageBuffer[messageBuffer.Count-1]);
 
-                    // Get a client stream for reading and writing.
-                    //  Stream stream = client.GetStream();
+                        // Get a client stream for reading and writing.
+                        //  Stream stream = client.GetStream();
 
-                    NetworkStream stream = client.GetStream();
+                        stream = client.GetStream();
+                        //    int i;
 
-                    // Send the message to the connected TcpServer. 
-                    stream.Write(data, 0, data.Length);
+                        //    // Loop to receive all the data sent by the client.
+                        //    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                        //    {
+                        //        // Translate data bytes to a ASCII string.
+                        //        readBuffer = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                        //        Debug.Log("RECEIVED: " + readBuffer);
+
+
+                        //    }
+                        Debug.Log("writing into the stream");
+                        // Send the message to the connected TcpServer. 
+                        stream.Write(data, 0, data.Length);
 
                     //remove the message from the buffer
                     messageBuffer.RemoveAt(messageBuffer.Count - 1);
 
                     Debug.Log("Sent message");
-                    //stream.Close();
-                }
-
-                Thread.Sleep(100);
+                        //stream.Close();
+                    }
+                    Thread.Sleep(100);
 
             }
 
             //close the client
             client.Close();
+            }
+            catch (SocketException e)
+            {
+                Debug.Log("got socket exception " + e.Message);
+                Debug.Log(e.SocketErrorCode.ToString());
+                Debug.Log("attempting to run again");
+                TCPClient(serverAddress);
+            }
         }
         catch (ArgumentNullException e)
         {
@@ -411,7 +320,9 @@ public class ClientThread : ThreadedJob
     IPAddress ClientSocket()
     {
         var Client = new UdpClient();
-        var RequestData = Encoding.ASCII.GetBytes("!");
+        Debug.Log("about to get subject name");
+        string message = "SUBJ \t" + Configuration.subjectName;
+        var RequestData = Encoding.ASCII.GetBytes(message);
         var ServerEp = new IPEndPoint(IPAddress.Any, 0);
 
         Client.EnableBroadcast = true;
@@ -440,7 +351,6 @@ public class ClientThread : ThreadedJob
 
 public class SocketControl : MonoBehaviour
 {
-    ServerThread _server;
     public ClientThread _client;
     // Start is called before the first frame update
     void Start()
@@ -461,24 +371,11 @@ public class SocketControl : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator RunServer()
-    {
-        UnityEngine.Debug.Log("starting server thread");
-        _server = new ServerThread();
-        _server.Start();
-        yield return null;
-    }
-
     private void OnApplicationQuit()
     {
-        if(_client!=null)
+        if (_client != null)
         {
             _client.Abort();
-        }
-
-        if(_server!=null)
-        {
-            _server.Abort();
         }
     }
 }

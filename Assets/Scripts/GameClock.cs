@@ -2,18 +2,25 @@
 using System.Collections;
 using System;
 using System.Net;
+using System.IO;
 using System.Net.Sockets;
+using System.Globalization;
 using System.Net.NetworkInformation;
 using UnityEngine.Networking;
+using System.Threading;
 using System.Text;
 
 
 
 public class NTPSynchronizer : ThreadedJob
 {
-    public bool isRunning = false;
+    public bool isRunning = true;
+    private bool blocking = false;
     public bool shouldSyncNTP = false;
+    public bool didUpdateNTP = false;
     public DateTime lastSyncedNTPTime = DateTime.Now;
+    static AutoResetEvent autoEvent = new AutoResetEvent(false);
+
     public NTPSynchronizer()
     {
         isRunning = true;
@@ -23,11 +30,9 @@ public class NTPSynchronizer : ThreadedJob
     {
         while(isRunning)
         {
-            while(shouldSyncNTP)
-            {
-                lastSyncedNTPTime= GetNetworkTime();
-                shouldSyncNTP = false;
-            }
+            didUpdateNTP = GetNIST();
+            //lastSyncedNTPTime = GetNetworkTime();
+            Thread.Sleep((int)Configuration.syncNTPInterval * 1000);
         }
     }
 
@@ -36,15 +41,60 @@ public class NTPSynchronizer : ThreadedJob
 
     }
 
+
     public void QueryNTPTime()
     {
+        Debug.Log("querying NTP time");
         shouldSyncNTP = true;
     }
+
+    void recieveArgs_Completed(object sender, SocketAsyncEventArgs e)
+    {
+        var are = (AutoResetEvent)e.UserToken;
+        are.Set();
+    }
+
+    public bool GetNIST()
+    {
+        Debug.Log("getting NIST time");
+        var client = new TcpClient("time.nist.gov", 13);
+        //var client = new TcpClient("time.windows.com", 13);
+
+        //const string ntpServer = "time.windows.com";
+        //var addresses = Dns.GetHostEntry(ntpServer).AddressList;
+        //var ipEndPoint = new IPEndPoint(addresses[0], 123);
+
+        //var client = new UdpClient(ipEndPoint);
+        //Debug.Log("client created");
+
+        using (var streamReader = new StreamReader(client.GetStream()))
+        {
+            var response = streamReader.ReadToEnd();
+            Debug.Log("response " + response);
+            if (response.Length >= 17)
+            {
+                var utcDateTimeString = response.Substring(7, 17);
+                Debug.Log("utc time substring " + utcDateTimeString);
+                var localDateTime = DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                Debug.Log("local date time " + localDateTime.ToString());
+
+                lastSyncedNTPTime= localDateTime;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
 
 
     public static DateTime GetNetworkTime()
     {
         //default Windows time server
+
+        Debug.Log("retrieving NTP time");
         const string ntpServer = "time.windows.com";
 
         // NTP message size - 16 bytes of the digest (RFC 2030)
@@ -64,12 +114,13 @@ public class NTPSynchronizer : ThreadedJob
             socket.Connect(ipEndPoint);
 
             //Stops code hang if NTP is blocked
-            socket.ReceiveTimeout = 1000;
+            socket.ReceiveTimeout = 3000;
 
             socket.Send(ntpData);
             socket.Receive(ntpData);
             socket.Close();
         }
+
 
         //Offset to get to the "Transmit Timestamp" field (time at which the reply 
         //departed the server for the client, in 64-bit timestamp format."
@@ -87,6 +138,7 @@ public class NTPSynchronizer : ThreadedJob
 
         var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
 
+        Debug.Log("obtained NTP time");
         //**UTC** time
         var networkDateTime = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)milliseconds);
 
@@ -102,7 +154,7 @@ public class NTPSynchronizer : ThreadedJob
                        ((x & 0xff000000) >> 24));
     }
 
-public virtual void close()
+    public virtual void close()
     {
         isRunning = false;
     }
@@ -129,8 +181,12 @@ public class GameClock : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        _ntpSync = new NTPSynchronizer();
-        _ntpSync.Start();
+
+        if (Configuration.isSyncing)
+        {
+            _ntpSync = new NTPSynchronizer();
+            _ntpSync.Start();
+        }
 	}
 
 
