@@ -355,7 +355,10 @@ public class GameClock : MonoBehaviour {
 
     private void OnApplicationQuit()
     {
-
+        if(_ntpSync!=null)
+        {
+            _ntpSync.close();
+        }
     }
 
 

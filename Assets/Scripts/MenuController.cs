@@ -41,7 +41,7 @@ public class MenuController : MonoBehaviour {
 
     IEnumerator PrepExperiment()
     { 
-        if (subjectInputField.text == "")
+        if (subjectInputField.text == "" && Configuration.isTargetIPAddrValid)
         {
             subjectEmptyWarningText.enabled = true;
         }

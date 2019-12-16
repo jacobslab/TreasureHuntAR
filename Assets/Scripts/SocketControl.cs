@@ -107,7 +107,7 @@ public class ClientThread : ThreadedJob
 
     public bool isConnected = false;
     List<string> messageBuffer;
-    DeviceStatusListener deviceStatusListener;
+    //DeviceStatusListener deviceStatusListener;
     public IPAddress serverAddress;
     public ClientThread()
     {
@@ -118,17 +118,34 @@ public class ClientThread : ThreadedJob
     {
         //StartClient();
 
-       
-        serverAddress = ClientSocket();
+        //if input field is empty with default string "0.0.0.0", then perform device discovery
+        if (Configuration.directIPAddress.Contains("0.0.0.0"))
+        {
 
+            PrintSomething("attempting device discovery");
+            
+            serverAddress = ClientSocket();
+        }
+        else
+        {
+            PrintSomething("doing direct ip connection");
+            PrintSomething(Configuration.directIPAddress);
+            serverAddress = IPAddress.Parse(Configuration.directIPAddress); // we are not doing TryParse here as we already did that in NetworkManager before switching to main experiment scene
+        }
         if (serverAddress != IPAddress.Parse("0.0.0.0"))
         {
             //ConnectToServer(serverAddress);
-            deviceStatusListener = new DeviceStatusListener();
-            deviceStatusListener.Start();
+            //deviceStatusListener = new DeviceStatusListener();
+            //deviceStatusListener.Start();
             TCPClient(serverAddress);
         }
 
+
+    }
+
+    void PrintSomething(string msg)
+    {
+        UnityEngine.Debug.Log("PRINT: " + msg);
     }
 
 
@@ -207,6 +224,7 @@ public class ClientThread : ThreadedJob
                 Debug.Log("got socket exception " + e.Message);
                 Debug.Log(e.SocketErrorCode.ToString());
                 Debug.Log("attempting to run again");
+                Thread.Sleep(500);
                 TCPClient(serverAddress);
             }
         }
@@ -338,7 +356,7 @@ public class ClientThread : ThreadedJob
 
         UnityEngine.Debug.Log("Received " + ServerResponse + " from " + ServerResponseData.Result.RemoteEndPoint.Address.ToString());
         Client.Close();
-
+        Debug.Log("close udp socket");
         return targetAddr;
 
     }
@@ -375,7 +393,8 @@ public class SocketControl : MonoBehaviour
     {
         if (_client != null)
         {
-            _client.Abort();
+            Debug.Log("about to abort client");
+            _client.close();
         }
     }
 }

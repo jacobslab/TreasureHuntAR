@@ -87,6 +87,8 @@ public class NetworkManager : MonoBehaviour
     public Text neuralConnectionText;
     public Image neuralConnectionStatusImage;
 
+    public InputField directIPAddress;
+    public Text ipAddrWarningText;
 
     private static NetworkManager _instance;
 
@@ -103,6 +105,7 @@ public class NetworkManager : MonoBehaviour
     private void Awake()
     {
 
+        ipAddrWarningText.enabled = false;
         if (_instance != null)
         {
             Debug.Log("Instance already exists!");
@@ -143,11 +146,11 @@ public class NetworkManager : MonoBehaviour
 
         yield return StartCoroutine(SetEPADConnectionUIStatus(true));
 
-        while(!Configuration.neuralDeviceConnected)
-        {
-            yield return 0;
-        }
-        yield return StartCoroutine(SetNeuralConnectionUIStatus(true));
+        //while(!Configuration.neuralDeviceConnected)
+        //{
+        //    yield return 0;
+        //}
+        //yield return StartCoroutine(SetNeuralConnectionUIStatus(true));
         connectionGroup.alpha = 0f;
         Configuration.isSyncing = true;
         yield return null;
@@ -202,6 +205,24 @@ public class NetworkManager : MonoBehaviour
             return InitiateDiscovery();
         else
             return 0;
+    }
+
+    public void UpdateDirectIPAddress()
+    {
+        Debug.Log("updating ip address with " + directIPAddress.text);
+        IPAddress targetAddr;
+        bool parseResult = IPAddress.TryParse(directIPAddress.text, out targetAddr);
+        Configuration.isTargetIPAddrValid = parseResult;
+        ipAddrWarningText.enabled = !parseResult; // turn off the warning if IP address parsing was successful
+        if (parseResult)
+        {
+            Debug.Log("able to parse the IP Address");
+            Configuration.directIPAddress = directIPAddress.text;
+        }
+        else
+        {
+            ipAddrWarningText.enabled = true;
+        }
     }
 
 
