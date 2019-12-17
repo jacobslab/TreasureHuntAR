@@ -30,8 +30,9 @@ public class NTPSynchronizer : ThreadedJob
     {
         while(isRunning)
         {
-            didUpdateNTP = GetNIST();
-            //lastSyncedNTPTime = GetNetworkTime();
+            //didUpdateNTP = GetNIST();
+            lastSyncedNTPTime = GetNetworkTime();
+            didUpdateNTP = true;
             Thread.Sleep((int)Configuration.syncNTPInterval * 1000);
         }
     }
@@ -45,7 +46,8 @@ public class NTPSynchronizer : ThreadedJob
     public void QueryNTPTime()
     {
         Debug.Log("querying NTP time");
-        shouldSyncNTP = true;
+        //shouldSyncNTP = true;
+        didUpdateNTP = false;
     }
 
     void recieveArgs_Completed(object sender, SocketAsyncEventArgs e)

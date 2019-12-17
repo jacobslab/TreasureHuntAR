@@ -66,7 +66,7 @@ public class Configuration : MonoBehaviour
 
     //time sync settings
     public static bool isSyncing = false;
-    public static float syncNTPInterval = 2f;
+    public static float syncNTPInterval = 60f;
 
     public static string directIPAddress = "0.0.0.0";
     public static bool isTargetIPAddrValid = true; //will turn false if entered IP Address is in invalid format; preventing from beginning the experiment

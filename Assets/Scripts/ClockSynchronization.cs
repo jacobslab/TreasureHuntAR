@@ -29,12 +29,13 @@ public class ClockSynchronization : MonoBehaviour
             yield return new WaitForSeconds(Configuration.syncNTPInterval);
             Debug.Log("finished waiting for seconds");
             gameClock._ntpSync.QueryNTPTime();
+            yield return new WaitForSeconds(0.1f);
             while (!gameClock._ntpSync.didUpdateNTP)
             {
                 yield return 0;
             }
             DateTime currentNTPTime = gameClock._ntpSync.lastSyncedNTPTime;
-            gameClock._ntpSync.didUpdateNTP = false; //set the updated flag to false now that we have retrieved the most recent NTP time
+            //gameClock._ntpSync.didUpdateNTP = false; //set the updated flag to false now that we have retrieved the most recent NTP time
             Debug.Log("current ntp time " + currentNTPTime.ToString());
 
 
