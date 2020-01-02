@@ -263,8 +263,14 @@ public class WorldMapManager : MonoBehaviour
 
             UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
 
+
             TreasureHuntController_ARKit.Instance.trialLog.LogWorldMapLoadSuccessful();
-			Debug.Log("Restarting session with worldMap");
+            ARPlaneAnchorGameObject planeObj = TreasureHuntController_ARKit.Instance.GetPlaneObject();
+            Vector3 originVec = planeObj.gameObject.transform.position;
+            Vector3 centerVec = planeObj.planeAnchor.center;
+            Vector3[] verticesArray = planeObj.planeAnchor.planeGeometry.boundaryVertices;
+            TreasureHuntController_ARKit.Instance.trialLog.LogEnvironmentDimensions(originVec, centerVec, verticesArray);
+            Debug.Log("Restarting session with worldMap");
 			session.RunWithConfigAndOptions(config, runOption);
             if (TreasureHuntController_ARKit.Instance!=null)
             {

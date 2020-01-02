@@ -2248,6 +2248,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         yield return null;
     }
 
+
+    public ARPlaneAnchorGameObject GetPlaneObject()
+    {
+        Vector3 originVec = Vector3.zero;
+        UnityARAnchorManager arAnchorManager = arkitManager.arGenPlane.GetAnchorManager();
+        //Debug.Log ("got anchor manager");
+        LinkedList<ARPlaneAnchorGameObject> arPlaneAnchors = arAnchorManager.GetCurrentPlaneAnchors();
+        //Debug.Log ("got anchor obj linked list");
+        ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+
+        //set it to the default first value
+        ARPlaneAnchor planeAnchor = arPlaneAnchors.First.Value.planeAnchor;
+
+        return planeAnchorObj;
+
+    }
+
     private void OnDestroy()
     {
 
