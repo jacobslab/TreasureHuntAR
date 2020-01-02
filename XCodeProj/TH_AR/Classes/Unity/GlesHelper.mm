@@ -43,6 +43,7 @@ extern "C" void InitRenderingGLES()
     int api = UnitySelectedRenderingAPI();
     assert(api == apiOpenGLES2 || api == apiOpenGLES3);
 
+    EAGLContextSetCurrentAutoRestore autorestore(GetMainDisplaySurface());
     _supportsDiscard        = api == apiOpenGLES2 ? UnityHasRenderingAPIExtension("GL_EXT_discard_framebuffer")         : true;
     _supportsMSAA           = api == apiOpenGLES2 ? UnityHasRenderingAPIExtension("GL_APPLE_framebuffer_multisample")   : true;
     _supportsPackedStencil  = api == apiOpenGLES2 ? UnityHasRenderingAPIExtension("GL_OES_packed_depth_stencil")        : true;
@@ -53,7 +54,18 @@ extern "C" void CreateSystemRenderingSurfaceGLES(UnityDisplaySurfaceGLES* surfac
     EAGLContextSetCurrentAutoRestore autorestore(surface->context);
     DestroySystemRenderingSurfaceGLES(surface);
 
-    surface->layer.opaque = YES;
+    if (UnityPreserveFramebufferAlpha())
+    {
+        const CGFloat components[] = {1.0f, 1.0f, 1.0f, 0.0f};
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGColorRef color = CGColorCreate(colorSpace, components);
+        surface->layer.opaque = NO;
+        surface->layer.backgroundColor = color;
+        CGColorRelease(color);
+        CGColorSpaceRelease(colorSpace);
+    }
+    else
+        surface->layer.opaque = YES;
     surface->layer.drawableProperties = @{ kEAGLDrawablePropertyRetainedBacking: @(FALSE), kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8 };
 
     surface->colorFormat = GL_RGBA8;

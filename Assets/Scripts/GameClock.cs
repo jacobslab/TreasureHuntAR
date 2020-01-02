@@ -28,7 +28,7 @@ public class NTPSynchronizer : ThreadedJob
 
     protected override void ThreadFunction()
     {
-        while(isRunning)
+        while (isRunning)
         {
             //didUpdateNTP = GetNIST();
             lastSyncedNTPTime = GetNetworkTime();
@@ -46,8 +46,8 @@ public class NTPSynchronizer : ThreadedJob
     public void QueryNTPTime()
     {
         Debug.Log("querying NTP time");
-        //shouldSyncNTP = true;
         didUpdateNTP = false;
+        shouldSyncNTP = true;
     }
 
     void recieveArgs_Completed(object sender, SocketAsyncEventArgs e)

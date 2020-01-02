@@ -35,7 +35,6 @@ extern "C" {
 
 // life cycle management
 
-void    UnityInitStartupTime();
 void    UnityInitRuntime(int argc, char* argv[]);
 void    UnityInitApplicationNoGraphics(const char* appPathName);
 void    UnityInitApplicationGraphics();
@@ -114,6 +113,7 @@ int     UnityIsOrientationEnabled(unsigned /*ScreenOrientation*/ orientation);
 
 int     UnityHasOrientationRequest();
 int     UnityShouldAutorotate();
+int     UnityShouldChangeAllowedOrientations();
 int     UnityRequestedScreenOrientation(); // returns ScreenOrientation
 void    UnityOrientationRequestWasCommitted();
 
@@ -121,6 +121,7 @@ int     UnityReportResizeView(unsigned w, unsigned h, unsigned /*ScreenOrientati
 void    UnityReportSafeAreaChange(float x, float y, float w, float h);
 void    UnityReportBackbufferChange(UnityRenderBufferHandle colorBB, UnityRenderBufferHandle depthBB);
 float   UnityCalculateScalingFactorFromTargetDPI(UIScreen* screen);
+void    UnityReportDisplayCutouts(const float* x, const float* y, const float* width, const float* height, int count);
 
 // player settings
 
@@ -132,14 +133,16 @@ int     UnityGetWideColorRequested();
 int     UnityGetShowActivityIndicatorOnLoading();
 int     UnityGetAccelerometerFrequency();
 int     UnityGetTargetFPS();
-int     UnityGetAppBackgroundBehavior();
+int     UnityGetUseCustomAppBackgroundBehavior();
 int     UnityGetDeferSystemGesturesTopEdge();
 int     UnityGetDeferSystemGesturesBottomEdge();
 int     UnityGetDeferSystemGesturesLeftEdge();
 int     UnityGetDeferSystemGesturesRightEdge();
 int     UnityGetHideHomeButton();
 int     UnityMetalFramebufferOnly();
-
+int     UnityMetalMemorylessDepth();
+int     UnityPreserveFramebufferAlpha();
+void    UnitySetAbsoluteURL(const char* url);
 
 // push notifications
 #if !PLATFORM_TVOS
@@ -173,19 +176,21 @@ void    UnityDidAccelerate(float x, float y, float z, double timestamp);
 void    UnitySetJoystickPosition(int joyNum, int axis, float pos);
 int     UnityStringToKey(const char *name);
 void    UnitySetKeyState(int key, int /*bool*/ state);
+void    UnitySetKeyboardKeyState(int key, int /*bool*/ state);
+void    UnitySendKeyboardCommand(UIKeyCommand* command);
 
 // WWW connection handling
 
-void    UnityReportWWWStatus(void* udata, int status);
-void    UnityReportWWWNetworkError(void* udata, int status);
-void    UnityReportWWWResponseHeader(void* udata, const char* headerName, const char* headerValue);
-void    UnityReportWWWReceivedResponse(void* udata, unsigned expectedDataLength);
-void    UnityReportWWWReceivedData(void* udata, const void* buffer, unsigned totalRead, unsigned expectedTotal);
-void    UnityReportWWWFinishedLoadingData(void* udata);
-void    UnityReportWWWSentData(void* udata, unsigned totalWritten, unsigned expectedTotal);
-int     UnityReportWWWValidateCertificate(void* udata, const void* certificateData, unsigned certificateSize);
-const void*   UnityWWWGetUploadData(void* udata, unsigned* bufferSize);
-void    UnityWWWConsumeUploadData(void* udata, unsigned consumedSize);
+void    UnityReportWebRequestStatus(void* udata, int status);
+void    UnityReportWebRequestNetworkError(void* udata, int status);
+void    UnityReportWebRequestResponseHeader(void* udata, const char* headerName, const char* headerValue);
+void    UnityReportWebRequestReceivedResponse(void* udata, unsigned expectedDataLength);
+void    UnityReportWebRequestReceivedData(void* udata, const void* buffer, unsigned totalRead, unsigned expectedTotal);
+void    UnityReportWebRequestFinishedLoadingData(void* udata);
+void    UnityReportWebRequestSentData(void* udata, unsigned totalWritten, unsigned expectedTotal);
+int     UnityReportWebRequestValidateCertificate(void* udata, const void* certificateData, unsigned certificateSize);
+const void*   UnityWebRequestGetUploadData(void* udata, unsigned* bufferSize);
+void    UnityWebRequestConsumeUploadData(void* udata, unsigned consumedSize);
 
 // AVCapture
 
@@ -283,7 +288,7 @@ EAGLContext*        UnityGetDataContextEAGL();
 UnityRenderBufferHandle UnityBackbufferColor();
 UnityRenderBufferHandle UnityBackbufferDepth();
 
-int             UnityGetWideColorSupported();
+int             UnityIsWideColorSupported();
 
 // UI/ActivityIndicator.mm
 void            UnityStartActivityIndicator();
@@ -308,7 +313,6 @@ int             UnityKeyboard_CanSetSelection();
 void            UnityKeyboard_SetSelection(int location, int range);
 
 // UI/UnityViewControllerBase.mm
-void            UnityNotifyAutoOrientationChange();
 void            UnityNotifyHideHomeButtonChange();
 void            UnityNotifyDeferSystemGesturesChange();
 
@@ -318,8 +322,8 @@ int             UnityGetAVCapturePermission(int captureTypes);
 void            UnityRequestAVCapturePermission(int captureTypes);
 
 // Unity/CameraCapture.mm
-void            UnityEnumVideoCaptureDevices(void* udata, void(*callback)(void* udata, const char* name, int frontFacing));
-void*           UnityInitCameraCapture(int device, int w, int h, int fps, void* udata);
+void            UnityEnumVideoCaptureDevices(void* udata, void(*callback)(void* udata, const char* name, int frontFacing, int autoFocusPointSupported, int kind, const int* resolutions, int resCount));
+void*           UnityInitCameraCapture(int device, int w, int h, int fps, int isDepth, void* udata);
 void            UnityStartCameraCapture(void* capture);
 void            UnityPauseCameraCapture(void* capture);
 void            UnityStopCameraCapture(void* capture);
@@ -327,6 +331,7 @@ void            UnityCameraCaptureExtents(void* capture, int* w, int* h);
 void            UnityCameraCaptureReadToMemory(void* capture, void* dst, int w, int h);
 int             UnityCameraCaptureVideoRotationDeg(void* capture);
 int             UnityCameraCaptureVerticallyMirrored(void* capture);
+int             UnityCameraCaptureSetAutoFocusPoint(void* capture, float x, float y);
 
 
 // Unity/DeviceSettings.mm
@@ -334,6 +339,9 @@ const char*     UnityDeviceUniqueIdentifier();
 const char*     UnityVendorIdentifier();
 const char*     UnityAdvertisingIdentifier();
 int             UnityAdvertisingTrackingEnabled();
+int            UnityGetLowPowerModeEnabled();
+int            UnityGetWantsSoftwareDimming();
+void            UnitySetWantsSoftwareDimming(int enabled);
 const char*     UnityDeviceName();
 const char*     UnitySystemName();
 const char*     UnitySystemVersion();
@@ -348,6 +356,9 @@ EAGLContext*    UnityGetMainScreenContextGLES();
 EAGLContext*    UnityGetContextEAGL();
 void            UnityStartFrameRendering();
 void            UnityDestroyUnityRenderSurfaces();
+int             UnityMainScreenRefreshRate();
+void            UnitySetBrightness(float brightness);
+float           UnityGetBrightness();
 
 // Unity/Filesystem.mm
 const char*     UnityApplicationDir();

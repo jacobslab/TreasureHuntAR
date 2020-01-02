@@ -229,14 +229,17 @@ static void* _ObservePlayerItemContext = (void*)0x2;
 - (void)resume
 {
     if (_playerReady && _player.rate == 0.0f)
+    {
+        [self seekToTimestamp: _player.currentTime];
         [_player play];
+    }
 }
 
 - (void)rewind                      { [self seekToTimestamp: kCMTimeZero]; }
 - (void)seekTo:(float)timeSeconds   { [self seekToTimestamp: CMTimeMakeWithSeconds(timeSeconds, 1)]; }
 - (void)seekToTimestamp:(CMTime)time
 {
-    [_player seekToTime: time];
+    [_player seekToTime: time toleranceBefore: kCMTimeZero toleranceAfter: kCMTimeZero];
     _curFrameTimestamp = _lastFrameTimestamp = time;
 }
 

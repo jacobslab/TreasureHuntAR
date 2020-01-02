@@ -116,7 +116,6 @@ static DisplayManager* _DisplayManager = nil;
         if (api == apiMetal)
         {
             UnityDisplaySurfaceMTL* surf = new UnityDisplaySurfaceMTL();
-            surf->writeCount    = 0;
             surf->layer         = (CAMetalLayer*)_view.layer;
             surf->device        = UnityGetMetalDevice();
             surf->commandQueue  = [surf->device newCommandQueue];
@@ -144,22 +143,23 @@ static DisplayManager* _DisplayManager = nil;
 
     bool systemSizeChanged  = _surface->systemW != _screenSize.width || _surface->systemH != _screenSize.height;
     bool msaaChanged        = _supportsMSAA && (_surface->msaaSamples != params.msaaSampleCount);
-    bool depthfmtChanged    = _surface->disableDepthAndStencil != params.disableDepthAndStencil;
+    bool depthFmtChanged    = _surface->disableDepthAndStencil != params.disableDepthAndStencil;
     bool cvCacheChanged     = _surface->useCVTextureCache != params.useCVTextureCache;
+    bool memorylessChanged  = _surface->memorylessDepth != params.metalMemorylessDepth;
 
     bool renderSizeChanged  = false;
     if ((params.renderW > 0 && _surface->targetW != params.renderW)         // changed resolution
         ||  (params.renderH > 0 && _surface->targetH != params.renderH)     // changed resolution
         ||  (params.renderW <= 0 && _surface->targetW != _surface->systemW) // no longer need intermediate fb
         ||  (params.renderH <= 0 && _surface->targetH != _surface->systemH) // no longer need intermediate fb
-        )
+    )
     {
         renderSizeChanged = true;
     }
 
     bool recreateSystemSurface      = systemSizeChanged;
     bool recreateRenderingSurface   = systemSizeChanged || renderSizeChanged || msaaChanged || cvCacheChanged;
-    bool recreateDepthbuffer        = systemSizeChanged || renderSizeChanged || msaaChanged || depthfmtChanged;
+    bool recreateDepthbuffer        = systemSizeChanged || renderSizeChanged || msaaChanged || depthFmtChanged || memorylessChanged;
 
     _surface->disableDepthAndStencil = params.disableDepthAndStencil;
 
@@ -173,6 +173,7 @@ static DisplayManager* _DisplayManager = nil;
     _surface->srgb = params.srgb;
     _surface->wideColor = params.wideColor;
     _surface->useCVTextureCache = params.useCVTextureCache;
+    _surface->memorylessDepth = params.metalMemorylessDepth;
 
     if (UnitySelectedRenderingAPI() == apiMetal)
     {
@@ -188,7 +189,7 @@ static DisplayManager* _DisplayManager = nil;
         CreateRenderingSurface(_surface);
     if (recreateDepthbuffer)
         CreateSharedDepthbuffer(_surface);
-    if (recreateSystemSurface || recreateRenderingSurface)
+    if (recreateSystemSurface || recreateRenderingSurface || recreateDepthbuffer)
         CreateUnityRenderBuffers(_surface);
 
     UnityInvalidateDisplayDataCache((__bridge void*)_screen);
@@ -231,11 +232,15 @@ static DisplayManager* _DisplayManager = nil;
     {
         RenderingSurfaceParams params =
         {
-            _surface->msaaSamples, (int)_requestedRenderingSize.width, (int)_requestedRenderingSize.height,
-            _surface->srgb,
-            _surface->wideColor,
-            false,
-            _surface->disableDepthAndStencil, self.surface->cvTextureCache != 0
+            .msaaSampleCount        = _surface->msaaSamples,
+            .renderW                = (int)_requestedRenderingSize.width,
+            .renderH                = (int)_requestedRenderingSize.height,
+            .srgb                   = _surface->srgb,
+            .wideColor              = _surface->wideColor,
+            .metalFramebufferOnly   = 0,
+            .metalMemorylessDepth   = 0,
+            .disableDepthAndStencil = _surface->disableDepthAndStencil,
+            .useCVTextureCache      = self.surface->cvTextureCache != 0,
         };
         [self recreateSurface: params];
 
@@ -290,7 +295,7 @@ static DisplayManager* _DisplayManager = nil;
                               valueOptions: NSPointerFunctionsStrongMemory | NSPointerFunctionsObjectPointerPersonality
             ];
 
-        for (UIScreen* screen in[UIScreen screens])
+        for (UIScreen* screen in [UIScreen screens])
             [self registerScreen: screen];
 
         _mainDisplay = self[[UIScreen mainScreen]];
@@ -450,6 +455,7 @@ static void EnsureDisplayIsInited(DisplayConnection* conn)
             .srgb                   = UnityGetSRGBRequested(),
             .wideColor              = 0,    // i am not sure how to handle wide color here (and if it is even supported for airplay)
             .metalFramebufferOnly   = UnityMetalFramebufferOnly(),
+            .metalMemorylessDepth   = UnityMetalMemorylessDepth(),
             .disableDepthAndStencil = UnityDisableDepthAndStencilBuffers(),
             .useCVTextureCache      = 0,
         };
@@ -559,6 +565,7 @@ extern "C" EAGLContext* UnityGetMainScreenContextGLES()
 {
     return GetMainDisplay().surfaceGLES->context;
 }
+
 extern "C" EAGLContext* UnityGetContextEAGL()
 {
     return GetMainDisplay().surfaceGLES->context;
@@ -590,6 +597,15 @@ extern "C" float UnityScreenScaleFactor(UIScreen* screen)
     return screen.scale;
 }
 
+extern "C" int UnityMainScreenRefreshRate()
+{
+    if (@available(iOS 10.3, tvOS 10.3, *))
+        return (int)[UIScreen mainScreen].maximumFramesPerSecond;
+
+    // this is backwards-compatible value
+    return 30;
+}
+
 extern "C" void UnityStartFrameRendering()
 {
     [[DisplayManager Instance] startFrameRendering];
@@ -600,4 +616,23 @@ extern "C" void UnityDestroyUnityRenderSurfaces()
     [[DisplayManager Instance] enumerateDisplaysWithBlock:^(DisplayConnection* conn) {
         DestroyUnityRenderBuffers(conn.surface);
     }];
+}
+
+extern "C" void UnitySetBrightness(float brightness)
+{
+    #if !PLATFORM_TVOS
+    brightness = (brightness > 1.0 ? 1.0 : brightness) < 0 ? 0.0 : brightness;
+    UIScreen* screen  = [UIScreen mainScreen];
+    screen.brightness = brightness;
+    #endif
+}
+
+extern "C" float UnityGetBrightness()
+{
+#if !PLATFORM_TVOS
+    UIScreen* screen  = [UIScreen mainScreen];
+    return screen.brightness;
+#else
+    return 1.0f;
+#endif
 }

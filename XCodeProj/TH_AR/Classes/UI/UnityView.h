@@ -1,6 +1,8 @@
 #pragma once
 
-@interface UnityRenderingView : UIView {}
+@interface UnityRenderingView : UIView
+{
+}
 + (void)InitializeForAPI:(UnityRenderingAPI)api;
 @end
 
@@ -31,6 +33,10 @@
 @interface UnityView (Deprecated)
 - (void)recreateGLESSurfaceIfNeeded __deprecated_msg("use recreateRenderingSurfaceIfNeeded instead.");
 - (void)recreateGLESSurface __deprecated_msg("use recreateRenderingSurface instead.");
+@end
+
+@interface UnityView (Keyboard)
+- (void)processKeyboard;
 @end
 
 #if PLATFORM_IOS

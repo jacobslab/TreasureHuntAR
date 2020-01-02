@@ -7,73 +7,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NetworkServer : ThreadedJob
-{
-    public bool isRunning = false;
-    public bool isConnected = false;
-
-    public NetworkServer()
-    {
-
-    }
-
-    protected override void ThreadFunction()
-    {
-        isRunning = true;
-        // Do your threaded task. DON'T use the Unity API here
-        while (isRunning)
-        {
-            int discoveryResult = NetworkManager.DoNetworkDiscovery();
-            if(discoveryResult == 1)
-            {
-                isConnected = true;
-            }
-            NetworkManager.EstablishConnection(); //establish connection as a PUBLISHER
-
-        }
-    }
-    protected override void OnFinished()
-    {
-        // This is executed by the Unity main thread when the job is finished
-
-    }
-
-
-
-    public void End()
-    {
-        isRunning = false;
-    }
-
-    public virtual void close()
-    {
-        isConnected = false;
-        isRunning = false;
-        Debug.Log("closing");
-    }
-
-}
-
 
 public class NetworkManager : MonoBehaviour
 {
 
 
-    [DllImport("__Internal")]
-    private static extern int InitiateDiscovery();
+    //[DllImport("__Internal")]
+    //private static extern int InitiateDiscovery();
 
-    [DllImport("__Internal")]
-    private static extern void Subscriber();
+    //[DllImport("__Internal")]
+    //private static extern void Subscriber();
 
-    [DllImport("__Internal")]
-    private static extern void Publisher();
+    //[DllImport("__Internal")]
+    //private static extern void Publisher();
 
 
-    [DllImport("__Internal")]
-    private static extern int CheckIfPulseSent();
+    //[DllImport("__Internal")]
+    //private static extern int CheckIfPulseSent();
 
-    [DllImport("__Internal")]
-    private static extern void TerminateConnection();
+    //[DllImport("__Internal")]
+    //private static extern void TerminateConnection();
 
     //NetworkServer _networkServer;
     private SocketControl _socketControl;
@@ -199,13 +152,13 @@ public class NetworkManager : MonoBehaviour
 
 
 
-    public static int DoNetworkDiscovery()
-    {
-        if (Application.platform != RuntimePlatform.OSXEditor)
-            return InitiateDiscovery();
-        else
-            return 0;
-    }
+    //public static int DoNetworkDiscovery()
+    //{
+    //    if (Application.platform != RuntimePlatform.OSXEditor)
+    //        return InitiateDiscovery();
+    //    else
+    //        return 0;
+    //}
 
     public void UpdateDirectIPAddress()
     {
@@ -227,36 +180,36 @@ public class NetworkManager : MonoBehaviour
 
 
 
-    public static void EstablishConnection()
-    {
-        if (Application.platform != RuntimePlatform.OSXEditor)
-        {
-            //the ipad client will be a Publisher
-            Publisher();
-        }
-    }
+    //public static void EstablishConnection()
+    //{
+    //    if (Application.platform != RuntimePlatform.OSXEditor)
+    //    {
+    //        //the ipad client will be a Publisher
+    //        Publisher();
+    //    }
+    //}
 
-    public IEnumerator CheckForPulses()
-    {
-        if (Application.platform != RuntimePlatform.OSXEditor)
-        {
-            while (true)
-            {
-                int result = CheckIfPulseSent();
-                if (result == 1)
-                {
-                    NotifyPulse(true);
-                }
-                else
-                {
-                    NotifyPulse(false);
-                }
-                yield return 0;
-            }
-        }
+    //public IEnumerator CheckForPulses()
+    //{
+    //    if (Application.platform != RuntimePlatform.OSXEditor)
+    //    {
+    //        while (true)
+    //        {
+    //            int result = CheckIfPulseSent();
+    //            if (result == 1)
+    //            {
+    //                NotifyPulse(true);
+    //            }
+    //            else
+    //            {
+    //                NotifyPulse(false);
+    //            }
+    //            yield return 0;
+    //        }
+    //    }
 
-        yield return null;
-    }
+    //    yield return null;
+    //}
 
     public int NotifyPulse(bool pulseSent)
     {
@@ -268,7 +221,7 @@ public class NetworkManager : MonoBehaviour
         if (Application.platform != RuntimePlatform.OSXEditor)
         {
             _socketControl._client.close();
-            TerminateConnection();
+            //TerminateConnection();
         }
     }
 

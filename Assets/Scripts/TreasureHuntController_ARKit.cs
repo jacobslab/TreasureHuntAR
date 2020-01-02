@@ -1922,7 +1922,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             string displayName = retrievalSequenceList[j].GetComponent<SpawnableObject>().GetName();
             //Debug.Log("asking about " + displayName);
             retrievalText.text = "Where did you find the " + displayName + "?";
-
+            trialLog.LogObjectToRecall(retrievalSequenceList[j].GetComponent<SpawnableObject>());
             //			debugText.text = debugText.text.Insert (0, displayName + " pos: " + retrievalSequenceList [j].transform.position.ToString ());
 
             //wait until it's picked up, then spawn an object
@@ -1963,6 +1963,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                                 //Anchor anchor = m_AllPlanes [0].CreateAnchor (new Pose (hit.Pose.position, Quaternion.identity));
                                 GameObject choiceObj = Instantiate(choiceSelectionPrefab, hitObj.transform.position, hitObj.transform.rotation);
                                 choiceSelectionList.Add(choiceObj);
+
+                                //log both the player's choice position and the correct object position
+                                trialLog.LogRetrievalChoice(choiceObj.transform.position, displayName);
+                                trialLog.LogCorrectRetrieval(retrievalSequenceList[j].transform.position, displayName);
+
 
                                 //wait to show their choice, then make it invisible
                                 yield return new WaitForSeconds(1f);
@@ -2025,13 +2030,19 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 //debugText.enabled = true;
                 //debugText.text += responseDistance.ToString() + " \n";
                 Debug.Log("response distance is " + responseDistance.ToString());
+                trialLog.LogResponseDistance(responseDistance); //logging response distance
                 if (responseDistance < Configuration.minResponseDistance)
                 {
                     lineColor = Color.green;
                     correctResponseList.Add(true);
+                    trialLog.LogCorrectAnswer(correctPositionIndicator.transform.position, retrievalSequenceList[i].gameObject.name);
                 }
                 else
+                {
                     correctResponseList.Add(false);
+                    trialLog.LogIncorrectAnswer(correctPositionIndicator.transform.position, retrievalSequenceList[i].gameObject.name);
+                
+                }
                 correctPositionIndicator.GetComponent<MeshRenderer>().material.color = lineColor;
                 correctPositionIndicatorList.Add(correctPositionIndicator);
             }
@@ -2112,6 +2123,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
 
 
+
     IEnumerator PrepareScoreboard()
     {
         int itemScore = 0;
@@ -2122,10 +2134,11 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             Debug.Log("preparing scoreboard for " + retrievalSequenceList[i].gameObject.name);
             scorePanelUIGroup.transform.GetChild(i).gameObject.GetComponent<ObjectScoreLine>().SetScore(retrievalSequenceList[i].gameObject.GetComponent<SpawnableObject>().GetName(), correctResponseList[i], out itemScore);
             totalScore += itemScore;
+            trialLog.LogItemScore(itemScore, retrievalSequenceList[i].gameObject.GetComponent<SpawnableObject>().GetName());
         }
         //time bonus
         int timeBonus = 0;
-        if(timer.timerBar.Value >50f)
+        if (timer.timerBar.Value > 50f)
         {
             timeBonus = 50;
         }
@@ -2136,16 +2149,21 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         totalScore += timeBonus;
         scorePanelUIGroup.transform.GetChild(3).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = timeBonus.ToString();
+        trialLog.LogTimeBonus(timeBonus);
         //distractor bonus
         int distractorBonus = (distractorSuccess) ? 50 : 0;
         totalScore += distractorBonus;
-        scorePanelUIGroup.transform.GetChild(4).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = distractorBonus.ToString(); 
+        trialLog.LogDistractorBonus(distractorBonus);
+        scorePanelUIGroup.transform.GetChild(4).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = distractorBonus.ToString();
 
         //total score
         scorePanelUIGroup.transform.GetChild(5).gameObject.GetComponent<ObjectScoreLine>().scoreText.text = totalScore.ToString();
         scoreText.text = totalScore.ToString();
+        trialLog.LogTotalScore(totalScore);
+
         yield return null;
     }
+
 
     public void UpdateNavigationStatus()
     {

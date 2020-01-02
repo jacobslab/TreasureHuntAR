@@ -23,8 +23,11 @@ KeyboardShowParam;
 - (void)textInputDone:(id)sender;
 - (void)textInputCancel:(id)sender;
 - (void)textInputLostFocus;
+- (void)textViewDidChange:(UITextView *)textView;
+- (void)keyboardWillShow:(NSNotification*)notification;
 - (void)keyboardDidShow:(NSNotification*)notification;
 - (void)keyboardWillHide:(NSNotification*)notification;
+- (void)becomeFirstResponder;
 
 // on older devices initial keyboard creation might be slow, so it is good to init in on initial loading.
 // on the other hand, if you dont use keyboard (or use it rarely), you can avoid having all related stuff in memory:

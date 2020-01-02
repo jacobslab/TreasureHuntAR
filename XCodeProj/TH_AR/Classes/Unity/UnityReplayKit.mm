@@ -12,13 +12,16 @@ static UnityReplayKit* _replayKit = nil;
 
 @protocol UnityReplayKit_RPScreenRecorder<NSObject>
 
+- (void)setMicrophoneEnabled:(BOOL)value;
 - (BOOL)isMicrophoneEnabled;
 - (void)setCameraEnabled:(BOOL)value;
 - (BOOL)isCameraEnabled;
+- (BOOL)isPreviewControllerActive;
 
-@property (nonatomic, getter = isMicrophoneEnabled) BOOL microphoneEnabled;
+@property (nonatomic, setter = setMicrophoneEnabled:, getter = isMicrophoneEnabled) BOOL microphoneEnabled;
 @property (nonatomic, setter = setCameraEnabled:, getter = isCameraEnabled) BOOL cameraEnabled;
 @property (nonatomic, readonly) UIView* cameraPreviewView;
+@property (nonatomic, getter = isPreviewControllerActive) BOOL previewControllerActive;
 
 @end
 
@@ -28,10 +31,11 @@ static UnityReplayKit* _replayKit = nil;
 @property(nonatomic, readonly, getter = isBroadcasting) BOOL broadcasting;
 @property(nonatomic, readonly) NSString *broadcastExtensionBundleID;
 //@property(nonatomic, weak) id<RPBroadcastControllerDelegate> delegate;
-@property(nonatomic, readonly, getter = isPaused) BOOL paused;
+@property(nonatomic, readonly, getter = isBroadcastingPaused) BOOL paused;
 @property(nonatomic, readonly) NSDictionary<NSString *, NSObject<NSCoding> *> *serviceInfo;
 
 - (BOOL)isBroadcasting;
+- (BOOL)isBroadcastingPaused;
 - (void)finishBroadcastWithHandler:(void (^)(NSError *error))handler;
 - (void)startBroadcastWithHandler:(void (^)(NSError *error))handler;
 - (void)pauseBroadcast;
@@ -55,7 +59,9 @@ static UnityReplayKit* _replayKit = nil;
 // to avoid that we create this monstrosity that pokes unity for orientation.
 
 #if PLATFORM_IOS
-@interface UnityReplayKitViewController : UnityViewControllerBase {}
+@interface UnityReplayKitViewController : UnityViewControllerBase
+{
+}
 - (NSUInteger)supportedInterfaceOrientations;
 @end
 @implementation UnityReplayKitViewController
@@ -96,6 +102,7 @@ static UnityReplayKit* _replayKit = nil;
     id<UnityReplayKit_RPBroadcastController> broadcastController;
     void* broadcastStartStatusCallback;
     UIView* currentCameraPreviewView;
+    bool currentPreviewControllerActive;
 
     UIWindow* overlayWindow;
 }
@@ -136,7 +143,7 @@ static UnityReplayKit* _replayKit = nil;
     return _previewController != nil;
 }
 
-- (BOOL)startRecording:(BOOL)enableMicrophone
+- (BOOL)startRecording
 {
     RPScreenRecorder* recorder = [RPScreenRecorder sharedRecorder];
     if (recorder == nil)
@@ -147,7 +154,7 @@ static UnityReplayKit* _replayKit = nil;
 
     recorder.delegate = self;
     __block BOOL success = YES;
-    [recorder startRecordingWithMicrophoneEnabled: enableMicrophone handler:^(NSError* error) {
+    [recorder startRecordingWithHandler:^(NSError* error) {
         if (error != nil)
         {
             _lastError = [error description];
@@ -224,6 +231,9 @@ static UnityReplayKit* _replayKit = nil;
     {
         _previewController = nil;
     }];
+
+    currentPreviewControllerActive = YES;
+
     return YES;
 }
 
@@ -248,6 +258,8 @@ static UnityReplayKit* _replayKit = nil;
     // TODO - the above callback doesn't seem to be working at the moment.
     _previewController = nil;
 
+    currentPreviewControllerActive = NO;
+
     return YES;
 }
 
@@ -257,6 +269,13 @@ static UnityReplayKit* _replayKit = nil;
     {
         [previewController dismissViewControllerAnimated: YES completion: nil];
     }
+
+    currentPreviewControllerActive = NO;
+}
+
+- (BOOL)isPreviewControllerActive
+{
+    return currentPreviewControllerActive;
 }
 
 /****************************************
@@ -285,6 +304,15 @@ static UnityReplayKit* _replayKit = nil;
         return NO;
     }
     return [broadcastController isBroadcasting];
+}
+
+- (BOOL)isBroadcastingPaused
+{
+    if (broadcastController == nil)
+    {
+        return NO;
+    }
+    return [broadcastController isBroadcastingPaused];
 }
 
 - (void)broadcastActivityViewController:(UnityReplayKit_RPBroadcastActivityViewController *)sBroadcastActivityViewController
@@ -396,6 +424,26 @@ static UnityReplayKit* _replayKit = nil;
     }];
 }
 
+- (void)pauseBroadcasting
+{
+    if (broadcastController == nil || !broadcastController.broadcasting)
+    {
+        return;
+    }
+
+    [broadcastController pauseBroadcast];
+}
+
+- (void)resumeBroadcasting
+{
+    if (broadcastController == nil || !broadcastController.broadcasting)
+    {
+        return;
+    }
+
+    [broadcastController resumeBroadcast];
+}
+
 - (BOOL)isCameraEnabled
 {
     if (![self apiAvailable])
@@ -444,7 +492,23 @@ static UnityReplayKit* _replayKit = nil;
     return screenRecorder.microphoneEnabled;
 }
 
-- (BOOL)showCameraPreviewAt:(CGPoint)position
+- (void)setMicrophoneEnabled:(BOOL)microphoneEnabled
+{
+    if (![self apiAvailable])
+    {
+        return;
+    }
+
+    id<UnityReplayKit_RPScreenRecorder> screenRecorder = (id)[RPScreenRecorder sharedRecorder];
+    if (![screenRecorder respondsToSelector: @selector(setMicrophoneEnabled:)])
+    {
+        return;
+    }
+
+    screenRecorder.microphoneEnabled = microphoneEnabled;
+}
+
+- (BOOL)showCameraPreviewAt:(CGPoint)position width:(float)width height:(float)height
 {
     if (currentCameraPreviewView == nil)
     {
@@ -465,8 +529,12 @@ static UnityReplayKit* _replayKit = nil;
         [cameraPreviewView setUserInteractionEnabled: NO];
     }
 
-    int width = currentCameraPreviewView.frame.size.width;
-    int height = currentCameraPreviewView.frame.size.height;
+    if (width < 0.0f)
+        width = currentCameraPreviewView.frame.size.width;
+
+    if (height < 0.0f)
+        height = currentCameraPreviewView.frame.size.height;
+
     [currentCameraPreviewView setFrame: CGRectMake(position.x, position.y, width, height)];
 
     return YES;

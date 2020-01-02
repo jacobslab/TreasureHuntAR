@@ -95,8 +95,9 @@ public class Configuration : MonoBehaviour
     public static void AdjustMapVariables(float extentMax)
     {
         float extentFactor = (extentMax - 2f) / 18f;
+        float extentFactorRoom = 0.7f; //hard-coded extent factor of Room 750
         Debug.Log("the extent factor is " + extentFactor.ToString());
-        minResponseDistance = Mathf.Clamp(1.3f * extentFactor, 0.6f, 1.3f);
+        minResponseDistance = Mathf.Clamp(1.3f * extentFactorRoom, 0.6f, 1.3f);
         minRabbitSpawnDistance = Mathf.Clamp(1.5f * extentFactor,0.5f,1.5f);
         minRabbitCatchDistance = Mathf.Clamp(1.3f * extentFactor,1.1f,1.3f);
         minDistanceBetweenObjects = Mathf.Clamp(1.5f * extentFactor, 0.5f, 1.5f * extentFactor);

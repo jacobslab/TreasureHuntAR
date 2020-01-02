@@ -21,22 +21,14 @@
     DisplayConnection*  _mainDisplay;
 
     // We will cache view controllers used for fixed orientation (indexed by UIInterfaceOrientation).
-    // Default view contoller goes to index 0. The default view controller is
-    // used when autorotation is enabled.
+    // Default view contoller goes to index 0. The default view controller is used when autorotation is enabled.
     //
-    // There's no way to force iOS to change orientation when autorotation is enabled and
-    // the current orientation is disabled. [UIViewController attemptRotationToDeviceOrientation]
-    // is insufficient to force iOS to change orientation in this circumstance.
-    //
-    // To work around this there's an additional view controller. We switch to it when the
-    // autorotating view controller is used and we detect that the current orientation has been
-    // disabled. The controller is swapped with _viewControllerForOrientation[0] immediately,
-    // so _secondaryAutorotatingViewController is never the actual active controller and can be
-    // ignored for most purposes.
+    // There's no way to force iOS to change orientation when autorotation is enabled and the current orientation is disabled.
+    // [UIViewController attemptRotationToDeviceOrientation] is insufficient to force iOS to change orientation in this circumstance.
+    // We will recreate _viewControllerForOrientation[0] in that case immediately (see checkOrientationRequest for more comments)
 #if UNITY_SUPPORT_ROTATION
     UIViewController*       _viewControllerForOrientation[5];
     UIInterfaceOrientation  _curOrientation;
-    UIViewController*       _secondaryAutorotatingViewController;
 #else
     UIViewController*       _viewControllerForOrientation[1];
 #endif
@@ -128,25 +120,8 @@ void AppController_SendUnityViewControllerNotification(NSString* name);
 
 // in the case when apple adds new api that has easy fallback path for old ios
 // we will add new api methods at runtime on older ios, so we can switch to new api universally
-// in that case we still need actual declaration: we do it here as most convenient place
+// in that case we still need actual declaration: we will do it here as it is the most convenient place
 
-#if (PLATFORM_IOS && !UNITY_HAS_IOSSDK_10_0) || (PLATFORM_TVOS && !UNITY_HAS_TVOSSDK_10_0)
-@interface CADisplayLink ()
-@property(nonatomic) NSInteger preferredFramesPerSecond;
-@end
-#endif
-
-#if (PLATFORM_IOS && !UNITY_HAS_IOSSDK_10_3) || (PLATFORM_TVOS && !UNITY_HAS_TVOSSDK_10_2)
-// The maximumFramesPerSecond API is available in the SDKs since 10.3.
-// However, tvOS SDK has it already in 10.2, but disabled.
-@interface UIScreen ()
-@property (readonly) NSInteger maximumFramesPerSecond;
-@end
-#endif
-
-#if (PLATFORM_IOS && !UNITY_HAS_IOSSDK_11_0) || (PLATFORM_TVOS && !UNITY_HAS_TVOSSDK_11_0)
-// The safeAreaInsets API is available in the SDKs since 11.0.
-@interface UIView ()
-@property (nonatomic, readonly) UIEdgeInsets safeAreaInsets;
-@end
-#endif
+// history:
+// [CADisplayLink preferredFramesPerSecond], [UIScreen maximumFramesPerSecond], [UIView safeAreaInsets]
+//   were removed after we started to enforce xcode9 (sdk 11)

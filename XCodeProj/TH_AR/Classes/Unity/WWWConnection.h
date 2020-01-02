@@ -1,5 +1,6 @@
 #pragma once
 
+#if 0 // old UnityWebRequest backend
 
 @interface UnityWWWConnectionDelegate : NSObject<NSURLConnectionDataDelegate>
 {
@@ -69,3 +70,5 @@
     WWWRequestProviderClassName = #ClassName;       \
 }                                                   \
 @end                                                \
+
+#endif

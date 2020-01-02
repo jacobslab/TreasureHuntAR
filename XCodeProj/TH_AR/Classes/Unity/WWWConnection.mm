@@ -1,5 +1,7 @@
 #include "WWWConnection.h"
 
+#if 0 // old UnityWebRequest backend
+
 // WARNING: this MUST be c decl (NSString ctor will be called after +load, so we cant really change its value)
 
 // If you need to communicate with HTTPS server with self signed certificate you might consider UnityWWWConnectionSelfSignedCertDelegate
@@ -181,47 +183,47 @@ static NSOperationQueue *webOperationQueue;
     NSEnumerator* headerEnum = [respHeader keyEnumerator];
 
     self->_status = [httpResponse statusCode];
-    UnityReportWWWStatus(self.udata, (int)self->_status);
+    UnityReportWebRequestStatus(self.udata, (int)self->_status);
 
     for (id headerKey = [headerEnum nextObject]; headerKey; headerKey = [headerEnum nextObject])
-        UnityReportWWWResponseHeader(self.udata, [headerKey UTF8String], [[respHeader objectForKey: headerKey] UTF8String]);
+        UnityReportWebRequestResponseHeader(self.udata, [headerKey UTF8String], [[respHeader objectForKey: headerKey] UTF8String]);
 
     long long contentLength = [response expectedContentLength];
 
     // ignore any data that we might have recieved during a redirect
     self->_estimatedLength  =  contentLength > 0 && (self->_status / 100 != 3) ? contentLength : 0;
     self->_dataRecievd = 0;
-    UnityReportWWWReceivedResponse(self.udata, (unsigned int)self->_estimatedLength);
+    UnityReportWebRequestReceivedResponse(self.udata, (unsigned int)self->_estimatedLength);
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
 {
-    UnityReportWWWReceivedData(self.udata, data.bytes, (unsigned int)[data length], (unsigned int)self->_estimatedLength);
+    UnityReportWebRequestReceivedData(self.udata, data.bytes, (unsigned int)[data length], (unsigned int)self->_estimatedLength);
 }
 
 - (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error
 {
-    UnityReportWWWNetworkError(self.udata, (int)[error code]);
-    UnityReportWWWFinishedLoadingData(self.udata);
+    UnityReportWebRequestNetworkError(self.udata, (int)[error code]);
+    UnityReportWebRequestFinishedLoadingData(self.udata);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
-    UnityReportWWWFinishedLoadingData(self.udata);
+    UnityReportWebRequestFinishedLoadingData(self.udata);
 }
 
 - (void)connection:(NSURLConnection*)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
 {
-    UnityReportWWWSentData(self.udata, (unsigned int)totalBytesWritten, (unsigned int)totalBytesExpectedToWrite);
+    UnityReportWebRequestSentData(self.udata, (unsigned int)totalBytesWritten, (unsigned int)totalBytesExpectedToWrite);
     if (_outputStream != nil)
     {
         unsigned dataSize = streamSize;
         unsigned transmitted = 0;
-        const UInt8* bytes = (const UInt8*)UnityWWWGetUploadData(_udata, &dataSize);
+        const UInt8* bytes = (const UInt8*)UnityWebRequestGetUploadData(_udata, &dataSize);
         if (dataSize > 0)
         {
             transmitted = [_outputStream write: bytes maxLength: dataSize];
-            UnityWWWConsumeUploadData(_udata, transmitted);
+            UnityWebRequestConsumeUploadData(_udata, transmitted);
         }
         if (dataSize < streamSize && transmitted >= dataSize)
         {
@@ -271,7 +273,7 @@ static NSOperationQueue *webOperationQueue;
             CFDataRef serverCertificateData = SecCertificateCopyData(serverCertificate);
             const UInt8* const data = CFDataGetBytePtr(serverCertificateData);
             const CFIndex size = CFDataGetLength(serverCertificateData);
-            bool trust = UnityReportWWWValidateCertificate(self.udata, (const char*)data, (unsigned)size);
+            bool trust = UnityReportWebRequestValidateCertificate(self.udata, (const char*)data, (unsigned)size);
             CFRelease(serverCertificateData);
             if (trust)
             {
@@ -346,7 +348,7 @@ static NSOperationQueue *webOperationQueue;
 // unity interface
 //
 
-extern "C" void UnitySendWWWConnection(void* connection, const void* data, unsigned length, bool blockImmediately, unsigned long timeoutSec, bool wantCertificateCallback)
+extern "C" void UnitySendWebRequest(void* connection, unsigned length, unsigned long timeoutSec, bool wantCertificateCallback)
 {
     UnityWWWConnectionDelegate* delegate = (__bridge UnityWWWConnectionDelegate*)connection;
 
@@ -354,30 +356,21 @@ extern "C" void UnitySendWWWConnection(void* connection, const void* data, unsig
 
     if (length > 0)
     {
-        if (data != nil)
+        unsigned dataSize = streamSize;
+        const void* bytes = UnityWebRequestGetUploadData(delegate.udata, &dataSize);
+        if (dataSize > 0)
         {
-            [request setHTTPBody: [NSData dataWithBytes: data length: length]];
-            [request setValue: [NSString stringWithFormat: @"%d", length] forHTTPHeaderField: @"Content-Length"];
-        }
-        else
-        {
-            unsigned dataSize = streamSize;
-            const void* bytes = UnityWWWGetUploadData(delegate.udata, &dataSize);
-            if (dataSize > 0)
-            {
-                CFReadStreamRef readStream;
-                CFWriteStreamRef writeStream;
-                CFStreamCreateBoundPair(kCFAllocatorDefault, &readStream, &writeStream, streamSize);
-                [request setHTTPBodyStream: (__bridge NSInputStream*)readStream];
-                [request setValue: @"chunked" forHTTPHeaderField: @"Transfer-Encoding"];
-                CFWriteStreamOpen(writeStream);
-                unsigned transmitted = CFWriteStreamWrite(writeStream, (UInt8*)bytes, dataSize);
-                UnityWWWConsumeUploadData(delegate.udata, transmitted);
-                if (dataSize < streamSize && transmitted >= dataSize)
-                    CFWriteStreamClose(writeStream);
-                else
-                    delegate.outputStream = (__bridge NSOutputStream*)writeStream;
-            }
+            CFReadStreamRef readStream;
+            CFWriteStreamRef writeStream;
+            CFStreamCreateBoundPair(kCFAllocatorDefault, &readStream, &writeStream, streamSize);
+            [request setHTTPBodyStream: (__bridge NSInputStream*)readStream];
+            CFWriteStreamOpen(writeStream);
+            unsigned transmitted = CFWriteStreamWrite(writeStream, (UInt8*)bytes, dataSize);
+            UnityWebRequestConsumeUploadData(delegate.udata, transmitted);
+            if (dataSize < streamSize && transmitted >= dataSize)
+                CFWriteStreamClose(writeStream);
+            else
+                delegate.outputStream = (__bridge NSOutputStream*)writeStream;
         }
     }
 
@@ -401,7 +394,7 @@ extern "C" void UnitySendWWWConnection(void* connection, const void* data, unsig
     [delegate startConnection];
 }
 
-extern "C" void* UnityStartWWWConnectionCustom(void* udata, const char* methodString, const void* headerDict, const char* url)
+extern "C" void* UnityCreateWebRequestBackend(void* udata, const char* methodString, const void* headerDict, const char* url)
 {
     UnityWWWConnectionDelegate* delegate = [UnityWWWConnectionDelegate newDelegateWithCStringURL: url udata: udata];
 
@@ -410,13 +403,13 @@ extern "C" void* UnityStartWWWConnectionCustom(void* udata, const char* methodSt
     return (__bridge_retained void*)delegate;
 }
 
-extern "C" bool UnityBlockWWWConnectionIsDone(void* connection)
+extern "C" bool UnityWebRequestIsDone(void* connection)
 {
     UnityWWWConnectionDelegate* delegate = (__bridge UnityWWWConnectionDelegate*)connection;
     return (delegate.request == nil);
 }
 
-extern "C" void UnityDestroyWWWConnection(void* connection)
+extern "C" void UnityDestroyWebRequestBackend(void* connection)
 {
     UnityWWWConnectionDelegate* delegate = (__bridge_transfer UnityWWWConnectionDelegate*)connection;
 
@@ -424,8 +417,38 @@ extern "C" void UnityDestroyWWWConnection(void* connection)
     delegate = nil;
 }
 
-extern "C" void UnityShouldCancelWWW(const void* connection)
+extern "C" void UnityCancelWebRequest(const void* connection)
 {
     UnityWWWConnectionDelegate* delegate = (__bridge UnityWWWConnectionDelegate*)connection;
     [delegate cancelConnection];
+}
+
+#endif
+
+
+extern "C" void UnityWebRequestClearCookieCache(const char* domain)
+{
+    NSArray<NSHTTPCookie*>* cookies;
+    NSHTTPCookieStorage* cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    if (domain == NULL)
+        cookies = [cookieStorage cookies];
+    else
+    {
+        NSURL* url = [NSURL URLWithString: [NSString stringWithUTF8String: domain]];
+        if (url.path == nil || [url.path isEqualToString: [NSString string]])
+        {
+            NSMutableArray<NSHTTPCookie*>* hostCookies = [[NSMutableArray<NSHTTPCookie *> alloc] init];
+            cookies = [cookieStorage cookies];
+            NSUInteger cookieCount = [cookies count];
+            for (unsigned i = 0; i < cookieCount; ++i)
+                if ([cookies[i].domain isEqualToString: url.host])
+                    [hostCookies addObject: cookies[i]];
+            cookies = hostCookies;
+        }
+        else
+            cookies = [cookieStorage cookiesForURL: url];
+    }
+    NSUInteger cookieCount = [cookies count];
+    for (int i = 0; i < cookieCount; ++i)
+        [cookieStorage deleteCookie: cookies[i]];
 }

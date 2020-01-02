@@ -42,6 +42,29 @@ extern "C" const char* UnityAdvertisingIdentifier()
     return _ADID;
 }
 
+extern "C" int UnityGetLowPowerModeEnabled()
+{
+    return [[NSProcessInfo processInfo] isLowPowerModeEnabled] ? 1 : 0;
+}
+
+extern "C" int UnityGetWantsSoftwareDimming()
+{
+#if !PLATFORM_TVOS
+    UIScreen* mainScreen = [UIScreen mainScreen];
+    return mainScreen.wantsSoftwareDimming ? 1 : 0;
+#else
+    return 0;
+#endif
+}
+
+extern "C" void UnitySetWantsSoftwareDimming(int enabled)
+{
+#if !PLATFORM_TVOS
+    UIScreen* mainScreen = [UIScreen mainScreen];
+    mainScreen.wantsSoftwareDimming = enabled;
+#endif
+}
+
 extern "C" int UnityAdvertisingTrackingEnabled()
 {
     bool _AdTrackingEnabled = false;
@@ -63,7 +86,6 @@ extern "C" const char* UnityVendorIdentifier()
 
     return _VendorID;
 }
-
 
 // UIDevice properties
 
@@ -96,6 +118,19 @@ extern "C" const char* UnityDeviceModel()
         char* model = (char*)::malloc(size + 1);
         ::sysctlbyname("hw.machine", model, &size, NULL, 0);
         model[size] = 0;
+
+#if TARGET_OS_SIMULATOR
+        if (!strncmp(model, "i386", 4) || !strncmp(model, "x86_64", 6))
+        {
+            NSString* simModel = [[NSProcessInfo processInfo] environment][@"SIMULATOR_MODEL_IDENTIFIER"];
+            if ([simModel length] > 0)
+            {
+                _DeviceModel = AllocCString(simModel);
+                ::free(model);
+                return _DeviceModel;
+            }
+        }
+#endif
 
         _DeviceModel = AllocCString([NSString stringWithUTF8String: model]);
         ::free(model);
@@ -134,124 +169,127 @@ extern "C" const char* UnitySystemLanguage()
     return _SystemLanguage;
 }
 
+enum DeviceType : uint8_t
+{
+    deviceTypeUnknown = 0,
+    iPhone = 1,
+    iPad = 2,
+    iPod = 3,
+    AppleTV = 4
+};
+
+struct DeviceTableEntry
+{
+    DeviceType deviceType;
+    uint8_t majorGen;
+    uint8_t minorGenMin;
+    uint8_t minorGenMax;
+    DeviceGeneration device;
+};
+
+DeviceTableEntry DeviceTable[] =
+{
+    { iPhone, 2, 1, 1, deviceiPhone3GS },
+    { iPhone, 3, 1, 3, deviceiPhone4 },
+    { iPhone, 4, 1, 1, deviceiPhone4S },
+    { iPhone, 5, 3, 4, deviceiPhone5C },
+    { iPhone, 5, 1, 2, deviceiPhone5 },
+    { iPhone, 6, 1, 2, deviceiPhone5S },
+    { iPhone, 7, 2, 2, deviceiPhone6 },
+    { iPhone, 7, 1, 1, deviceiPhone6Plus },
+    { iPhone, 8, 1, 1, deviceiPhone6S },
+    { iPhone, 8, 2, 2, deviceiPhone6SPlus },
+    { iPhone, 8, 4, 4, deviceiPhoneSE1Gen },
+    { iPhone, 9, 1, 1, deviceiPhone7 },
+    { iPhone, 9, 3, 3, deviceiPhone7 },
+    { iPhone, 9, 2, 2, deviceiPhone7Plus },
+    { iPhone, 9, 4, 4, deviceiPhone7Plus },
+    { iPhone, 10, 1, 1, deviceiPhone8 },
+    { iPhone, 10, 4, 4, deviceiPhone8 },
+    { iPhone, 10, 2, 2, deviceiPhone8Plus },
+    { iPhone, 10, 5, 5, deviceiPhone8Plus },
+    { iPhone, 10, 3, 3, deviceiPhoneX },
+    { iPhone, 10, 6, 6, deviceiPhoneX },
+    { iPhone, 11, 8, 8, deviceiPhoneXR },
+    { iPhone, 11, 2, 2, deviceiPhoneXS },
+    { iPhone, 11, 4, 4, deviceiPhoneXSMax },
+    { iPhone, 11, 6, 6, deviceiPhoneXSMax },
+    { iPod, 4, 1, 1, deviceiPodTouch4Gen },
+    { iPod, 5, 1, 1, deviceiPodTouch5Gen },
+    { iPod, 7, 1, 1, deviceiPodTouch6Gen },
+    { iPad, 2, 5, 7, deviceiPadMini1Gen },
+    { iPad, 4, 4, 6, deviceiPadMini2Gen },
+    { iPad, 4, 7, 9, deviceiPadMini3Gen },
+    { iPad, 5, 1, 2, deviceiPadMini4Gen },
+    { iPad, 2, 1, 4, deviceiPad2Gen },
+    { iPad, 3, 1, 3, deviceiPad3Gen },
+    { iPad, 3, 4, 6, deviceiPad4Gen },
+    { iPad, 6, 11, 12, deviceiPad5Gen },
+    { iPad, 7, 5, 6, deviceiPad6Gen },
+    { iPad, 4, 1, 3, deviceiPadAir1 },
+    { iPad, 5, 3, 4, deviceiPadAir2 },
+    { iPad, 6, 7, 8, deviceiPadPro1Gen },
+    { iPad, 7, 1, 2, deviceiPadPro2Gen },
+    { iPad, 6, 3, 4, deviceiPadPro10Inch1Gen },
+    { iPad, 7, 3, 4, deviceiPadPro10Inch2Gen },
+    { iPad, 8, 1, 4, deviceiPadPro11Inch },
+    { iPad, 8, 5, 8, deviceiPadPro3Gen },
+
+    { AppleTV, 5, 3, 3, deviceAppleTV1Gen },
+    { AppleTV, 6, 2, 2, deviceAppleTV2Gen }
+};
+
 extern "C" int ParseDeviceGeneration(const char* model)
 {
-#if PLATFORM_IOS
-    if (!strcmp(model, "iPhone2,1"))
-        return deviceiPhone3GS;
-    else if (!strncmp(model, "iPhone3,", 8))
-        return deviceiPhone4;
-    else if (!strncmp(model, "iPhone4,", 8))
-        return deviceiPhone4S;
-    else if (!strncmp(model, "iPhone5,", 8))
+    DeviceType deviceType = deviceTypeUnknown;
+
+    if (!strncmp(model, "iPhone", 6))
     {
-        int rev = atoi(model + 8);
-        if (rev >= 3)
-            return deviceiPhone5C;               // iPhone5,3
-        else
-            return deviceiPhone5;
+        deviceType = iPhone;
+        model += 6;
     }
-    else if (!strncmp(model, "iPhone6,", 8))
-        return deviceiPhone5S;
-    else if (!strncmp(model, "iPhone7,2", 9))
-        return deviceiPhone6;
-    else if (!strncmp(model, "iPhone7,1", 9))
-        return deviceiPhone6Plus;
-    else if (!strncmp(model, "iPhone8,1", 9))
-        return deviceiPhone6S;
-    else if (!strncmp(model, "iPhone8,2", 9))
-        return deviceiPhone6SPlus;
-    else if (!strncmp(model, "iPhone8,4", 9))
-        return deviceiPhoneSE1Gen;
-    else if (!strncmp(model, "iPhone9,1", 9) || !strncmp(model, "iPhone9,3", 9))
-        return deviceiPhone7;
-    else if (!strncmp(model, "iPhone9,2", 9) || !strncmp(model, "iPhone9,4", 9))
-        return deviceiPhone7Plus;
-    else if (!strncmp(model, "iPhone10,1", 10) || !strncmp(model, "iPhone10,4", 10))
-        return deviceiPhone8;
-    else if (!strncmp(model, "iPhone10,2", 10) || !strncmp(model, "iPhone10,5", 10))
-        return deviceiPhone8Plus;
-    else if (!strncmp(model, "iPhone10,3", 10) || !strncmp(model, "iPhone10,6", 10))
-        return deviceiPhoneX;
-    else if (!strcmp(model, "iPod4,1"))
-        return deviceiPodTouch4Gen;
-    else if (!strncmp(model, "iPod5,", 6))
-        return deviceiPodTouch5Gen;
-    else if (!strncmp(model, "iPod7,", 6))
-        return deviceiPodTouch6Gen;
-    else if (!strncmp(model, "iPad2,", 6))
+    else if (!strncmp(model, "iPad", 4))
     {
-        int rev = atoi(model + 6);
-        if (rev >= 5)
-            return deviceiPadMini1Gen;                 // iPad2,5
-        else
-            return deviceiPad2Gen;
+        deviceType = iPad;
+        model += 4;
     }
-    else if (!strncmp(model, "iPad3,", 6))
+    else if (!strncmp(model, "iPod", 4))
     {
-        int rev = atoi(model + 6);
-        if (rev >= 4)
-            return deviceiPad4Gen;                 // iPad3,4
-        else
-            return deviceiPad3Gen;
+        deviceType = iPod;
+        model += 4;
     }
-    else if (!strncmp(model, "iPad4,", 6))
+    else if (!strncmp(model, "AppleTV", 7))
     {
-        int rev = atoi(model + 6);
-        if (rev >= 7)
-            return deviceiPadMini3Gen;
-        else if (rev >= 4)
-            return deviceiPadMini2Gen;     // iPad4,4
-        else
-            return deviceiPadAir1;
-    }
-    else if (!strncmp(model, "iPad5,", 6))
-    {
-        int rev = atoi(model + 6);
-        if (rev == 1 || rev == 2)
-            return deviceiPadMini4Gen;
-        else if (rev >= 3)
-            return deviceiPadAir2;
-    }
-    else if (!strncmp(model, "iPad6,", 6))
-    {
-        int rev = atoi(model + 6);
-        if (rev == 7 || rev == 8)
-            return deviceiPadPro1Gen;
-        else if (rev == 3 || rev == 4)
-            return deviceiPadPro10Inch1Gen;
-        else if (rev == 11 || rev == 12)
-            return deviceiPad5Gen;
-    }
-    else if (!strncmp(model, "iPad7,", 6))
-    {
-        int rev = atoi(model + 6);
-        if (rev == 1 || rev == 2)
-            return deviceiPadPro2Gen;
-        else if (rev == 3 || rev == 4)
-            return deviceiPadPro10Inch2Gen;
-    }
-    // completely unknown hw - just determine form-factor
-    else
-    {
-        if (!strncmp(model, "iPhone", 6))
-            return deviceiPhoneUnknown;
-        else if (!strncmp(model, "iPad", 4))
-            return deviceiPadUnknown;
-        else if (!strncmp(model, "iPod", 4))
-            return deviceiPodTouchUnknown;
-        else
-            return deviceUnknown;
+        deviceType = AppleTV;
+        model += 7;
     }
 
-#elif PLATFORM_TVOS
-    if (!strncmp(model, "AppleTV5,", 9))
-        return deviceAppleTV1Gen;
-    else if (!strncmp(model, "AppleTV6,", 9))
-        return deviceAppleTV2Gen;
-    else
-        return deviceUnknown;
-#endif
+    char* endPtr;
+    int majorGen = (int)strtol(model, &endPtr, 10);
+    int minorGen = (int)strtol(endPtr + 1, &endPtr, 10);
+
+    if (strlen(endPtr) == 0)
+    {
+        for (int i = 0; i < sizeof(DeviceTable) / sizeof(DeviceTable[0]); ++i)
+        {
+            if (deviceType != DeviceTable[i].deviceType)
+                continue;
+            if (majorGen != DeviceTable[i].majorGen)
+                continue;
+            if (minorGen < DeviceTable[i].minorGenMin || minorGen > DeviceTable[i].minorGenMax)
+                continue;
+            return DeviceTable[i].device;
+        }
+    }
+
+    if (deviceType == iPhone)
+        return deviceiPhoneUnknown;
+    else if (deviceType == iPad)
+        return deviceiPadUnknown;
+    else if (deviceType == iPod)
+        return deviceiPodTouchUnknown;
+
+    return deviceUnknown;
 }
 
 extern "C" int UnityDeviceGeneration()
@@ -266,30 +304,43 @@ extern "C" int UnityDeviceGeneration()
     return _DeviceGeneration;
 }
 
+extern "C" int UnityDeviceSupportedOrientations()
+{
+    int device = UnityDeviceGeneration();
+    int orientations = 0;
+
+    orientations |= (1 << portrait);
+    orientations |= (1 << landscapeLeft);
+    orientations |= (1 << landscapeRight);
+
+    switch (device)
+    {
+        case deviceiPhoneX:
+        case deviceiPhoneXS:
+        case deviceiPhoneXSMax:
+        case deviceiPhoneXR:
+            break;
+        default:
+            orientations |= (1 << portraitUpsideDown);
+    }
+    return orientations;
+}
+
 extern "C" int UnityDeviceIsStylusTouchSupported()
 {
     int deviceGen = UnityDeviceGeneration();
     return (deviceGen == deviceiPadPro1Gen ||
-            deviceGen == deviceiPadPro10Inch1Gen ||
-            deviceGen == deviceiPadPro2Gen ||
-            deviceGen == deviceiPadPro10Inch2Gen) ? 1 : 0;
+        deviceGen == deviceiPadPro10Inch1Gen ||
+        deviceGen == deviceiPadPro2Gen ||
+        deviceGen == deviceiPadPro10Inch2Gen) ? 1 : 0;
 }
 
-extern "C" int UnityDeviceIsWideColorSupported()
+extern "C" int UnityDeviceCanShowWideColor()
 {
-    UIScreen* mainScreen = [UIScreen mainScreen];
-    if (![mainScreen respondsToSelector: @selector(traitCollection)])
-        return false;
+    if (@available(iOS 10.0, tvOS 10.0, *))
+        return [UIScreen mainScreen].traitCollection.displayGamut == UIDisplayGamutP3;
 
-    UITraitCollection* traits = mainScreen.traitCollection;
-    if (![traits respondsToSelector: @selector(displayGamut)])
-        return false;
-
-#if UNITY_HAS_IOSSDK_10_0 || UNITY_HAS_TVOSSDK_10_0
-    return traits.displayGamut == UIDisplayGamutP3;
-#else
     return false;
-#endif
 }
 
 extern "C" float UnityDeviceDPI()
@@ -313,6 +364,7 @@ extern "C" float UnityDeviceDPI()
             case deviceiPhoneSE1Gen:
             case deviceiPhone7:
             case deviceiPhone8:
+            case deviceiPhoneXR:
                 _DeviceDPI = 326.0f; break;
             case deviceiPhone6Plus:
             case deviceiPhone6SPlus:
@@ -320,6 +372,8 @@ extern "C" float UnityDeviceDPI()
             case deviceiPhone8Plus:
                 _DeviceDPI = 401.0f; break;
             case deviceiPhoneX:
+            case deviceiPhoneXS:
+            case deviceiPhoneXSMax:
                 _DeviceDPI = 458.0f; break;
 
             // iPad
@@ -334,6 +388,9 @@ extern "C" float UnityDeviceDPI()
             case deviceiPadPro2Gen:
             case deviceiPadPro10Inch2Gen:
             case deviceiPad5Gen:
+            case deviceiPad6Gen:
+            case deviceiPadPro11Inch:
+            case deviceiPadPro3Gen:
                 _DeviceDPI = 264.0f; break;
 
             // iPad mini

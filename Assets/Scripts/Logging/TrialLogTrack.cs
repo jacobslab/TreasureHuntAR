@@ -190,7 +190,17 @@ public class TrialLogTrack : LogTrack {
 		}
 	}
 
-	public void LogFeedback(bool isStarting){
+    public void LogRetrievalChoice(Vector3 choicePosition, string displayName)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CHOSEN_TEST_POSITION" + separator + choicePosition.x.ToString() + separator + choicePosition.y.ToString() + separator + choicePosition.z.ToString() + separator + displayName);
+    }
+
+    public void LogCorrectRetrieval(Vector3 correctPosition, string displayName)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CORRECT_TEST_POSITION" + separator + correctPosition.x.ToString() + separator + correctPosition.y.ToString() + separator + correctPosition.z.ToString() + separator + displayName);
+    }
+
+    public void LogFeedback(bool isStarting){
 		if (Configuration.isLogging) {
 			if(isStarting){
 				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "FEEDBACK_STARTED");
@@ -203,7 +213,65 @@ public class TrialLogTrack : LogTrack {
 		}
 	}
 
-	public void LogScoreScreenStarted(bool isStarting){
+    public void LogMapVariables(float minResponseDistance, float minRabbitSpawnDistance, float minRabbitCatchDistance, float minDistanceBetweenObjects)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "MIN_RESPONSE_DISTANCE" + separator + minResponseDistance.ToString());
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "MIN_RABBIT_SPAWN_DISTANCE" + separator + minRabbitSpawnDistance.ToString());
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "MIN_RABBIT_CATCH_DISTANCE" + separator + minRabbitCatchDistance.ToString());
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "MIN_DISTANCE_BETWEEN_OBJECTS" + separator + minDistanceBetweenObjects.ToString());
+    }
+
+    //only logs environment origins for now
+    public void LogEnvironmentDimensions(Vector3 envOrigin, Vector3 envCenter, Vector3[] verticesArr)
+    {
+        //log origin & center
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_ORIGIN" + separator + envOrigin.x.ToString() + separator + envOrigin.y.ToString() + separator + envOrigin.z.ToString());
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_CENTER" + separator + envCenter.x.ToString() + separator + envCenter.y.ToString() + separator + envCenter.z.ToString());
+
+        for (int i = 0; i < verticesArr.Length; i++)
+        {
+            subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Experiment Info" + separator + "ENV_VERTEX" + separator + verticesArr[i].x.ToString() + separator + verticesArr[i].y.ToString() + separator + verticesArr[i].z.ToString());
+        }
+    }
+
+    public void LogResponseDistance(float responseDistance)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "RESPONSE_DISTANCE" + separator + responseDistance.ToString());
+    }
+
+    public void LogCorrectAnswer(Vector3 indicatorPos, string cuedObjName)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CORRECT_ANSWER" + separator + indicatorPos.x.ToString() + separator + indicatorPos.y.ToString() + separator + indicatorPos.z.ToString() + separator + cuedObjName);
+    }
+
+    public void LogIncorrectAnswer(Vector3 indicatorPos, string cuedObjName)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "INCORRECT_ANSWER" + separator + indicatorPos.x.ToString() + separator + indicatorPos.y.ToString() + separator + indicatorPos.z.ToString() + separator + cuedObjName);
+    }
+
+    public void LogItemScore(int itemScore, string objName)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "ITEM_SCORE" + separator + itemScore.ToString() + separator + objName);
+    }
+
+    public void LogTimeBonus(int timeBonus)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIME_BONUS" + separator + timeBonus.ToString());
+    }
+
+    public void LogDistractorBonus(int distractorBonus)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "DISTRACTOR_BONUS" + separator + distractorBonus.ToString());
+    }
+
+    public void LogTotalScore(int totalScore)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TOTAL_SCORE" + separator + totalScore.ToString());
+
+    }
+
+
+    public void LogScoreScreenStarted(bool isStarting){
 		if (Configuration.isLogging) {
 			if(isStarting){
 				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "SCORESCREEN_STARTED");
@@ -228,6 +296,40 @@ public class TrialLogTrack : LogTrack {
 			}
 		}
 	}
+
+    public void LogStartTimer()
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIMER_STARTED");
+    }
+
+    public void LogStopTimer()
+    {
+
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIMER_STOPPED");
+    }
+
+    public void LogPauseTimer()
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIMER_PAUSED");
+
+    }
+
+    public void LogUnpauseTimer()
+    {
+
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIMER_UNPAUSED");
+    }
+
+    public void LogResetTimer()
+    {
+
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIMER_RESET");
+    }
+    public void LogTimerValue(float timerVal)
+    {
+
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIMER_VALUE" + separator + timerVal.ToString());
+    }
 
     public void LogPulse()
     {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #ifdef __OBJC__
 @class CAEAGLLayer;
 @class EAGLContext;
@@ -93,6 +95,7 @@ typedef struct UnityDisplaySurfaceBase
     int                 wideColor;              // [bool]
     int                 disableDepthAndStencil; // [bool]
     int                 allowScreenshot;        // [bool] currently we allow screenshots (from script) only on main display
+    int                 memorylessDepth;        // [bool]
 
     int                 api;                    // [UnityRenderingAPI]
 } UnityDisplaySurfaceBase;
@@ -102,7 +105,7 @@ typedef struct UnityDisplaySurfaceBase
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-declarations"
 
-#define kUnityNumOffscreenSurfaces 3
+#define kUnityNumOffscreenSurfaces 2
 
 // GLES display surface
 START_STRUCT(UnityDisplaySurfaceGLES, UnityDisplaySurfaceBase)
@@ -146,10 +149,8 @@ OBJC_OBJECT_PTR CAMetalDrawableRef  drawable;
 OBJC_OBJECT_PTR MTLTextureRef       drawableProxyRT[kUnityNumOffscreenSurfaces];
 
 // These are used on a Mac with drawableProxyRT when off-screen rendering is used
-volatile int32_t                    readCount;
-volatile int32_t                    writeCount;
-volatile int32_t                    bufferChanged;
-volatile int32_t                    bufferCompleted[3];
+volatile int32_t                    bufferCompleted;
+volatile int32_t                    bufferSwap;
 
 OBJC_OBJECT_PTR MTLTextureRef       systemColorRB;
 OBJC_OBJECT_PTR MTLTextureRef       targetColorRT;
@@ -173,6 +174,24 @@ typedef enum UnityRenderingAPI
     apiOpenGLES3    = 3,
     apiMetal        = 4,
 } UnityRenderingAPI;
+
+typedef struct
+    RenderingSurfaceParams
+{
+    // rendering setup
+    int msaaSampleCount;
+    int renderW;
+    int renderH;
+    int srgb;
+    int wideColor;
+    int metalFramebufferOnly;
+    int metalMemorylessDepth;
+
+    // unity setup
+    int disableDepthAndStencil;
+    int useCVTextureCache;
+}
+RenderingSurfaceParams;
 
 #ifdef __cplusplus
 extern "C" {

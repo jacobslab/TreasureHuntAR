@@ -47,11 +47,6 @@ extern bool _supportsMSAA;
 #endif
 
     [self onUpdateSurfaceSize: frame.size];
-
-#if UNITY_CAN_USE_METAL
-    if (UnitySelectedRenderingAPI() == apiMetal)
-        ((CAMetalLayer*)self.layer).framebufferOnly = NO;
-#endif
 }
 
 - (id)initWithFrame:(CGRect)frame scaleFactor:(CGFloat)scale;
@@ -102,6 +97,7 @@ extern bool _supportsMSAA;
     int requestedMSAA = UnityGetDesiredMSAASampleCount(MSAA_DEFAULT_SAMPLE_COUNT);
     int requestedSRGB = UnityGetSRGBRequested();
     int requestedWideColor = UnityGetWideColorRequested();
+    int requestedMemorylessDepth = UnityMetalMemorylessDepth();
 
     UnityDisplaySurfaceBase* surf = GetMainDisplaySurface();
 
@@ -111,7 +107,8 @@ extern bool _supportsMSAA;
         ||  (_supportsMSAA && surf->msaaSamples != requestedMSAA)
         ||  surf->srgb != requestedSRGB
         ||  surf->wideColor != requestedWideColor
-        )
+        ||  surf->memorylessDepth != requestedMemorylessDepth
+    )
     {
         [self recreateRenderingSurface];
     }
@@ -126,12 +123,15 @@ extern bool _supportsMSAA;
 
         RenderingSurfaceParams params =
         {
-            UnityGetDesiredMSAASampleCount(MSAA_DEFAULT_SAMPLE_COUNT),
-            (int)requestedW, (int)requestedH,
-            UnityGetSRGBRequested(),
-            UnityGetWideColorRequested(),
-            UnityMetalFramebufferOnly(),
-            UnityDisableDepthAndStencilBuffers(), 0
+            .msaaSampleCount        = UnityGetDesiredMSAASampleCount(MSAA_DEFAULT_SAMPLE_COUNT),
+            .renderW                = (int)requestedW,
+            .renderH                = (int)requestedH,
+            .srgb                   = UnityGetSRGBRequested(),
+            .wideColor              = UnityGetWideColorRequested(),
+            .metalFramebufferOnly   = UnityMetalFramebufferOnly(),
+            .metalMemorylessDepth   = UnityMetalMemorylessDepth(),
+            .disableDepthAndStencil = UnityDisableDepthAndStencilBuffers(),
+            .useCVTextureCache      = 0,
         };
 
         APP_CONTROLLER_RENDER_PLUGIN_METHOD_ARG(onBeforeMainDisplaySurfaceRecreate, &params);
@@ -203,6 +203,31 @@ void ReportSafeAreaChangeForView(UIView* view)
     CGRect safeArea = ComputeSafeArea(view);
     UnityReportSafeAreaChange(safeArea.origin.x, safeArea.origin.y,
         safeArea.size.width, safeArea.size.height);
+
+    switch (UnityDeviceGeneration())
+    {
+        case deviceiPhoneXR:
+        {
+            const float x = 184, y = 1726, w = 460, h = 66;
+            UnityReportDisplayCutouts(&x, &y, &w, &h, 1);
+            break;
+        }
+        case deviceiPhoneX:
+        case deviceiPhoneXS:
+        {
+            const float x = 250, y = 2346, w = 625, h = 90;
+            UnityReportDisplayCutouts(&x, &y, &w, &h, 1);
+            break;
+        }
+        case deviceiPhoneXSMax:
+        {
+            const float x = 308, y = 2598, w = 626, h = 90;
+            UnityReportDisplayCutouts(&x, &y, &w, &h, 1);
+            break;
+        }
+        default:
+            UnityReportDisplayCutouts(nullptr, nullptr, nullptr, nullptr, 0);
+    }
 }
 
 CGRect ComputeSafeArea(UIView* view)
@@ -211,10 +236,8 @@ CGRect ComputeSafeArea(UIView* view)
     CGRect screenRect = CGRectMake(0, 0, screenSize.width, screenSize.height);
 
     UIEdgeInsets insets = UIEdgeInsetsMake(0, 0, 0, 0);
-#if UNITY_HAS_IOSSDK_11_0 || UNITY_HAS_TVOSSDK_11_0
     if (@available(iOS 11.0, tvOS 11.0, *))
         insets = [view safeAreaInsets];
-#endif
 
     screenRect.origin.x += insets.left;
     screenRect.origin.y += insets.bottom; // Unity uses bottom left as the origin
@@ -222,9 +245,12 @@ CGRect ComputeSafeArea(UIView* view)
     screenRect.size.height -= insets.top + insets.bottom;
 
     float scale = view.contentScaleFactor;
-    screenRect.origin.x *= scale;
-    screenRect.origin.y *= scale;
-    screenRect.size.width *= scale;
-    screenRect.size.height *= scale;
+
+    // Truncate safe area size because in some cases (for example when Display zoom is turned on)
+    // it might become larger than Screen.width/height which are returned as ints.
+    screenRect.origin.x = (unsigned)(screenRect.origin.x * scale);
+    screenRect.origin.y = (unsigned)(screenRect.origin.y * scale);
+    screenRect.size.width = (unsigned)(screenRect.size.width * scale);
+    screenRect.size.height = (unsigned)(screenRect.size.height * scale);
     return screenRect;
 }

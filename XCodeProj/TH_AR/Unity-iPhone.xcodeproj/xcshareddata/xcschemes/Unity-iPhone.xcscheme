@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "0500"
    version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-               BuildableName = "TreasureHuntAR.app"
+               BuildableName = "thar.app"
                BlueprintName = "Unity-iPhone"
                ReferencedContainer = "container:Unity-iPhone.xcodeproj">
             </BuildableReference>
@@ -27,23 +27,11 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "NO">
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5623C57217FDCB0800090B9E"
-               BuildableName = "TreasureHuntAR.xctest"
-               BlueprintName = "Unity-iPhone Tests"
-               ReferencedContainer = "container:Unity-iPhone.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "TreasureHuntAR.app"
+            BuildableName = "thar.app"
             BlueprintName = "Unity-iPhone"
             ReferencedContainer = "container:Unity-iPhone.xcodeproj">
          </BuildableReference>
@@ -54,8 +42,18 @@
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5623C57217FDCB0800090B9E"
+               BuildableName = "thar.xctest"
+               BlueprintName = "Unity-iPhone Tests"
+               ReferencedContainer = "container:Unity-iPhone.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "ReleaseForRunning"
@@ -75,13 +73,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "TreasureHuntAR.app"
+            BuildableName = "thar.app"
             BlueprintName = "Unity-iPhone"
             ReferencedContainer = "container:Unity-iPhone.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "ReleaseForProfiling"
@@ -94,7 +90,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "TreasureHuntAR.app"
+            BuildableName = "thar.app"
             BlueprintName = "Unity-iPhone"
             ReferencedContainer = "container:Unity-iPhone.xcodeproj">
          </BuildableReference>

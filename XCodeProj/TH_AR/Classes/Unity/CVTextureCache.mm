@@ -2,22 +2,26 @@
 
 #include "DisplayManager.h"
 
-#include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
+#include <OpenGLES/ES3/gl.h>
+#include <OpenGLES/ES3/glext.h>
 #include <CoreVideo/CVOpenGLESTextureCache.h>
 
 #include "UnityMetalSupport.h"
 #if UNITY_CAN_USE_METAL
     #include <CoreVideo/CVMetalTextureCache.h>
 #else
-const CFStringRef kCVPixelBufferMetalCompatibilityKey = CFSTR("MetalCompatibility");
+
 typedef void* CVMetalTextureCacheRef;
 typedef void* CVMetalTextureRef;
+
+const CFStringRef kCVPixelBufferMetalCompatibilityKey = CFSTR("MetalCompatibility");
 inline CVReturn         CVMetalTextureCacheCreate(CFAllocatorRef, CFDictionaryRef, MTLDeviceRef, CFDictionaryRef, CVMetalTextureCacheRef*)  { return 0; }
 inline CVReturn         CVMetalTextureCacheCreateTextureFromImage(CFAllocatorRef, CVMetalTextureCacheRef, CVImageBufferRef, CFDictionaryRef, MTLPixelFormat, size_t, size_t, size_t, CVMetalTextureRef*)    { return 0; }
 inline void             CVMetalTextureCacheFlush(CVMetalTextureCacheRef, uint64_t options)  {}
 inline MTLTextureRef    CVMetalTextureGetTexture(CVMetalTextureRef) { return nil; }
 inline Boolean          CVMetalTextureIsFlipped(CVMetalTextureRef)  { return 0; }
+
 #endif
 
 
@@ -47,7 +51,7 @@ void FlushCVTextureCache(void* cache)
         CVOpenGLESTextureCacheFlush((CVOpenGLESTextureCacheRef)cache, 0);
 }
 
-void* CreateTextureFromCVTextureCache(void* cache, void* image, size_t w, size_t h)
+void* CreateBGRA32TextureFromCVTextureCache(void* cache, void* image, size_t w, size_t h)
 {
     void* texture = 0;
 
@@ -55,22 +59,59 @@ void* CreateTextureFromCVTextureCache(void* cache, void* image, size_t w, size_t
     if (UnitySelectedRenderingAPI() == apiMetal)
     {
         err = CVMetalTextureCacheCreateTextureFromImage(
-                kCFAllocatorDefault, (CVMetalTextureCacheRef)cache, (CVImageBufferRef)image, 0,
-                MTLPixelFormatBGRA8Unorm, w, h, 0, (CVMetalTextureRef*)&texture
-                );
+            kCFAllocatorDefault, (CVMetalTextureCacheRef)cache, (CVImageBufferRef)image, 0,
+            (MTLPixelFormat)((UnityDisplaySurfaceMTL*)GetMainDisplaySurface())->colorFormat, w, h, 0, (CVMetalTextureRef*)&texture
+        );
     }
     else
     {
         err = CVOpenGLESTextureCacheCreateTextureFromImage(
-                kCFAllocatorDefault, (CVOpenGLESTextureCacheRef)cache, (CVImageBufferRef)image, 0,
-                GL_TEXTURE_2D, GL_RGBA, (GLsizei)w, (GLsizei)h, GL_BGRA_EXT, GL_UNSIGNED_BYTE,
-                0, (CVOpenGLESTextureRef*)&texture
-                );
+            kCFAllocatorDefault, (CVOpenGLESTextureCacheRef)cache, (CVImageBufferRef)image, 0,
+            GL_TEXTURE_2D, GL_RGBA, (GLsizei)w, (GLsizei)h, GL_BGRA_EXT, GL_UNSIGNED_BYTE,
+            0, (CVOpenGLESTextureRef*)&texture
+        );
     }
 
     if (err)
     {
-        ::printf("Error at CVOpenGLESTextureCacheCreateTextureFromImage: %d", err);
+        ::printf("Error at CVOpenGLESTextureCacheCreateTextureFromImage: %d\n", err);
+        texture = 0;
+    }
+    return texture;
+}
+
+void* CreateHalfFloatTextureFromCVTextureCache(void* cache, void* image, size_t w, size_t h)
+{
+    void* texture = 0;
+
+    CVReturn err = 0;
+    if (UnitySelectedRenderingAPI() == apiMetal)
+    {
+        err = CVMetalTextureCacheCreateTextureFromImage(
+            kCFAllocatorDefault, (CVMetalTextureCacheRef)cache, (CVImageBufferRef)image, 0,
+            MTLPixelFormatR16Float, w, h, 0, (CVMetalTextureRef*)&texture
+        );
+    }
+    else if (UnitySelectedRenderingAPI() == apiOpenGLES3)
+    {
+        err = CVOpenGLESTextureCacheCreateTextureFromImage(
+            kCFAllocatorDefault, (CVOpenGLESTextureCacheRef)cache, (CVImageBufferRef)image, 0,
+            GL_TEXTURE_2D, GL_R16F, (GLsizei)w, (GLsizei)h, GL_RED, GL_HALF_FLOAT,
+            0, (CVOpenGLESTextureRef*)&texture
+        );
+    }
+    else // OpenGLES2
+    {
+        err = CVOpenGLESTextureCacheCreateTextureFromImage(
+            kCFAllocatorDefault, (CVOpenGLESTextureCacheRef)cache, (CVImageBufferRef)image, 0,
+            GL_TEXTURE_2D, GL_RED_EXT, (GLsizei)w, (GLsizei)h, GL_RED_EXT, GL_HALF_FLOAT_OES,
+            0, (CVOpenGLESTextureRef*)&texture
+        );
+    }
+
+    if (err)
+    {
+        ::printf("Error at CVOpenGLESTextureCacheCreateTextureFromImage: %d\n", err);
         texture = 0;
     }
     return texture;
@@ -114,7 +155,7 @@ void* CreatePixelBufferForCVTextureCache(size_t w, size_t h)
 void* CreateReadableRTFromCVTextureCache(void* cache, size_t w, size_t h, void** pb)
 {
     *pb = CreatePixelBufferForCVTextureCache(w, h);
-    return CreateTextureFromCVTextureCache(cache, *pb, w, h);
+    return CreateBGRA32TextureFromCVTextureCache(cache, *pb, w, h);
 }
 
 int IsCVTextureFlipped(void* texture)
