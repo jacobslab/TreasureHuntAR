@@ -263,7 +263,14 @@ public class WorldMapManager : MonoBehaviour
 
             UnityARSessionRunOption runOption = UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking;
 
-
+            ARPointCloud cloud = worldMap.pointCloud;
+            Debug.Log("point cloud vector size is " + cloud.Points.Length.ToString());
+            for(int i=0;i<cloud.Points.Length;i++)
+            {
+                TreasureHuntController_ARKit.Instance.trialLog.LogPointCloudVector(cloud.Points[i].ToString());
+                Debug.Log(cloud.Points[i].ToString());
+            }
+            UnityEngine.Debug.Log(cloud.Points.ToString());
             TreasureHuntController_ARKit.Instance.trialLog.LogWorldMapLoadSuccessful();
             ARPlaneAnchorGameObject planeObj = TreasureHuntController_ARKit.Instance.GetPlaneObject();
             Vector3 originVec = planeObj.gameObject.transform.position;

@@ -60,6 +60,12 @@ public class TrialLogTrack : LogTrack {
 	}
 
 
+    public void LogPointCloudVector(string point)
+    {
+        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "POINT_CLOUD" + separator + point);
+    }
+
+
     public void LogCamPosition(Vector3 camPos)
     {
         //UnityEngine.Debug.Log("logging cam position");
