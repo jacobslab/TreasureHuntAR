@@ -91,6 +91,7 @@ public class DistractorGame : MonoBehaviour {
             Vector3 spawnPos = taskController.GetRandomPosition(out randPlaneIndex);
             rabbitObj.transform.parent = planeAnchor.gameObject.transform;
             rabbitObj.transform.localPosition = spawnPos;
+            TreasureHuntController_ARKit.Instance.trialLog.LogRabbitStartPosition(rabbitObj.transform);
             Debug.Log("put rabbit on a random spawn pos");
 
             //find a random position that is reasonable distance away from the rabbit
@@ -126,7 +127,8 @@ public class DistractorGame : MonoBehaviour {
             //first make sure the rabbit is looking at the targetpos
             rabbitObj.transform.LookAt(targetPos);
             rabbitObj.transform.localEulerAngles = new Vector3(0f, rabbitObj.transform.localEulerAngles.y, 0f); //reset x and z axes angles
-            rabbitObj.transform.localPosition = targetPos;
+            //rabbitObj.transform.localPosition = targetPos;
+
             //Debug.Log("waiting for rabbit to be looked at");
             //yield return StartCoroutine(WaitTillRabbitLooked());
             Debug.Log("setting rabbit anim to move");
@@ -138,37 +140,39 @@ public class DistractorGame : MonoBehaviour {
             {
                 UnityEngine.Debug.Log("caught an exception" + e.ToString());
             }
-            //Debug.Log("moving the rabbit");
-            //while (moveTimer < smoothTime)
-            //{
-            //    try
-            //    {
-            //        moveTimer += Time.deltaTime;
-            //        UnityEngine.Debug.Log("move timer " + moveTimer.ToString());
-            //        if (rabbitObj != null)
-            //        {
-            //            float lerpFactor = moveTimer / maxWaitFactor;
-            //            //debugText.text = rabbitObj.transform.localPosition.ToString() + " with move timer " + moveTimer.ToString();
-            //            //float newPositionX = Mathf.SmoothDamp(rabbitObj.transform.localPosition.x, targetPos.x, ref xVelocity, smoothTime);
-            //            //float newPositionZ = Mathf.SmoothDamp(rabbitObj.transform.localPosition.z, targetPos.z, ref zVelocity, smoothTime);
-            //            //rabbitObj.transform.localPosition = new Vector3(newPositionX, rabbitObj.transform.localPosition.y, newPositionZ);
-            //            rabbitObj.transform.localPosition = new Vector3(Mathf.SmoothStep(rabbitObj.transform.localPosition.x, targetPos.x, lerpFactor) , rabbitObj.transform.localPosition.y,Mathf.SmoothStep(rabbitObj.transform.localPosition.z,targetPos.z,lerpFactor));
-            //            //rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
-            //        }
-            //        else
-            //        {
-            //            UnityEngine.Debug.Log("no rabbit object");
-            //            TreasureHuntController_ARKit.Instance.debugText.text = "NO RABBITOBJ";
-            //        }
-            //    }
-            //    catch (NullReferenceException e)
-            //    {
-            //        UnityEngine.Debug.Log("caught an exception" + e.ToString());
-            //    }
+            Debug.Log("moving the rabbit");
+            while (moveTimer < smoothTime)
+            {
+                try
+                {
+                    moveTimer += Time.deltaTime;
+                    UnityEngine.Debug.Log("move timer " + moveTimer.ToString());
+                    if (rabbitObj != null)
+                    {
+                        float lerpFactor = moveTimer / maxWaitFactor;
+                        //debugText.text = rabbitObj.transform.localPosition.ToString() + " with move timer " + moveTimer.ToString();
+                        float newPositionX = Mathf.SmoothDamp(rabbitObj.transform.localPosition.x, targetPos.x, ref xVelocity, smoothTime);
+                        float newPositionZ = Mathf.SmoothDamp(rabbitObj.transform.localPosition.z, targetPos.z, ref zVelocity, smoothTime);
+                        //rabbitObj.transform.localPosition = new Vector3(newPositionX, rabbitObj.transform.localPosition.y, newPositionZ);
+                        rabbitObj.transform.localPosition = new Vector3(newPositionX, rabbitObj.transform.localPosition.y,newPositionZ);
+                        //rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log("no rabbit object");
+                        TreasureHuntController_ARKit.Instance.debugText.text = "NO RABBITOBJ";
+                    }
+                }
+                catch (NullReferenceException e)
+                {
+                    UnityEngine.Debug.Log("caught an exception" + e.ToString());
+                }
 
-            //    //rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
-            //    yield return 0;
-            //}
+                //rabbitObj.transform.localPosition = Vector3.Lerp(rabbitObj.transform.localPosition, targetPos, lerpFactor);
+                yield return 0;
+            }
+
+            TreasureHuntController_ARKit.Instance.trialLog.LogRabbitEndPosition(rabbitObj.transform);
             try
             {
                 rabbitObj.GetComponent<Animator>().SetBool("CanMove?", false);

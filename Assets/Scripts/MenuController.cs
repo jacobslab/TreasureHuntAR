@@ -41,17 +41,19 @@ public class MenuController : MonoBehaviour {
 
     IEnumerator PrepExperiment()
     { 
-        if (subjectInputField.text == "" && Configuration.isTargetIPAddrValid)
+        if (subjectInputField.text == "")
         {
             subjectEmptyWarningText.enabled = true;
         }
         else
         {
             //should synchronize first
+#if !NONSYNC
             if(syncToggle.isOn)
             {
                 yield return StartCoroutine(networkManager.BeginDiscovery());
             }
+#endif
             SceneManager.LoadScene(1); //load the main game scene;
         }
         yield return null;

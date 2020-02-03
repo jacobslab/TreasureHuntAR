@@ -68,6 +68,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public CanvasGroup scorePanelUIGroup;
     public CanvasGroup endSessionPanelUIGroup;
     public CanvasGroup waitForReadyUIGroup;
+    public CanvasGroup rotSyncUIGroup;
+
     public Text retrievalText;
     public Button acceptUserResponseButton;
     public Toggle debugVisualsToggle;
@@ -75,6 +77,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public Button confirmMarkersButton;
     public Dropdown mapDropdown;
     public Text trialCountText;
+    
+
 
     //feedback
     public GameObject feedbackConnectingLinePrefab;
@@ -573,7 +577,6 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             testList.Add(testSpawn);
 
             Debug.Log("instantiated test obj and set plane anchor as its transform parent");
-            //          Debug.Log ("pos is: " + testSpawn.transform.position.ToString ());
 
             if (geoUtils.IsPointInPolygon(markerPosList, new Vector2(testSpawn.transform.position.x, testSpawn.transform.position.z)))
             {
@@ -764,15 +767,23 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     void FixedUpdate()
     {
         Vector3 camPos = Vector3.zero;
-        //Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
-        ////Vector3 camPos = arkitManager.arCamManager.m_camera.transform.localPosition;
-        ////camPosText.text = camPos.ToString() + " \n rotation " + camRot.eulerAngles.ToString();
 
         if (arkitManager != null && !treasureFound)
         {
             if (arkitManager.arCamManager != null)
             {
                 Matrix4x4 camMatrix = arkitManager.arCamManager.GetCurrentPose();
+                Transform currentTransform = arkitManager.arCamManager.m_camera.transform;
+                trialLog.LogCamTransform(currentTransform);
+
+                if(currentTransform.eulerAngles.z > 200f && currentTransform.eulerAngles.z <270f)
+                {
+                    ShowRotationSynchronization(true);
+                }
+                else
+                {
+                    ShowRotationSynchronization(false);
+                }
 
                 camPos = UnityARMatrixOps.GetPosition(camMatrix);
                 Quaternion camRot = UnityARMatrixOps.GetRotation(camMatrix);
@@ -788,6 +799,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                         if (arPlaneAnchors.Count > 0)
                         {
                             ARPlaneAnchorGameObject planeAnchorObj = arPlaneAnchors.First.Value;
+
                         }
                     }
                 }
@@ -799,15 +811,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         if (canNavigate && spawnChest != null && !treasureFound)
         {
-            //Debug.Log("spawnchest");
-            //    //Matrix4x4 camMatrix = arCamManager.m_camera.transform.localpo
-            //    //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
-            //    //camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
             distance = Vector3.Distance(spawnChest.transform.position, camPos);
-            //    //debugText.enabled = true;
-            //    //debugText.text = distance.ToString() + " \n parent " + spawnChest.transform.parent.gameObject.name;
             distanceLeft = Mathf.Clamp(distance - Configuration.minOpenDistance, -0.1f, Configuration.minOpenDistance);
-            //    //debugText.text = "Distance: " + distance.ToString() + " \n" + "Distance Left: " + distanceLeft.ToString ();
             spawnChest.gameObject.GetComponent<TreasureChest>().UpdateDistanceBar(distanceLeft);
         }
 
@@ -816,6 +821,18 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     public void BeginSpawnTest()
     {
         StartCoroutine(RunSpawnTest());
+    }
+
+
+    public void ShowRotationSynchronization(bool isRotSyncing)
+    {
+        //only trigger if the status has changed
+        if (Configuration.rotSync != isRotSyncing)
+        {
+            Configuration.rotSync = isRotSyncing;
+            trialLog.LogRotationSyncStatus(isRotSyncing);
+            rotSyncUIGroup.alpha = (isRotSyncing ? 1f : 0f);
+        }
     }
 
     public IEnumerator RunSpawnTest()
@@ -982,7 +999,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                     //Vector3 camPos = UnityARMatrixOps.GetPosition (camMatrix);
                     Vector3 camPos = UnityARMatrixOps.GetPosition(arkitManager.arCamManager.m_camera.transform.localPosition);
                     //debugText.text = camPos.ToString();
-                    trialLog.LogCamPosition(camPos);
+                    //trialLog.LogCamPosition(camPos);
                     //float distance = Vector3.Distance(spawnChest.transform.position, camPos);
                     //					debugText.text = distance.ToString ();
                 }
@@ -1161,6 +1178,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     {
 
         Debug.Log("forcing open coroutine");
+        trialLog.LogChestOpening(chestIndex,forcingOpen);
         yield return StartCoroutine(spawnChest.GetComponent<TreasureChest>().Open(FirstPersonCamera.gameObject));
         if (hasItem)
         {
@@ -1168,11 +1186,15 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             yield return StartCoroutine(SpawnTreasure(spawnChest.transform, chestIndex));
             
             spawnObj.GetComponent<VisibilityToggler>().TurnVisible(true);
-            spawnChest.GetComponent<TreasureChest>().SetItemText(spawnObj.GetComponent<SpawnableObject>().GetName());
+            string objName = spawnObj.GetComponent<SpawnableObject>().GetName();
+            spawnChest.GetComponent<TreasureChest>().SetItemText(objName);
+
+            trialLog.LogChestItem(chestIndex, objName);
         }
         else
         {
             Debug.Log("no item to spawn");
+            trialLog.LogEmptyChest(chestIndex);
             //nothing; maybe play the empty chest sound
         }
         //set the text mesh to display the object name
@@ -1197,6 +1219,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         {
             forcingOpen = true;
             Debug.Log("forcing open button method");
+            trialLog.LogChestForceOpenEvent(chestIndex);
             StartCoroutine(OpenTreasureChest(shouldSpawnItem));
         }
     }

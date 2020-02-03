@@ -66,11 +66,15 @@ public class TrialLogTrack : LogTrack {
     }
 
 
-    public void LogCamPosition(Vector3 camPos)
-    {
-        //UnityEngine.Debug.Log("logging cam position");
-        subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "CAM_POS" + separator + camPos.x.ToString() + separator + camPos.y.ToString() + separator + camPos.z.ToString());
-    }
+
+	public void LogCamTransform(Transform camTransform)
+	{
+		//UnityEngine.Debug.Log("logging cam position");
+		subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "PLAYER" + separator + "POSITION" + separator + camTransform.position.x.ToString() + separator + camTransform.position.y.ToString() + separator + camTransform.position.z.ToString());
+		subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "PLAYER" + separator + "ROTATION" + separator + camTransform.eulerAngles.x.ToString() + separator + camTransform.eulerAngles.y.ToString() + separator + camTransform.eulerAngles.z.ToString());
+		//Debug.Log("ROTATION " + camTransform.eulerAngles.x.ToString() + "," + camTransform.eulerAngles.y.ToString() + "," + camTransform.eulerAngles.z.ToString());
+
+	}
 
     public void LogWorldMapLoaded(string worldMapName)
     {
@@ -104,35 +108,68 @@ public class TrialLogTrack : LogTrack {
 		}
 	}
 
-	public void LogVideoEvent(bool isStarting){
-		if (Configuration.isLogging) {
-			if(isStarting){
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "INSTRUCTION_VIDEO_STARTED");
-				Debug.Log ("Logged video started event.");
+	public void LogVideoEvent(bool isStarting)
+	{
+		if (Configuration.isLogging)
+		{
+			if (isStarting)
+			{
+				subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Trial Event" + separator + "INSTRUCTION_VIDEO_STARTED");
+				Debug.Log("Logged video started event.");
 			}
-			else{
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "INSTRUCTION_VIDEO_ENDED");
-				Debug.Log ("Logged video ended event.");
+			else
+			{
+				subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Trial Event" + separator + "INSTRUCTION_VIDEO_ENDED");
+				Debug.Log("Logged video ended event.");
 			}
 		}
 	}
 
-	public void LogInstructionEvent(){
-		if (Configuration.isLogging) {
-			subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "SHOWING_INSTRUCTIONS");
-			Debug.Log ("Logged instruction event.");
+	//chest logging
+
+	public void LogChestForceOpenEvent(int chestIndex)
+	{
+		subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TREASURE_CHEST" + separator + chestIndex.ToString() + separator + "FORCE_OPENING");
+	}
+	public void LogChestOpening(int chestIndex,bool forcedOpen)
+	{
+		subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TREASURE_CHEST" + separator + chestIndex.ToString() + separator + "OPENING");
+	}
+
+	public void LogChestItem(int chestIndex, string itemName)
+	{
+		subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TREASURE_CHEST" + separator + chestIndex.ToString() + separator + "TREASURE_LABEL" + separator + itemName);
+
+	}
+
+	public void LogEmptyChest(int chestIndex)
+	{
+		subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TREASURE_CHEST" + separator + chestIndex.ToString() + separator + "EMPTY");
+
+	}
+
+	public void LogInstructionEvent()
+	{
+		if (Configuration.isLogging)
+		{
+			subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Trial Event" + separator + "SHOWING_INSTRUCTIONS");
+			Debug.Log("Logged instruction event.");
 		}
 	}
 
-	public void LogBeginningExplorationEvent(bool isStarting){
-		if (Configuration.isLogging) {
-			if(isStarting){
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "FREE_EXPLORATION_STARTED");
-				Debug.Log ("Logged exploration event.");
+	public void LogBeginningExplorationEvent(bool isStarting)
+	{
+		if (Configuration.isLogging)
+		{
+			if (isStarting)
+			{
+				subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Trial Event" + separator + "FREE_EXPLORATION_STARTED");
+				Debug.Log("Logged exploration event.");
 			}
-			else{
-				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "FREE_EXPLORATION_ENDED");
-				Debug.Log ("Logged exploration ended event.");
+			else
+			{
+				subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "Trial Event" + separator + "FREE_EXPLORATION_ENDED");
+				Debug.Log("Logged exploration ended event.");
 			}
 		}
 	}
@@ -150,6 +187,8 @@ public class TrialLogTrack : LogTrack {
 		}
 	}
 
+    //distractor events
+
 	public void LogDistractorGame(bool isStarting){ //if it's not starting, then it's ending
 		if (Configuration.isLogging) {
 			if(isStarting){
@@ -160,6 +199,23 @@ public class TrialLogTrack : LogTrack {
 				subjectLog.Log (GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount (), "Trial Event" + separator + "DISTRACTOR_GAME_ENDED");
 				Debug.Log ("Logged distractor game ended event.");
 			}
+		}
+	}
+
+    public void LogRabbitStartPosition(Transform startTransform)
+    {
+        if(Configuration.isLogging)
+        {
+			subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "RABBIT_START" + separator + "POSITION" + separator + startTransform.localPosition.x.ToString() + separator + startTransform.localPosition.y.ToString() + separator + startTransform.localPosition.z.ToString());
+        }
+    }
+
+
+	public void LogRabbitEndPosition(Transform endTransform)
+	{
+		if (Configuration.isLogging)
+		{
+			subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "RABBIT_END" + separator + "POSITION" + separator + endTransform.localPosition.x.ToString() + separator + endTransform.localPosition.y.ToString() + separator + endTransform.localPosition.z.ToString());
 		}
 	}
 
@@ -353,5 +409,16 @@ public class TrialLogTrack : LogTrack {
             subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "TIME_SYNC_EVENT" + separator + ntpTime.ToString() + separator + localTime.ToString() + separator + difference.ToString());
         }
     }
+
+    //rotation sync
+    public void LogRotationSyncStatus(bool isRotSync)
+    {
+        if(Configuration.isLogging)
+        {
+			subjectLog.Log(GameClock.SystemTime_Milliseconds, subjectLog.GetFrameCount(), "ROTATION_SYNC_EVENT" + separator + (isRotSync ? "BEGIN" : "END"));
+        }
+    }
+
+
 
 }

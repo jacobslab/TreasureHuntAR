@@ -68,6 +68,9 @@ public class Configuration : MonoBehaviour
     public static bool isSyncing = false;
     public static float syncNTPInterval = 60f;
 
+    //rotation sync settings
+    public static bool rotSync = false;
+
     public static string directIPAddress = "0.0.0.0";
     public static bool isTargetIPAddrValid = true; //will turn false if entered IP Address is in invalid format; preventing from beginning the experiment
 
@@ -102,14 +105,17 @@ public class Configuration : MonoBehaviour
         minRabbitCatchDistance = Mathf.Clamp(1.3f * extentFactor,1.1f,1.3f);
         minDistanceBetweenObjects = Mathf.Clamp(1.5f * extentFactor, 0.5f, 1.5f * extentFactor);
 
+
+        TreasureHuntController_ARKit.Instance.trialLog.LogMapVariables(minResponseDistance, minRabbitSpawnDistance, minRabbitCatchDistance, minDistanceBetweenObjects);
+
         //TreasureHuntController_ARKit.Instance.debugText.text = " Rabbit Spawn Dist : " + minRabbitSpawnDistance.ToString() + " \n Rabbit Catch Dist: " + minRabbitCatchDistance.ToString() + " \n  Distance bw objs " + minDistanceBetweenObjects.ToString();
 
     }
 
 
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 
