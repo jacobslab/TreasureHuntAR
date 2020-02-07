@@ -768,7 +768,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
     {
         Vector3 camPos = Vector3.zero;
 
-        if (arkitManager != null && !treasureFound)
+        if (arkitManager != null)
         {
             if (arkitManager.arCamManager != null)
             {
