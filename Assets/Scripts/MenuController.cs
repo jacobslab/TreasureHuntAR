@@ -8,6 +8,7 @@ public class MenuController : MonoBehaviour {
 
     //UI references
     public InputField subjectInputField;
+    public InputField IPInputField;
     public CanvasGroup menuGroup;
     public Text subjectEmptyWarningText;
     public Toggle syncToggle;
@@ -33,6 +34,11 @@ public class MenuController : MonoBehaviour {
         Configuration.subjectName = subjectInputField.text;
     }
 
+    public void UpdateIPAdd()
+    {
+        Configuration.ipadd = IPInputField.text;
+    }
+
     //called by the BeginExperiment button in MenuCanvas
     public void BeginExperiment()
     {
@@ -40,7 +46,8 @@ public class MenuController : MonoBehaviour {
     }
 
     IEnumerator PrepExperiment()
-    { 
+    {
+        Debug.Log("Hello There!!12111111111111111111111982348924982392394093240");
         if (subjectInputField.text == "")
         {
             subjectEmptyWarningText.enabled = true;
@@ -48,12 +55,16 @@ public class MenuController : MonoBehaviour {
         else
         {
             //should synchronize first
-#if !NONSYNC
+            syncToggle.isOn = true;
+            Debug.Log("kjvnkernkerkvjekvnrkegvkrevgkwefnr3ef" + syncToggle.isOn);
+            
+//#if !NONSYNC
             if(syncToggle.isOn)
             {
                 yield return StartCoroutine(networkManager.BeginDiscovery());
+                Debug.Log("kjvnkernkerkvjekvnrkegvkrevgkwefnr3efiojwfoicjreofo - I am here bro");
             }
-#endif
+//#endif
             SceneManager.LoadScene(1); //load the main game scene;
         }
         yield return null;

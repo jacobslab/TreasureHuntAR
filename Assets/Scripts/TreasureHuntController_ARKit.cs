@@ -222,6 +222,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         markerObjList = new List<GameObject>();
         //		ChangeDebugVisualsStatus(true);
         UpdateNavigationStatus();
+        Debug.Log("frrrrrrrrrrrrrcrrrcrcrcrcrrsrcrvrcxsrcvcxrscvcdrvrvtyvtcrxzescr vttcxrezecrcrxex" + Configuration.isSyncing);
         if (Configuration.isSyncing)
             StartCoroutine(clockSync.RunSyncInterval());
 
@@ -233,6 +234,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
         //beginTrialPanelUIGroup.alpha = 1f;
     }
+
+ 
 
     void UpdateTrackingStatus(UnityARCamera cam)
     {
@@ -650,6 +653,17 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //				}
         //			}
         //		}
+        if (beginexper.begin_exp_pressed == true)
+        {
+            beginexper.begin_exp_pressed = false;
+            BeginNewSession();
+
+
+
+        }
+
+        if (Configuration.isSyncing)
+            StartCoroutine(clockSync.RunSyncInterval());
     }
 
 
@@ -1022,7 +1036,8 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                             x = screenPosition.x,
                             y = screenPosition.y
                         };
-                        if(!canNavigate)
+                        //canNavigate = true;
+                        if (!canNavigate)
                         {
                             Debug.Log("got a touch");
                             canOpen = true;
@@ -1786,10 +1801,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         //yield return StartCoroutine(FillMarkerPosList());
         Debug.Log("preparing spawnables");
         //wait until spawnable list is ready
-        while (!spawnablesReady)
+        /*while (!spawnablesReady)
         {
             yield return 0;
-        }
+        }*/
         Debug.Log("spawnables are ready");
         yield return StartCoroutine(RunTrial());
         //play end trial sound

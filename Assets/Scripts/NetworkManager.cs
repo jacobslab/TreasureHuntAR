@@ -57,7 +57,7 @@ public class NetworkManager : MonoBehaviour
 
     private void Awake()
     {
-
+        Debug.Log("Bruuuuuuuuuuuuuuuuuhuuuhuhuhuhuhuhuhuhuhuhuhuhuhuhuhuhuhu");
         ipAddrWarningText.enabled = false;
         if (_instance != null)
         {
@@ -70,6 +70,7 @@ public class NetworkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Bruuuuuuuuuuuuuuuuuhuuuhuhuhuhuhuhuhuhuhuhuhuhuhuhuhuhuhu1233445566");
         //_networkServer = new NetworkServer();
 
         _socketControl = gameObject.GetComponent<SocketControl>();

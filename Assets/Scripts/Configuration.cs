@@ -41,6 +41,7 @@ public class Configuration : MonoBehaviour
     public static string defaultLoggingPath;
 
     public static string subjectName = "test";
+    public static string ipadd = "160.39.244.254";
 
     public Slider responseDistSlider;
     public Text responseDistText;
@@ -66,7 +67,7 @@ public class Configuration : MonoBehaviour
 
     //time sync settings
     public static bool isSyncing = false;
-    public static float syncNTPInterval = 60f;
+    public static float syncNTPInterval = 2f;
 
     //rotation sync settings
     public static bool rotSync = false;

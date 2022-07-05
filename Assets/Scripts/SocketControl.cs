@@ -117,7 +117,8 @@ public class ClientThread : ThreadedJob
     protected override void ThreadFunction()
     {
         //StartClient();
-
+        Configuration.directIPAddress = Configuration.ipadd;
+        Debug.Log("HHCjdbvjfvcfv: " + Configuration.directIPAddress);
         //if input field is empty with default string "0.0.0.0", then perform device discovery
         if (Configuration.directIPAddress.Contains("0.0.0.0"))
         {
@@ -152,7 +153,7 @@ public class ClientThread : ThreadedJob
 
     public void AddMessageToBuffer(string newMessage)
     {
-        Debug.Log("added message to buffer");
+        Debug.Log("added message to buffer ughitrugierwtjirocow");
         messageBuffer.Add(newMessage);
     }
 
@@ -181,9 +182,10 @@ public class ClientThread : ThreadedJob
                     //Byte[] bytes = new Byte[256];
                     //string readBuffer;
                     // Translate the first passed message in the message buffer and convert into ASCII and store it as a Byte array.
+                    Debug.Log("We are HErevkjewnvkejv");
                     if (messageBuffer.Count > 0)
                     {
-                        Debug.Log("got message in the buffer");
+                        Debug.Log("got message in the buffer jeghiuerhiueritvciowmiwrwdmoi");
                         //convert the last message
                         data = System.Text.Encoding.ASCII.GetBytes(messageBuffer[messageBuffer.Count-1]);
 
@@ -349,10 +351,14 @@ public class ClientThread : ThreadedJob
         //var ServerResponseData = Client.Receive(ref ServerEp);
         //var ServerResponse = Encoding.ASCII.GetString(ServerResponseData);
 
+        Debug.Log("waiting to receive as client11111111111");
         var ServerResponseData = Client.ReceiveAsync();
+        Debug.Log("waiting to receive as client12321434" + ServerResponseData);
         var ServerResponse = ServerResponseData.Result.Buffer.ToString();
+        Debug.Log("waiting to receive as client12321434wqefwef: " + ServerResponse);
 
         IPAddress targetAddr = ServerResponseData.Result.RemoteEndPoint.Address;
+        Debug.Log("waiting to receive as client12321434: " + targetAddr);
 
         UnityEngine.Debug.Log("Received " + ServerResponse + " from " + ServerResponseData.Result.RemoteEndPoint.Address.ToString());
         Client.Close();
