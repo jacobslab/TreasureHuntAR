@@ -239,8 +239,10 @@ public class TreasureHuntController_ARKit : MonoBehaviour
 
     void UpdateTrackingStatus(UnityARCamera cam)
     {
+        Debug.Log("Is it reaching here? T1");
         if(cam.trackingState == ARTrackingState.ARTrackingStateNormal)
         {
+            Debug.Log("Is it reaching here? T2");
             trackingImage.color = Color.green;
             if(arkitManager.arWorldMapManager.isRelocalizing)
             {
@@ -248,6 +250,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
                 arkitManager.arWorldMapManager.isRelocalizing = false;
 
             }
+            Debug.Log("Is it reaching here? T3");
         }
         else if(cam.trackingState == ARTrackingState.ARTrackingStateLimited)
         {
@@ -940,6 +943,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
         Debug.Log("running trial");
         //turn off debug visuals
 
+        Debug.Log("Where it is is happening 1");
         //create a distribution of number of spawnable items spawned each trial for our session
         yield return StartCoroutine(GetItemTrialDistribution());
         //yield return StartCoroutine(CreateChestLocationList());
@@ -1806,6 +1810,7 @@ public class TreasureHuntController_ARKit : MonoBehaviour
             yield return 0;
         }*/
         Debug.Log("spawnables are ready");
+        Debug.Log("Where it is is happening 0");
         yield return StartCoroutine(RunTrial());
         //play end trial sound
         audioManager.PlayClipOnce(audioManager.beepLow);
